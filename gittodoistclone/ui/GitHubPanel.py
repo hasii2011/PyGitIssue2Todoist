@@ -15,6 +15,7 @@ from wx import ALL
 from wx import BU_LEFT
 from wx import CB_DROPDOWN
 from wx import CB_READONLY
+from wx import EVT_BUTTON
 from wx import EVT_COMBOBOX
 from wx import EVT_LISTBOX
 from wx import EXPAND
@@ -126,16 +127,15 @@ class GitHubPanel(BasePanel):
 
     def _createCloneButton(self) -> BoxSizer:
 
-        bSizer:     BoxSizer = BoxSizer(HORIZONTAL)
-        fqFileName: str = BasePanel.retrieveResourcePath('play.png')
-
-        cloneWxID: int = wxNewIdRef()
+        bSizer:    BoxSizer = BoxSizer(HORIZONTAL)
+        cloneWxID: int      = wxNewIdRef()
 
         self._cloneButton: Button = Button(self, id=cloneWxID, style=BU_LEFT, label='Clone')
 
         self._cloneButton.Enable(False)
         bSizer.Add(self._cloneButton, GitHubPanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
 
+        self.Bind(EVT_BUTTON, self._onCloneClicked, id=cloneWxID)
         return bSizer
 
     def _onRepositorySelected(self, event: CommandEvent):
@@ -152,6 +152,18 @@ class GitHubPanel(BasePanel):
         self.logger.info(f'{repoName=} - {milestoneTitle=}')
 
         self.__populateIssues(milestoneTitle, repoName)
+
+    # noinspection PyUnusedLocal
+    def _onCloneClicked(self, event: CommandEvent):
+
+        selectedIndices: List[int] = self._issueList.GetSelections()
+        self.logger.info(f'{selectedIndices=}')
+
+        selectedIssueNames: List[str] = []
+        for idx in selectedIndices:
+            selectedIssueNames.append(self._issueList.GetString(idx))
+
+        self.logger.info(f'{selectedIssueNames=}')
 
     def __populateRepositories(self):
 
