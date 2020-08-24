@@ -1,0 +1,7 @@
+.idea/
+__pycache__/
+.DS_Store
+/html/
+build/
+dist/
+/pyenv-3.8.5-github-todoist-wxpython/
