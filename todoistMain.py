@@ -1,9 +1,13 @@
 
 from todoist.api import TodoistAPI
 
+from gittodoistclone.general.Preferences import Preferences
+
+Preferences.determinePreferencesLocation()
 
 
 def addSimpleTask():
+    api_token: str = Preferences().todoistApiToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
 
@@ -14,6 +18,8 @@ def addSimpleTask():
 
 
 def addTaskToProject():
+
+    api_token: str = Preferences().todoistApiToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
     todoist.sync()
@@ -38,5 +44,5 @@ def addTaskToProject():
 
 
 if __name__ == '__main__':
-    # addSimpleTask()
+    addSimpleTask()
     addTaskToProject()

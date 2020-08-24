@@ -3,7 +3,11 @@ from github import Github
 from github.Milestone import Milestone
 from github.NamedUser import NamedUser
 
+from gittodoistclone.general.Preferences import Preferences
 
+Preferences.determinePreferencesLocation()
+INTEGRATION_TOKEN: str = Preferences().githubApiToken
+USERNAME:          str = 'hasii2011'
 
 
 def getIssuesInRepos():
