@@ -4,8 +4,6 @@ from github.Milestone import Milestone
 from github.NamedUser import NamedUser
 
 
-INTEGRATION_TOKEN: str = '0902f2cbdcbbec7c52c54fa4a1e7de452ac34084'
-USERNAME:          str = 'hasii2011'
 
 
 def getIssuesInRepos():

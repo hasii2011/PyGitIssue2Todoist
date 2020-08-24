@@ -1,7 +1,6 @@
 
 from todoist.api import TodoistAPI
 
-api_token: str = "86e2b16e4f1d1920c556cc5621e6c5ed468c5445"
 
 
 def addSimpleTask():
