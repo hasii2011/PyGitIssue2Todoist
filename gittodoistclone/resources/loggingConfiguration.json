@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "disable_existing_loggers": "False",
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        },
+        "pyutSimple": {
+            "format": "%(asctime)s.%(msecs)03d %(levelname)s %(module)s: %(message)s",
+            "datefmt" : "%H:%M:%S"
+        }
+    },
+    "handlers": {
+        "consoleHandler": {
+            "class":     "logging.StreamHandler",
+            "formatter": "pyutSimple",
+            "stream":     "ext://sys.stdout"
+        }
+    },
+    "loggers": {
+        "root": {
+            "level":     "ERROR",
+            "handlers":  ["consoleHandler"],
+            "propagate": "False"
+        },
+        "gittodoistclone": {
+            "level":     "INFO",
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
+        },
+        "tests": {
+            "level":     "INFO",
+            "propagate": "False"
+        }
+    }
+}

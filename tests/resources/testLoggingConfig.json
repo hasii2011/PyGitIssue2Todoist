@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "disable_existing_loggers": "False",
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s.%(msecs)03d %(levelname)s %(module)s: %(message)s"
+        },
+        "testSimple": {
+            "format": "%(levelname)s: %(module)s: %(message)s"
+        }
+    },
+    "handlers": {
+        "consoleHandler": {
+            "class": "logging.StreamHandler",
+            "formatter": "testSimple",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "loggers": {
+        "root": {
+            "level": "WARNING",
+            "handlers": ["consoleHandler"],
+            "propagate": "False"
+        },
+        "gitissueclone": {
+            "level":     "INFO",
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
+        },
+        "tests": {
+            "level":     "INFO",
+            "propagate": "False"
+        }
+    }
+}

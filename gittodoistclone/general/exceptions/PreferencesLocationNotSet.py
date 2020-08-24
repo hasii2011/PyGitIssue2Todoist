@@ -1,0 +1,3 @@
+
+class PreferencesLocationNotSet(Exception):
+    pass
