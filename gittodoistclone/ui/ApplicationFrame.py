@@ -5,31 +5,33 @@ from logging import Logger
 from logging import getLogger
 
 from wx import BOTH
-from wx import BoxSizer
-from wx import Colour
 from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_CLOSE
 from wx import EVT_MENU
 from wx import EXPAND
 from wx import FRAME_EX_METAL
-from wx import GREEN
-from wx import Size
-
 from wx import HORIZONTAL
 from wx import OK
 
+from wx import BoxSizer
+from wx import Size
 from wx import CommandEvent
 from wx import Frame
 from wx import Menu
 from wx import MenuBar
-from wx import ScrolledWindow
-
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
 
 from gittodoistclone.general.Preferences import Preferences
+
+from gittodoistclone.ui.CustomEvents import EVT_ISSUES_SELECTED
+from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
+
 from gittodoistclone.ui.GitHubPanel import GitHubPanel
+from gittodoistclone.ui.TodoistPanel import CloneInformation
+from gittodoistclone.ui.TodoistPanel import TodoistPanel
+
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
 
 
@@ -48,7 +50,7 @@ class ApplicationFrame(Frame):
         self._status.SetStatusText('Ready!')
 
         self._createApplicationMenuBar()
-        self._createApplicationContentArea()
+        self._githubPanel, self._todoistPanel = self._createApplicationContentArea()
         self.SetThemeEnabled(True)
 
         x, y = self._preferences.appStartupPosition
@@ -60,48 +62,7 @@ class ApplicationFrame(Frame):
             self.SetPosition(pt=appPosition)
 
         self.Bind(EVT_CLOSE, self.Close)
-
-    def _createApplicationMenuBar(self):
-
-        menuBar:  MenuBar = MenuBar()
-        fileMenu: Menu = Menu()
-
-        idExit:      int = wxNewIdRef()
-        idConfigure: int = wxNewIdRef()
-
-        fileMenu.Append(idConfigure, 'Configure', 'Configure Application IDs')
-        fileMenu.AppendSeparator()
-        fileMenu.Append(idExit, '&Quit', "Quit Application")
-
-        menuBar.Append(fileMenu, 'File')
-        self.SetMenuBar(menuBar)
-
-        self.Bind(EVT_MENU, self._onConfigure, id=idConfigure)
-        self.Bind(EVT_MENU, self.Close, id=idExit)
-
-    def _createApplicationContentArea(self):
-
-        leftPanel:  GitHubPanel = GitHubPanel(self)
-        rightPanel: ScrolledWindow = self._createPanel(GREEN)
-
-        mainSizer: BoxSizer = BoxSizer(orient=HORIZONTAL)
-        mainSizer.Add(leftPanel,  1, EXPAND)
-        mainSizer.Add(rightPanel, 1, EXPAND)
-
-        self.SetSizer(mainSizer)
-        # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
-
-    def _createPanel(self, color: Colour) -> ScrolledWindow:
-
-        retPanel: ScrolledWindow = ScrolledWindow(self)
-        retPanel.SetBackgroundColour(color)
-        retPanel.ShowScrollbars(horz=False, vert=True)
-        retPanel.SetScrollbars(pixelsPerUnitX=20, pixelsPerUnitY=20, noUnitsX=150, noUnitsY=107, xPos=0, yPos=0, noRefresh=False)
-
-        # minSize: Size = Size(width=400, height=200)
-        # retPanel.SetMinClientSize(minSize)
-
-        return retPanel
+        self.Bind(EVT_ISSUES_SELECTED, self._onIssuesSelected)
 
     def Close(self, force=False):
 
@@ -122,3 +83,47 @@ class ApplicationFrame(Frame):
             todoistToken: str = dlg.todoistToken
             githubToken:  str = dlg.githubToken
             self.logger.info(f'{todoistToken=} - {githubToken=}')
+
+    def _onIssuesSelected(self, event: IssuesSelectedEvent):
+
+        cloneInformation: CloneInformation = CloneInformation()
+
+        cloneInformation.repositoryTask    = event.repositoryName
+        cloneInformation.milestoneNameTask = event.milestoneName
+        cloneInformation.tasksToClone      = event.selectedIssues
+
+        self.logger.info(f'{event.selectedIssues=}')
+
+        self._todoistPanel.tasksToClone = cloneInformation
+
+    def _createApplicationMenuBar(self):
+
+        menuBar:  MenuBar = MenuBar()
+        fileMenu: Menu = Menu()
+
+        idExit:      int = wxNewIdRef()
+        idConfigure: int = wxNewIdRef()
+
+        fileMenu.Append(idConfigure, 'Configure', 'Configure Application IDs')
+        fileMenu.AppendSeparator()
+        fileMenu.Append(idExit, '&Quit', "Quit Application")
+
+        menuBar.Append(fileMenu, 'File')
+        self.SetMenuBar(menuBar)
+
+        self.Bind(EVT_MENU, self._onConfigure, id=idConfigure)
+        self.Bind(EVT_MENU, self.Close, id=idExit)
+
+    def _createApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
+
+        leftPanel:  GitHubPanel  = GitHubPanel(self)
+        rightPanel: TodoistPanel = TodoistPanel(self)
+
+        mainSizer: BoxSizer = BoxSizer(orient=HORIZONTAL)
+        mainSizer.Add(leftPanel,  1, EXPAND)
+        mainSizer.Add(rightPanel, 1, EXPAND)
+
+        self.SetSizer(mainSizer)
+        # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
+
+        return leftPanel, rightPanel

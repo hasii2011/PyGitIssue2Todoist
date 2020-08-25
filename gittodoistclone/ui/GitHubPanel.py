@@ -23,6 +23,7 @@ from wx import HORIZONTAL
 from wx import LB_MULTIPLE
 from wx import LB_OWNERDRAW
 from wx import LB_SINGLE
+from wx import PostEvent
 from wx import VERTICAL
 
 from wx import Button
@@ -38,12 +39,10 @@ from wx import NewIdRef as wxNewIdRef
 from gittodoistclone.general.Preferences import Preferences
 
 from gittodoistclone.ui.BasePanel import BasePanel
+from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
 
 
 class GitHubPanel(BasePanel):
-
-    PROPORTION_NOT_CHANGEABLE: int = 0
-    PROPORTION_CHANGEABLE:     int = 1
 
     ALL_ISSUES_INDICATOR:     str = 'All'
     OPEN_MILESTONE_INDICATOR: str = 'Open'
@@ -66,6 +65,11 @@ class GitHubPanel(BasePanel):
         self.SetSizer(contentSizer)
         self.Fit()
 
+        self._selectedIssueNames: List[str] = []
+
+    def selectedIssueNames(self) -> List[str]:
+        return self._selectedIssueNames
+
     def _layoutContent(self) -> BoxSizer:
 
         sizer: BoxSizer = BoxSizer(VERTICAL)
@@ -75,10 +79,10 @@ class GitHubPanel(BasePanel):
         iz: StaticBoxSizer = self._createIssueSelection()
         bz: BoxSizer       = self._createCloneButton()
 
-        sizer.Add(rz, GitHubPanel.PROPORTION_NOT_CHANGEABLE, ALL | EXPAND, 1)
-        sizer.Add(mz, GitHubPanel.PROPORTION_CHANGEABLE, ALL | EXPAND, 2)
-        sizer.Add(iz, GitHubPanel.PROPORTION_CHANGEABLE, ALL | EXPAND | ALIGN_TOP, 1)
-        sizer.Add(bz, GitHubPanel.PROPORTION_NOT_CHANGEABLE, ALL | ALIGN_RIGHT, 2)
+        sizer.Add(rz, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL | EXPAND, 1)
+        sizer.Add(mz, BasePanel.PROPORTION_CHANGEABLE, ALL | EXPAND, 2)
+        sizer.Add(iz, BasePanel.PROPORTION_CHANGEABLE, ALL | EXPAND | ALIGN_TOP, 1)
+        sizer.Add(bz, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL | ALIGN_RIGHT, 2)
 
         sizer.Fit(self)
 
@@ -91,7 +95,7 @@ class GitHubPanel(BasePanel):
         self._repositorySelection: ComboBox = ComboBox(self, repoSelectionWxId, style=CB_DROPDOWN | CB_READONLY)
 
         sz = StaticBoxSizer(VERTICAL, self, "Repository List")
-        sz.Add(self._repositorySelection, GitHubPanel.PROPORTION_NOT_CHANGEABLE, EXPAND)
+        sz.Add(self._repositorySelection, BasePanel.PROPORTION_NOT_CHANGEABLE, EXPAND)
 
         self.__populateRepositories()
 
@@ -107,7 +111,7 @@ class GitHubPanel(BasePanel):
 
         self._milestoneList.Enable(False)
         sz = StaticBoxSizer(VERTICAL, self, "Repository Milestone Titles")
-        sz.Add(self._milestoneList, GitHubPanel.PROPORTION_CHANGEABLE, EXPAND)
+        sz.Add(self._milestoneList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
 
         self.Bind(EVT_LISTBOX, self._onMilestoneSelected, milestoneSelectionWxId)
 
@@ -121,7 +125,7 @@ class GitHubPanel(BasePanel):
 
         self._issueList.Enable(False)
         sz = StaticBoxSizer(VERTICAL, self, "Repository Issues")
-        sz.Add(self._issueList, GitHubPanel.PROPORTION_CHANGEABLE, EXPAND)
+        sz.Add(self._issueList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
 
         return sz
 
@@ -133,7 +137,7 @@ class GitHubPanel(BasePanel):
         self._cloneButton: Button = Button(self, id=cloneWxID, style=BU_LEFT, label='Clone')
 
         self._cloneButton.Enable(False)
-        bSizer.Add(self._cloneButton, GitHubPanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
+        bSizer.Add(self._cloneButton, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
 
         self.Bind(EVT_BUTTON, self._onCloneClicked, id=cloneWxID)
         return bSizer
@@ -159,11 +163,18 @@ class GitHubPanel(BasePanel):
         selectedIndices: List[int] = self._issueList.GetSelections()
         self.logger.info(f'{selectedIndices=}')
 
-        selectedIssueNames: List[str] = []
         for idx in selectedIndices:
-            selectedIssueNames.append(self._issueList.GetString(idx))
+            self._selectedIssueNames.append(self._issueList.GetString(idx))
 
-        self.logger.info(f'{selectedIssueNames=}')
+        self.logger.info(f'{self._selectedIssueNames=}')
+
+        repositoryName: str = self._repositorySelection.GetStringSelection()
+        milestoneName:  str = self._milestoneList.GetStringSelection()
+        evt: IssuesSelectedEvent = IssuesSelectedEvent(repositoryName=repositoryName,
+                                                       milestoneName=milestoneName,
+                                                       selectedIssues=self._selectedIssueNames)
+        parent = self.GetParent()
+        PostEvent(parent, evt)
 
     def __populateRepositories(self):
 
