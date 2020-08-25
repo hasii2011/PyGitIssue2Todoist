@@ -20,9 +20,11 @@ from wx import EXPAND
 from wx import HORIZONTAL
 from wx import LB_ALWAYS_SB
 from wx import LB_OWNERDRAW
+from wx import PD_ELAPSED_TIME
 from wx import VERTICAL
 
 from wx import Button
+from wx import ProgressDialog
 from wx import CommandEvent
 from wx import ListBox
 from wx import StaticBoxSizer
@@ -30,6 +32,8 @@ from wx import BoxSizer
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
+from wx import Yield as wxYield
+from wx import MilliSleep as wxMilliSleep
 
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.ui.BasePanel import BasePanel
@@ -113,20 +117,44 @@ class TodoistPanel(BasePanel):
     # noinspection PyUnusedLocal
     def _onCreateTaskClicked(self, event: CommandEvent):
 
-        self.logger.info(f'Start')
+        dlg: ProgressDialog = self.__setupProgressDialog()
+
+        self.__updateDialog('Start', 750)
         todoist: TodoistAPI       = self._todoist
         ci:      CloneInformation = self._cloneInformation
 
         justRepoName: str     = ci.repositoryTask.split('/')[1]
         project:      Project = todoist.projects.add(justRepoName)
+        self.__updateDialog(f'Added {justRepoName}', 750)
 
         milestoneTaskItem: Item = todoist.items.add(ci.milestoneNameTask, project_id=project['id'])
 
-        tasks: List[str] = ci.tasksToClone
-        for task in tasks:
-            todoist.items.add(task, project_id=milestoneTaskItem['id'])
+        self.__updateDialog(f'Added Milestone: {ci.milestoneNameTask}')
 
+        tasks: List[str] = ci.tasksToClone
+        #
+        # To create subtasks first create in project then move them to the milestone task
+        #
+        for task in tasks:
+            subTask: Item = todoist.items.add(task, project_id=project['id'])
+            subTask.move(parent_id=milestoneTaskItem['id'])
+
+        self.__updateDialog('Start Sync', 750)
         self._todoist.sync()
+        self.__updateDialog('Committing', 750)
         self._todoist.commit()
 
-        self.logger.info(f'End')
+        self.__updateDialog('Done', 1000)
+        dlg.Destroy()
+
+    def __setupProgressDialog(self) -> ProgressDialog:
+
+        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "An informative message", parent=self, style=PD_ELAPSED_TIME)
+
+        return self._progressDlg
+
+    def __updateDialog(self, newMsg: str, delay: int = 500):
+
+        self._progressDlg.Pulse(newMsg)
+        wxYield()
+        wxMilliSleep(delay)
