@@ -30,20 +30,24 @@ The application gathers the following:
 
 # Format of configuration file
 
+**Name:**   `.gitIssueClone.ini`
+
+**Location:**  `${HOME}`
+
+```
+[Github]
+github_api_token = PutYourGithubKeyHere
+github_user_name = PutYourGithubUserNameHere
+
+[Todoist]
+todoist_api_token = PutYourTodoistKeyHere
+
+[Main]
+startup_width = 1024
+startup_height = 768
+startup_x = -1
+startup_y = -1
 
 
-
-
-`[Github]`
-`github_api_token = PutYourGithubKeyHere`
-`github_user_name = PutYourGithubUserNameHere`
-
-`[Todoist]`
-`todoist_api_token = PutYourTodoistKeyHere`
-
-`[Main]`
-`startup_width = 1024`
-`startup_height = 768`
-`startup_x = -1`
-`startup_y = -1`
+```
 
