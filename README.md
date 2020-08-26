@@ -25,3 +25,25 @@ The application gathers the following:
 ## Github
 
 ## Todoist
+
+
+
+# Format of configuration file
+
+
+
+
+
+`[Github]`
+`github_api_token = PutYourGithubKeyHere`
+`github_user_name = PutYourGithubUserNameHere`
+
+`[Todoist]`
+`todoist_api_token = PutYourTodoistKeyHere`
+
+`[Main]`
+`startup_width = 1024`
+`startup_height = 768`
+`startup_x = -1`
+`startup_y = -1`
+

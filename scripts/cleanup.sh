@@ -12,4 +12,5 @@ changeToProjectRoot
 
 rm -rf dist build
 
-rm -rf UNKNOWN.egg-info 
+rm -rf UNKNOWN.egg-info
+rm -rf .eggs

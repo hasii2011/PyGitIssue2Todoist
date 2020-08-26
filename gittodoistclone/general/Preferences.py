@@ -182,7 +182,7 @@ class Preferences(Singleton):
             self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY, 'PutYourGithubKeyHere')
 
         if self._config.has_option(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY) is False:
-            self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY, 'UserName here')
+            self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY, 'PutYourGithubUserNameHere')
 
     def __createApplicationPreferences(self):
 

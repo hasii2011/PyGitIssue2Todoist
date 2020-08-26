@@ -178,7 +178,10 @@ class GitHubPanel(BasePanel):
 
     def __populateRepositories(self):
 
-        repos: PaginatedList = self._github.search_repositories(query='user:hasii2011')    # TODO get user name from preferences
+        userName: str = self._preferences.githubUserName
+        query:    str = f'user:{userName}'
+
+        repos: PaginatedList = self._github.search_repositories(query=query)
 
         repoNames: List[str] = []
         for repository in repos:
