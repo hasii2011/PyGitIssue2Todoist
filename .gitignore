@@ -5,3 +5,5 @@ __pycache__/
 build/
 dist/
 /pyenv-3.8.5-github-todoist-wxpython/
+UNKNOWN.egg-info
+
