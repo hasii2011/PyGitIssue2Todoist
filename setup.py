@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['PyGitIssueClone.py']
 DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingConfiguration.json']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/play.png']),
+              ('gittodoistclone/resources', ['gittodoistclone/resources/play.png'])
               ]
 OPTIONS = {}
 
@@ -20,7 +20,7 @@ setup(
               'gittodoistclone.general',
               'gittodoistclone.general.exceptions',
               'gittodoistclone.ui',
-              'gittodoistclone.ui.dialogs',
+              'gittodoistclone.ui.dialogs'
               ],
     include_package_data=True,
     zip_safe=False,
@@ -29,7 +29,7 @@ setup(
     author='Humberto A. Sanchez II',
     author_email='Humberto.A.Sanchez.II@gmail.com',
     description='Clone Github issues in Todoist',
-    options={'py2app': OPTIONS},
+    options={},
     setup_requires=['py2app'],
     install_requires=['wxPython', 'PyGithub', 'todoist-python']
 )

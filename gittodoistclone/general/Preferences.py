@@ -38,6 +38,7 @@ class Preferences(Singleton):
 
     TODOIST_API_TOKEN_KEY: str = 'todoist_api_token'
     GITHUB_API_TOKEN_KEY:  str = 'github_api_token'
+    GITHUB_USER_NAME_KEY:  str = 'github_user_name'
 
     STARTUP_X:      str = 'startup_x'
     STARTUP_Y:      str = 'startup_y'
@@ -98,6 +99,15 @@ class Preferences(Singleton):
     @githubApiToken.setter
     def githubApiToken(self, newValue: str):
         self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY, newValue)
+        self.__saveConfig()
+
+    @property
+    def githubUserName(self) -> str:
+        return self._config.get(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY)
+
+    @githubUserName.setter
+    def githubUserName(self, newName: str):
+        self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY, newName)
         self.__saveConfig()
 
     @property
@@ -170,6 +180,9 @@ class Preferences(Singleton):
 
         if self._config.has_option(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY) is False:
             self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY, 'PutYourGithubKeyHere')
+
+        if self._config.has_option(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY) is False:
+            self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY, 'UserName here')
 
     def __createApplicationPreferences(self):
 

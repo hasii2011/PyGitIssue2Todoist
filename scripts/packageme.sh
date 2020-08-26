@@ -24,8 +24,8 @@ else
     if [[ ${1} = 'deploy' ]] ; then
             echo "create deployable binary"
             rm -rf build dist
-            # python3 setup.py py2app packages=wx,PyGithub,todoist-python --iconfile src/org/pyut/resources/img/Pyut.icns
-            python3 setup.py py2app --packages=wx,github,todoist
+            # python3 setup.py py2app packages=wx,github,todoist --iconfile gittodoistclone/resources/Pyut.icns
+            python3 setup.py py2app --packages=wx,github,todoist --iconfile gittodoistclone/resources/Pyut.icns
     else
         echo "Unknown command line arguments"
     fi
