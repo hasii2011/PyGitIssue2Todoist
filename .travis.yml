@@ -26,6 +26,8 @@ install:
   - pip install wxPython
   - pip install PyGithub
   - pip install todoist-python
+  - pip install html-testRunner
+
 
 # command to run tests
 script: ${TRAVIS_BUILD_DIR}/scripts/runtests.sh
