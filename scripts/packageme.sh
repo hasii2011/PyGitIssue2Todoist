@@ -18,14 +18,14 @@ clear
 if [[ $# -eq 0 ]] ; then
         echo "in alias mode"
         rm -rf build dist
-        # python3 setup.py py2app -A --iconfile src/org/pyut/resources/img/Pyut.icns
+        # python3 setup.py py2app -A --iconfile gittodoistclone/resources/BaseLogo.icns
         python3 setup.py py2app -A
 else
     if [[ ${1} = 'deploy' ]] ; then
             echo "create deployable binary"
             rm -rf build dist
-            # python3 setup.py py2app --packages=wx,github,todoist --iconfile gittodoistclone/resources/Pyut.icns
-            python3 setup.py py2app --packages=wx,github,todoist
+            python3 setup.py py2app --packages=wx,github,todoist --iconfile gittodoistclone/resources/BaseLogo.icns
+            # python3 setup.py py2app --packages=wx,github,todoist
     else
         echo "Unknown command line arguments"
     fi

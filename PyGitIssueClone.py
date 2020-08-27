@@ -37,6 +37,12 @@ class PyGitIssueClone:
         app: ClonerApplication = ClonerApplication(redirect=False)
         app.MainLoop()
 
+    def configurationFileExists(self) -> bool:
+
+        ans: bool = True
+
+        return ans
+
     @classmethod
     def retrieveResourcePath(cls, bareFileName: str) -> str:
 
