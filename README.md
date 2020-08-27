@@ -1,4 +1,4 @@
-[![GitHub version](https://badge.fury.io/gh/hasii2011%2Fgittodoistclone.svg)](https://badge.fury.io/gh/hasii2011%2Fgittodoistclone)
+[![Build Status](https://travis-ci.org/hasii2011/gittodoistclone.svg?branch=master)](https://travis-ci.org/hasii2011/gittodoistclone)
 
 # Introduction
 
