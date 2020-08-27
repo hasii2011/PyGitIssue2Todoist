@@ -169,7 +169,7 @@ class Preferences(Singleton):
     def __createSectionIfNecessary(self, sectionName: str):
 
         hasSection: bool = self._config.has_section(sectionName)
-        self.logger.info(f'hasSection: {hasSection} - {sectionName}')
+        self.logger.debug(f'hasSection: {hasSection} - {sectionName}')
         if hasSection is False:
             self._config.add_section(sectionName)
 
