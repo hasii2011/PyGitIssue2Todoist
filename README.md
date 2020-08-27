@@ -1,3 +1,5 @@
+[![GitHub version](https://badge.fury.io/gh/hasii2011%2Fgittodoistclone.svg)](https://badge.fury.io/gh/hasii2011%2Fgittodoistclone)
+
 # Introduction
 
 This mac application can read your github repositories and converts your github issues to todoist tasks.
