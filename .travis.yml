@@ -1,0 +1,31 @@
+
+# os: osx
+
+# osx_image: xcode11.2
+notifications:
+  email:
+    recipients:
+      - humberto.a.sanchez.ii@gmail.com
+    on_success: change # default: change
+    on_failure: always # default: always
+
+language: python
+
+cache: pip
+
+services:
+  - xvfb
+
+python:
+  - "3.8.5"
+
+# command to install dependencies
+install:
+  # pip install -r requirements.txt
+  - pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 wxPython
+  - pip install wxPython
+  - pip install PyGithub
+  - pip install todoist-python
+
+# command to run tests
+script: ${TRAVIS_BUILD_DIR}/scripts/runtests.sh
