@@ -23,7 +23,11 @@ from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
 
+from wx.adv import AboutDialogInfo
+from wx.adv import AboutBox
+
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.general.Version import Version
 
 from gittodoistclone.ui.CustomEvents import EVT_ISSUES_SELECTED
 from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
@@ -75,44 +79,31 @@ class ApplicationFrame(Frame):
 
         self.Destroy()
 
-    # noinspection PyUnusedLocal
-    def _onConfigure(self, event: CommandEvent):
-
-        dlg: DlgConfigure = DlgConfigure(self)
-        if dlg.ShowModal() == OK:
-            todoistToken: str = dlg.todoistToken
-            githubToken:  str = dlg.githubToken
-            self.logger.info(f'{todoistToken=} - {githubToken=}')
-
-    def _onIssuesSelected(self, event: IssuesSelectedEvent):
-
-        cloneInformation: CloneInformation = CloneInformation()
-
-        cloneInformation.repositoryTask    = event.repositoryName
-        cloneInformation.milestoneNameTask = event.milestoneName
-        cloneInformation.tasksToClone      = event.selectedIssues
-
-        self.logger.info(f'{event.selectedIssues=}')
-
-        self._todoistPanel.tasksToClone = cloneInformation
-
     def _createApplicationMenuBar(self):
 
         menuBar:  MenuBar = MenuBar()
         fileMenu: Menu = Menu()
+        helpMenu: Menu = Menu()
 
         idExit:      int = wxNewIdRef()
         idConfigure: int = wxNewIdRef()
+        idAbout:     int = wxNewIdRef()
 
         fileMenu.Append(idConfigure, 'Configure', 'Configure Application IDs')
         fileMenu.AppendSeparator()
         fileMenu.Append(idExit, '&Quit', "Quit Application")
 
+        helpMenu.AppendSeparator()
+        helpMenu.Append(idAbout, '&About', 'Tell you about me')
+
         menuBar.Append(fileMenu, 'File')
+        menuBar.Append(helpMenu, 'Help')
+
         self.SetMenuBar(menuBar)
 
         self.Bind(EVT_MENU, self._onConfigure, id=idConfigure)
-        self.Bind(EVT_MENU, self.Close, id=idExit)
+        self.Bind(EVT_MENU, self._onAbout,     id=idAbout)
+        self.Bind(EVT_MENU, self.Close,        id=idExit)
 
     def _createApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
 
@@ -127,3 +118,37 @@ class ApplicationFrame(Frame):
         # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
 
         return leftPanel, rightPanel
+
+    def _onIssuesSelected(self, event: IssuesSelectedEvent):
+
+        cloneInformation: CloneInformation = CloneInformation()
+
+        cloneInformation.repositoryTask    = event.repositoryName
+        cloneInformation.milestoneNameTask = event.milestoneName
+        cloneInformation.tasksToClone      = event.selectedIssues
+
+        self.logger.info(f'{event.selectedIssues=}')
+
+        self._todoistPanel.tasksToClone = cloneInformation
+
+    # noinspection PyUnusedLocal
+    def _onConfigure(self, event: CommandEvent):
+
+        dlg: DlgConfigure = DlgConfigure(self)
+        if dlg.ShowModal() == OK:
+            todoistToken: str = dlg.todoistToken
+            githubToken:  str = dlg.githubToken
+            self.logger.info(f'{todoistToken=} - {githubToken=}')
+
+    # noinspection PyUnusedLocal
+    def _onAbout(self, event: CommandEvent):
+
+        info: AboutDialogInfo = AboutDialogInfo()
+
+        info.Name    = Version.applicationName()
+        info.Version = Version.applicationVersion()
+        info.Website = ('https://github.com/hasii2011/gittodoistclone/wiki', 'Get the best information')
+
+        info.Developers = ["Humberto A. Sanchez II", "Opie Dope Baby Jesus", "Gabby 10Meows"]
+
+        AboutBox(info)
