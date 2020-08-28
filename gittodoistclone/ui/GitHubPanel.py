@@ -235,7 +235,7 @@ class GitHubPanel(BasePanel):
 
     def __handleAuthenticationError(self):
 
-        eDlg = GenericMessageDialog(self, 'The Github authentication error', "", agwStyle=ICON_ERROR | OK)
+        eDlg = GenericMessageDialog(self, 'Github authentication error', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()
         eDlg.Destroy()
 

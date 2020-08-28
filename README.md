@@ -22,12 +22,7 @@ The application gathers the following:
 * Your Github username
 * A Todoist API token
 
-# How to generate tokens
-
-## Github
-
-## Todoist
-
+The instructions on how to acquire/generate these tokens is [here](https://github.com/hasii2011/gittodoistclone/wiki).
 
 
 # Format of configuration file
