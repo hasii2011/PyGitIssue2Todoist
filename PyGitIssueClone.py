@@ -14,7 +14,6 @@ from pathlib import Path
 
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.ui.ClonerApplication import ClonerApplication
-from gittodoistclone.ui.ConfigurationApplication import ConfigurationApplication
 
 
 class PyGitIssueClone:
@@ -34,21 +33,17 @@ class PyGitIssueClone:
         self.logger: Logger = getLogger(__name__)
 
         Preferences.determinePreferencesLocation()
+        configFile: Path = Path(Preferences.getPreferencesLocation())
+        #
+        # Will create a default one if necessary
+        #
+        if configFile.exists() is False:
+            self._preferences = Preferences()
 
     def startApp(self):
 
         app: ClonerApplication = ClonerApplication(redirect=False)
         app.MainLoop()
-
-    def configurationFileExists(self) -> bool:
-
-        ans: bool = False
-
-        configFile: Path = Path(Preferences.getPreferencesLocation())
-        if configFile.exists():
-            ans = True
-
-        return ans
 
     @classmethod
     def retrieveResourcePath(cls, bareFileName: str) -> str:
@@ -86,9 +81,5 @@ if __name__ == "__main__":
     print(f"Starting {PyGitIssueClone.MADE_UP_PRETTY_MAIN_NAME}")
 
     issueCloner: PyGitIssueClone = PyGitIssueClone()
-    if issueCloner.configurationFileExists() is True:
-        issueCloner.startApp()
-    else:
-        print('Sorry no configuration file')
-        configurationApp: ConfigurationApplication = ConfigurationApplication()
-        configurationApp.MainLoop()
+    issueCloner.startApp()
+

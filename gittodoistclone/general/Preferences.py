@@ -22,7 +22,9 @@ PREFERENCES_NAME_VALUES = Dict[str, str]
 
 
 class Preferences(Singleton):
-
+    """
+    If the Preferences singleton detects that the configuration file does not exist it will create a default one
+    """
     THE_GREAT_MAC_PLATFORM: str = 'darwin'
     PREFERENCES_FILE_NAME:  str = '.gitIssueClone.ini'
 

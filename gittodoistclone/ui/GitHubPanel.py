@@ -1,5 +1,6 @@
 
 from typing import List
+from typing import cast
 
 from logging import Logger
 from logging import getLogger
@@ -8,6 +9,7 @@ from github import Github
 from github.Milestone import Milestone
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
+from github import BadCredentialsException
 
 from wx import ALIGN_RIGHT
 from wx import ALIGN_TOP
@@ -20,10 +22,11 @@ from wx import EVT_COMBOBOX
 from wx import EVT_LISTBOX
 from wx import EXPAND
 from wx import HORIZONTAL
+from wx import ICON_ERROR
 from wx import LB_MULTIPLE
 from wx import LB_OWNERDRAW
 from wx import LB_SINGLE
-from wx import PostEvent
+from wx import OK
 from wx import VERTICAL
 
 from wx import Button
@@ -33,13 +36,17 @@ from wx import ListBox
 from wx import BoxSizer
 from wx import ComboBox
 from wx import Window
+from wx import PostEvent
 
 from wx import NewIdRef as wxNewIdRef
+
+from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.general.Preferences import Preferences
 
 from gittodoistclone.ui.BasePanel import BasePanel
 from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
+from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
 
 
 class GitHubPanel(BasePanel):
@@ -183,11 +190,15 @@ class GitHubPanel(BasePanel):
 
         repos: PaginatedList = self._github.search_repositories(query=query)
 
-        repoNames: List[str] = []
-        for repository in repos:
-            repoNames.append(repository.full_name)
+        try:
+            repoNames: List[str] = []
+            for repository in repos:
+                repoNames.append(repository.full_name)
 
-        self._repositorySelection.SetItems(repoNames)
+            self._repositorySelection.SetItems(repoNames)
+        except BadCredentialsException as e:
+            self.logger.error(f'{e=}')
+            self.__handleAuthenticationError()
 
     def __populateMilestones(self, repoName):
 
@@ -221,3 +232,17 @@ class GitHubPanel(BasePanel):
         self._issueList.SetItems(issueTitles)
         self._issueList.Enable(True)
         self._cloneButton.Enable(True)
+
+    def __handleAuthenticationError(self):
+
+        eDlg = GenericMessageDialog(self, 'The Github authentication error', "", agwStyle=ICON_ERROR | OK)
+        eDlg.ShowModal()
+        eDlg.Destroy()
+
+        with DlgConfigure(self) as dlg:
+            dlg: DlgConfigure = cast(DlgConfigure, dlg)
+            if dlg.ShowModal() == OK:
+                githubToken: str = self._preferences.githubApiToken
+                self._github: Github = Github(githubToken)
+
+                self.__populateRepositories()  # I hate recursion

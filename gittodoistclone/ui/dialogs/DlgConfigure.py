@@ -47,6 +47,8 @@ class DlgConfigure(Dialog):
 
         super().__init__(parent, wxID, 'Configure', DefaultPosition, DefaultSize)
 
+        self._preferences: Preferences = Preferences()
+
         self.Center(BOTH)
 
         box:       StaticBox      = StaticBox(self, ID_ANY, "")
@@ -70,8 +72,6 @@ class DlgConfigure(Dialog):
         self.Bind(EVT_BUTTON, self.__onClose, id=ID_CANCEL)
 
         self.Bind(EVT_CLOSE,  self.__onClose)
-
-        self._preferences: Preferences = Preferences()
 
     @property
     def todoistToken(self) -> str:
@@ -101,6 +101,8 @@ class DlgConfigure(Dialog):
         mainTokensContainer.Add(szrTodoist,    1, ALIGN_LEFT | TOP, 5)
         mainTokensContainer.Add(szrGithub,     1, ALIGN_LEFT | TOP, 9)
         mainTokensContainer.Add(szrGithubName, 1, ALIGN_LEFT | TOP, 2)
+
+        self.__setPreferencesValues()
 
         return mainTokensContainer
 
@@ -152,7 +154,15 @@ class DlgConfigure(Dialog):
         githubApiToken:  str = preferences.githubApiToken
         githubUserName:  str = preferences.githubUserName
 
-        if len(todoistApiToken) == 0 or len(githubApiToken) or len(githubUserName):
+        if len(todoistApiToken) == 0 or len(githubApiToken) == 0 or len(githubUserName) == 0:
             ans = False
 
         return ans
+
+    def __setPreferencesValues(self):
+
+        preferences: Preferences = self._preferences
+
+        self._txtTodoistToken.SetValue(preferences.todoistApiToken)
+        self._txtGithubToken.SetValue(preferences.githubApiToken)
+        self._txtGithubName.SetValue(preferences.githubUserName)

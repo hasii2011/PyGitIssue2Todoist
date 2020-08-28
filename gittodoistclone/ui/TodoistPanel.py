@@ -1,6 +1,7 @@
 
 from typing import List
 from typing import cast
+from typing import Dict
 
 from dataclasses import dataclass
 from dataclasses import field
@@ -18,8 +19,10 @@ from wx import BU_LEFT
 from wx import EVT_BUTTON
 from wx import EXPAND
 from wx import HORIZONTAL
+from wx import ICON_ERROR
 from wx import LB_ALWAYS_SB
 from wx import LB_OWNERDRAW
+from wx import OK
 from wx import PD_ELAPSED_TIME
 from wx import VERTICAL
 
@@ -35,8 +38,11 @@ from wx import NewIdRef as wxNewIdRef
 from wx import Yield as wxYield
 from wx import MilliSleep as wxMilliSleep
 
+from wx.lib.agw.genericmessagedialog import GenericMessageDialog
+
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.ui.BasePanel import BasePanel
+from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
 
 
 @dataclass
@@ -140,12 +146,15 @@ class TodoistPanel(BasePanel):
             subTask.move(parent_id=milestoneTaskItem['id'])
 
         self.__updateDialog('Start Sync', 750)
-        self._todoist.sync()
-        self.__updateDialog('Committing', 750)
-        self._todoist.commit()
-
-        self.__updateDialog('Done', 1000)
-        dlg.Destroy()
+        response: Dict[str, str] = self._todoist.sync()
+        if "error_tag" in response:
+            dlg.Destroy()
+            self.__handleAuthenticationError(event)
+        else:
+            self.__updateDialog('Committing', 750)
+            self._todoist.commit()
+            self.__updateDialog('Done', 1000)
+            dlg.Destroy()
 
     def __setupProgressDialog(self) -> ProgressDialog:
 
@@ -158,3 +167,16 @@ class TodoistPanel(BasePanel):
         self._progressDlg.Pulse(newMsg)
         wxYield()
         wxMilliSleep(delay)
+
+    def __handleAuthenticationError(self, event: CommandEvent):
+
+        eDlg = GenericMessageDialog(self, 'The supplied todoist token is invalid', "", agwStyle=ICON_ERROR | OK)
+        eDlg.ShowModal()
+        eDlg.Destroy()
+        with DlgConfigure(self) as cDlg:
+            cDlg: DlgConfigure = cast(DlgConfigure, cDlg)
+            if cDlg.ShowModal() == OK:
+                self._apiToken: str = Preferences().todoistApiToken
+                self._todoist: TodoistAPI = TodoistAPI(self._apiToken)
+
+                self._onCreateTaskClicked(event)    # Dang I hate recursion
