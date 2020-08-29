@@ -22,7 +22,7 @@
             "handlers": ["consoleHandler"],
             "propagate": "False"
         },
-        "gitissueclone": {
+        "TestADialog": {
             "level":     "INFO",
             "propagate": "False",
             "handlers":  ["consoleHandler"]
