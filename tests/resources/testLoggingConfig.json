@@ -27,6 +27,12 @@
             "propagate": "False",
             "handlers":  ["consoleHandler"]
         },
+        "TestGithubAdapter": {
+            "level":     "INFO",
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
+        },
+
         "tests": {
             "level":     "INFO",
             "propagate": "False"
