@@ -5,7 +5,10 @@ from logging import getLogger
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
-from gittodoistclone.general.Preferences import Preferences
+from unittest.mock import MagicMock
+from unittest.mock import Mock
+from unittest.mock import PropertyMock
+from unittest.mock import patch
 
 from gittodoistclone.adapters.GithubAdapter import GithubAdapter
 from gittodoistclone.adapters.GithubAdapter import RepositoryNames
@@ -31,40 +34,81 @@ class TestGithubAdapter(TestBase):
 
         self.logger: Logger = TestGithubAdapter.clsLogger
 
-        Preferences.determinePreferencesLocation()
-
-        preferences: Preferences = Preferences()
-
-        self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
-
     def tearDown(self):
         pass
 
     def testGetRepositoryNames(self):
 
-        repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
+        githubAdapter: GithubAdapter = GithubAdapter(userName='mockUserName', authenticationToken='mockToken')
 
-        self.assertTrue(len(repoNames) != 0, "We should have found some repositories")
+        githubAdapter._github = MagicMock()
 
-        for repoName in repoNames:
-            self.logger.info(f'{repoName=}')
+        with patch('github.Repository.Repository') as mockRepo1:
+            with patch('github.Repository.Repository') as mockRepo2:
+
+                type(mockRepo1).full_name = PropertyMock(return_value='Mock/Repo1')
+                type(mockRepo2).full_name = PropertyMock(return_value='Mock/Repo2')
+
+                githubAdapter._github.search_repositories.return_value = [mockRepo1, mockRepo2]
+
+                repoNames: RepositoryNames = githubAdapter.getRepositoryNames()
+
+                self.assertTrue(len(repoNames) == 2, "We should have found an exact number")
+
+                for repoName in repoNames:
+                    self.logger.info(f'{repoName=}')
 
     def testGetMilestones(self):
 
-        milestones: MilestoneTitles = self._githubAdapter.getMileStoneTitles(TestGithubAdapter.TEST_REPOSITORY_NAME)
+        githubAdapter: GithubAdapter = GithubAdapter(userName='mockUserName', authenticationToken='mockToken')
+        githubAdapter._github = Mock()
 
-        self.assertTrue(len(milestones) != 0, "We should have found some milestones")
+        with patch('github.Milestone.Milestone') as mockMileStone1:
+            with patch('github.Milestone.Milestone') as mockMileStone2:
 
-        for ms in milestones:
-            self.logger.info(f'{ms=}')
+                type(mockMileStone1).title = PropertyMock(return_value='MockMilestone1')
+                type(mockMileStone2).title = PropertyMock(return_value='MockMilestone2')
+
+                mockRepo = Mock()
+                mockRepo.get_milestones.return_value = [mockMileStone1, mockMileStone2]
+
+                githubAdapter._github.get_repo.return_value = mockRepo
+                #
+                # Finally got all the mocks set up
+                #
+                milestones: MilestoneTitles = githubAdapter.getMileStoneTitles(TestGithubAdapter.TEST_REPOSITORY_NAME)
+
+                self.assertTrue(len(milestones) != 0, "We should have found some milestones")
+
+                for ms in milestones:
+                    self.logger.info(f'{ms=}')
 
     def testGetIssues(self):
 
-        issuesTitles: IssueTitles = self._githubAdapter.getIssueTitles(TestGithubAdapter.TEST_REPOSITORY_NAME, TestGithubAdapter.TEST_MILESTONE_TITLE)
-        self.assertTrue(len(issuesTitles) != 0, "We should have found some open issues")
+        githubAdapter: GithubAdapter = GithubAdapter(userName='mockUserName', authenticationToken='mockToken')
+        githubAdapter._github = Mock()
 
-        for issueTitle in issuesTitles:
-            self.logger.info(f'{issueTitle=}')
+        mockRepo = Mock()
+
+        with patch('github.Issue.Issue') as mockIssue1:
+            with patch('github.Milestone.Milestone') as mockMileStone1:
+
+                type(mockMileStone1).title = PropertyMock(return_value=TestGithubAdapter.TEST_MILESTONE_TITLE)
+
+                type(mockIssue1).title = PropertyMock(return_value='MockIssue1')
+                type(mockIssue1).milestone = PropertyMock(return_value=mockMileStone1)
+
+                githubAdapter._github.get_repo.return_value = mockRepo
+
+                mockRepo.get_issues.return_value = [mockIssue1]
+                #
+                # Done patching
+                #
+                issuesTitles: IssueTitles = githubAdapter.getIssueTitles(TestGithubAdapter.TEST_REPOSITORY_NAME, TestGithubAdapter.TEST_MILESTONE_TITLE)
+                self.assertTrue(len(issuesTitles) != 0, "We should have found some open issues")
+
+                for issueTitle in issuesTitles:
+                    self.logger.info(f'{issueTitle=}')
 
 
 def suite() -> TestSuite:
