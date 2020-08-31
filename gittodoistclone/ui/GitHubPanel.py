@@ -9,7 +9,6 @@ from github import Github
 from github.Milestone import Milestone
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
-from github import BadCredentialsException
 
 from wx import ALIGN_RIGHT
 from wx import ALIGN_TOP
@@ -42,6 +41,9 @@ from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.adapters.GithubAdapter import GithubAdapter
+from gittodoistclone.adapters.GithubAdapter import RepositoryNames
+
 from gittodoistclone.general.Preferences import Preferences
 
 from gittodoistclone.ui.BasePanel import BasePanel
@@ -62,7 +64,12 @@ class GitHubPanel(BasePanel):
         self.SetBackgroundColour(self.backgroundColor)
 
         self.logger:      Logger       = getLogger(__name__)
-        self._preferences: Preferences = Preferences()
+
+        preferences: Preferences = Preferences()
+        self._preferences: Preferences = preferences
+        self._selectedIssueNames: List[str] = []
+
+        self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
 
         githubToken:  str    = self._preferences.githubApiToken
         self._github: Github = Github(githubToken)
@@ -71,8 +78,6 @@ class GitHubPanel(BasePanel):
 
         self.SetSizer(contentSizer)
         self.Fit()
-
-        self._selectedIssueNames: List[str] = []
 
     def selectedIssueNames(self) -> List[str]:
         return self._selectedIssueNames
@@ -185,20 +190,9 @@ class GitHubPanel(BasePanel):
 
     def __populateRepositories(self):
 
-        userName: str = self._preferences.githubUserName
-        query:    str = f'user:{userName}'
+        repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
 
-        repos: PaginatedList = self._github.search_repositories(query=query)
-
-        try:
-            repoNames: List[str] = []
-            for repository in repos:
-                repoNames.append(repository.full_name)
-
-            self._repositorySelection.SetItems(repoNames)
-        except BadCredentialsException as e:
-            self.logger.error(f'{e=}')
-            self.__handleAuthenticationError()
+        self._repositorySelection.SetItems(repoNames)
 
     def __populateMilestones(self, repoName):
 
