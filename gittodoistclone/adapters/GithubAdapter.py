@@ -13,6 +13,8 @@ from github.Issue import Issue
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 
+from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+
 RepositoryNames = List[str]
 MilestoneTitles = List[str]
 IssueTitles     = List[str]
@@ -48,7 +50,8 @@ class GithubAdapter:
 
         except BadCredentialsException as e:
             self.logger.error(f'{e=}')
-            self.__handleAuthenticationError()
+            raise AdapterAuthenticationError(e)
+
         return repoNames
 
     def getMileStoneTitles(self, repoName: str) -> MilestoneTitles:
@@ -86,5 +89,3 @@ class GithubAdapter:
 
         return issueTitles
 
-    def __handleAuthenticationError(self):
-        pass

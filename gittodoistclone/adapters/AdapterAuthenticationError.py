@@ -1,0 +1,3 @@
+
+class AdapterAuthenticationError(Exception):
+    pass

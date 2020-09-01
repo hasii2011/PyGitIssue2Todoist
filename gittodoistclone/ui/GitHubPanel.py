@@ -5,11 +5,6 @@ from typing import cast
 from logging import Logger
 from logging import getLogger
 
-from github import Github
-from github.Milestone import Milestone
-from github.PaginatedList import PaginatedList
-from github.Repository import Repository
-
 from wx import ALIGN_RIGHT
 from wx import ALIGN_TOP
 from wx import ALL
@@ -43,6 +38,7 @@ from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.adapters.GithubAdapter import GithubAdapter
 from gittodoistclone.adapters.GithubAdapter import RepositoryNames
+from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 
 from gittodoistclone.general.Preferences import Preferences
 
@@ -70,9 +66,6 @@ class GitHubPanel(BasePanel):
         self._selectedIssueNames: List[str] = []
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
-
-        githubToken:  str    = self._preferences.githubApiToken
-        self._github: Github = Github(githubToken)
 
         contentSizer: BoxSizer = self._layoutContent()
 
@@ -167,7 +160,7 @@ class GitHubPanel(BasePanel):
         milestoneTitle: str = event.GetString()
         self.logger.info(f'{repoName=} - {milestoneTitle=}')
 
-        self.__populateIssues(milestoneTitle, repoName)
+        self.__populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
 
     # noinspection PyUnusedLocal
     def _onCloneClicked(self, event: CommandEvent):
@@ -190,38 +183,23 @@ class GitHubPanel(BasePanel):
 
     def __populateRepositories(self):
 
-        repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
+        try:
+            repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
 
-        self._repositorySelection.SetItems(repoNames)
+            self._repositorySelection.SetItems(repoNames)
+        except AdapterAuthenticationError as e:
+            self.__handleAuthenticationError()
 
-    def __populateMilestones(self, repoName):
+    def __populateMilestones(self, repoName: str):
 
-        repo:            Repository  = self._github.get_repo(repoName)
-        mileStones:      PaginatedList = repo.get_milestones(state=GitHubPanel.OPEN_MILESTONE_INDICATOR)
-
-        mileStoneTitles: List[str] = [GitHubPanel.ALL_ISSUES_INDICATOR]
-
-        for mileStone in mileStones:
-            mileStoneTitles.append(mileStone.title)
+        mileStoneTitles: List[str] = self._githubAdapter.getMileStoneTitles(repoName)
 
         self._milestoneList.SetItems(mileStoneTitles)
         self._milestoneList.Enable(True)
 
-    def __populateIssues(self, milestoneTitle, repoName):
+    def __populateIssues(self, repoName: str, milestoneTitle: str):
 
-        repo:        Repository    = self._github.get_repo(repoName)
-        open_issues: PaginatedList = repo.get_issues(state=GitHubPanel.OPEN_ISSUE_INDICATOR)
-
-        issueTitles: List[str] = []
-
-        if milestoneTitle == GitHubPanel.ALL_ISSUES_INDICATOR:
-            for issue in open_issues:
-                issueTitles.append(issue.title)
-        else:
-            for issue in open_issues:
-                mileStone: Milestone = issue.milestone
-                if mileStone is not None and mileStone.title == milestoneTitle:
-                    issueTitles.append(issue.title)
+        issueTitles: List[str] = self._githubAdapter.getIssueTitles(repoName, milestoneTitle)
 
         self._issueList.SetItems(issueTitles)
         self._issueList.Enable(True)
@@ -237,6 +215,7 @@ class GitHubPanel(BasePanel):
             dlg: DlgConfigure = cast(DlgConfigure, dlg)
             if dlg.ShowModal() == OK:
                 githubToken: str = self._preferences.githubApiToken
-                self._github: Github = Github(githubToken)
+                userName:    str = self._preferences.githubUserName
+                self._githubAdapter = GithubAdapter(userName=userName, authenticationToken=githubToken)
 
                 self.__populateRepositories()  # I hate recursion
