@@ -32,10 +32,20 @@
             "propagate": "False",
             "handlers":  ["consoleHandler"]
         },
-
-        "tests": {
+        "TestTodoistAdapterReal": {
             "level":     "INFO",
-            "propagate": "False"
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
+        },
+        "tests.TestTodoistAdapterBase": {
+            "level":     "INFO",
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
+        },
+        "gittodoistclone.adapters.TodoistAdapter": {
+            "level":     "WARNING",
+            "propagate": "False",
+            "handlers":  ["consoleHandler"]
         }
     }
 }

@@ -1,17 +1,8 @@
 
-from typing import List
 from typing import cast
-from typing import Dict
-
-from dataclasses import dataclass
-from dataclasses import field
 
 from logging import Logger
 from logging import getLogger
-
-from todoist import TodoistAPI
-from todoist.models import Item
-from todoist.models import Project
 
 from wx import ALIGN_RIGHT
 from wx import ALL
@@ -40,16 +31,14 @@ from wx import MilliSleep as wxMilliSleep
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.adapters.TodoistAdapter import CloneInformation
+from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
+
 from gittodoistclone.general.Preferences import Preferences
+
 from gittodoistclone.ui.BasePanel import BasePanel
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
-
-
-@dataclass
-class CloneInformation:
-    repositoryTask:    str = ''
-    milestoneNameTask: str = ''
-    tasksToClone:      List[str] = field(default_factory=list)
 
 
 class TodoistPanel(BasePanel):
@@ -69,8 +58,8 @@ class TodoistPanel(BasePanel):
 
         self._cloneInformation: CloneInformation = cast(CloneInformation, None)
 
-        self._apiToken: str        = Preferences().todoistApiToken
-        self._todoist:  TodoistAPI = TodoistAPI(self._apiToken)
+        self._apiToken:        str            = Preferences().todoistApiToken
+        self._todoistAdapter:  TodoistAdapter = TodoistAdapter(self._apiToken)
 
     @property
     def tasksToClone(self) -> CloneInformation:
@@ -125,42 +114,25 @@ class TodoistPanel(BasePanel):
 
         dlg: ProgressDialog = self.__setupProgressDialog()
 
-        self.__updateDialog('Start', 750)
-        todoist: TodoistAPI       = self._todoist
-        ci:      CloneInformation = self._cloneInformation
+        ci: CloneInformation = self._cloneInformation
 
-        justRepoName: str     = ci.repositoryTask.split('/')[1]
-        project:      Project = todoist.projects.add(justRepoName)
-        self.__updateDialog(f'Added {justRepoName}', 750)
+        adapter: TodoistAdapter = self._todoistAdapter
 
-        milestoneTaskItem: Item = todoist.items.add(ci.milestoneNameTask, project_id=project['id'])
-
-        self.__updateDialog(f'Added Milestone: {ci.milestoneNameTask}')
-
-        tasks: List[str] = ci.tasksToClone
-        #
-        # To create subtasks first create in project then move them to the milestone task
-        #
-        for task in tasks:
-            subTask: Item = todoist.items.add(task, project_id=project['id'])
-            subTask.move(parent_id=milestoneTaskItem['id'])
-
-        self.__updateDialog('Start Sync', 750)
-        response: Dict[str, str] = self._todoist.sync()
-        if "error_tag" in response:
-            dlg.Destroy()
+        try:
+            adapter.createTasks(info=ci, progressCb=self.__adapterCallback)
+            self._progressDlg.Destroy()
+        except AdapterAuthenticationError as e:
+            self._progressDlg.Destroy()
             self.__handleAuthenticationError(event)
-        else:
-            self.__updateDialog('Committing', 750)
-            self._todoist.commit()
-            self.__updateDialog('Done', 1000)
-            dlg.Destroy()
 
     def __setupProgressDialog(self) -> ProgressDialog:
 
         self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "An informative message", parent=self, style=PD_ELAPSED_TIME)
 
         return self._progressDlg
+
+    def __adapterCallback(self, statusMsg: str):
+        self.__updateDialog(newMsg=statusMsg)
 
     def __updateDialog(self, newMsg: str, delay: int = 500):
 
@@ -177,6 +149,6 @@ class TodoistPanel(BasePanel):
             cDlg: DlgConfigure = cast(DlgConfigure, cDlg)
             if cDlg.ShowModal() == OK:
                 self._apiToken: str = Preferences().todoistApiToken
-                self._todoist: TodoistAPI = TodoistAPI(self._apiToken)
+                self._todoistAdapter: TodoistAdapter = TodoistAdapter(self._apiToken)
 
                 self._onCreateTaskClicked(event)    # Dang I hate recursion
