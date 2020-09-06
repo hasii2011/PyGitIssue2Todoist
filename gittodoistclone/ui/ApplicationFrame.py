@@ -147,8 +147,10 @@ class ApplicationFrame(Frame):
 
         info.Name    = Version.applicationName()
         info.Version = Version.applicationVersion()
+
         info.Website = ('https://github.com/hasii2011/gittodoistclone/wiki', 'Get the best information')
 
         info.Developers = ["Humberto A. Sanchez II", "Opie Dope Baby Jesus", "Gabby 10Meows"]
 
+        info.SetCopyright(' ')
         AboutBox(info)
