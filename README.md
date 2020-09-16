@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hasii2011/gittodoistclone.svg?branch=master)](https://travis-ci.org/hasii2011/gittodoistclone)
+[![Build Status](https://travis-ci.com/hasii2011/gittodoistclone.svg?branch=master)](https://travis-ci.com/hasii2011/gittodoistclone)
 
 # Introduction
 
