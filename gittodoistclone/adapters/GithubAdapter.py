@@ -36,8 +36,6 @@ class GithubAdapter:
 
     def getRepositoryNames(self) -> RepositoryNames:
 
-        repoNames: RepositoryNames = []
-
         userName: str = self._userName
         query:    str = f'user:{userName}'
 
@@ -88,4 +86,3 @@ class GithubAdapter:
                     issueTitles.append(issue.title)
 
         return issueTitles
-

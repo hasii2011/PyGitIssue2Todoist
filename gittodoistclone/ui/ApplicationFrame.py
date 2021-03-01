@@ -12,6 +12,9 @@ from wx import EXPAND
 from wx import FRAME_EX_METAL
 from wx import HORIZONTAL
 from wx import OK
+from wx import ID_ABOUT
+from wx import ID_EXIT
+
 
 from wx import BoxSizer
 from wx import Size
@@ -85,16 +88,14 @@ class ApplicationFrame(Frame):
         fileMenu: Menu = Menu()
         helpMenu: Menu = Menu()
 
-        idExit:      int = wxNewIdRef()
         idConfigure: int = wxNewIdRef()
-        idAbout:     int = wxNewIdRef()
 
         fileMenu.Append(idConfigure, 'Configure', 'Configure Application IDs')
         fileMenu.AppendSeparator()
-        fileMenu.Append(idExit, '&Quit', "Quit Application")
+        fileMenu.Append(ID_EXIT, '&Quit', "Quit Application")
 
         helpMenu.AppendSeparator()
-        helpMenu.Append(idAbout, '&About', 'Tell you about me')
+        helpMenu.Append(ID_ABOUT, '&About', 'Tell you about me')
 
         menuBar.Append(fileMenu, 'File')
         menuBar.Append(helpMenu, 'Help')
@@ -102,8 +103,8 @@ class ApplicationFrame(Frame):
         self.SetMenuBar(menuBar)
 
         self.Bind(EVT_MENU, self._onConfigure, id=idConfigure)
-        self.Bind(EVT_MENU, self._onAbout,     id=idAbout)
-        self.Bind(EVT_MENU, self.Close,        id=idExit)
+        self.Bind(EVT_MENU, self._onAbout,     id=ID_ABOUT)
+        self.Bind(EVT_MENU, self.Close,        id=ID_EXIT)
 
     def _createApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
 

@@ -45,6 +45,21 @@ class PyGitIssueClone:
         app: ClonerApplication = ClonerApplication(redirect=False)
         app.MainLoop()
 
+    def displayVersionInformation(self):
+        import wx
+        import sys
+        import platform
+
+        print("Versions: ")
+        # print(f"PyUt:     {PyutVersion.getPyUtVersion()}")
+        print(f'Platform: {platform.platform()}')
+        print(f'    System:       {platform.system()}')
+        print(f'    Version:      {platform.version()}')
+        print(f'    Release:      {platform.release()}')
+
+        print(f'WxPython: {wx.__version__}')
+        print(f'Python:   {sys.version.split(" ")[0]}')
+
     @classmethod
     def retrieveResourcePath(cls, bareFileName: str) -> str:
 
@@ -81,5 +96,5 @@ if __name__ == "__main__":
     print(f"Starting {PyGitIssueClone.MADE_UP_PRETTY_MAIN_NAME}")
 
     issueCloner: PyGitIssueClone = PyGitIssueClone()
+    issueCloner.displayVersionInformation()
     issueCloner.startApp()
-
