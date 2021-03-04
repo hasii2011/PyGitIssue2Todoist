@@ -127,7 +127,7 @@ class TodoistPanel(BasePanel):
 
     def __setupProgressDialog(self) -> ProgressDialog:
 
-        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "An informative message", parent=self, style=PD_ELAPSED_TIME)
+        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "", parent=self, style=PD_ELAPSED_TIME)
 
         return self._progressDlg
 

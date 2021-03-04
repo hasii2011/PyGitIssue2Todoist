@@ -7,9 +7,11 @@ from unittest import main as unitTestMain
 
 from unittest.mock import MagicMock
 from unittest.mock import Mock
+from unittest.mock import PropertyMock
 
 from todoist.managers.items import ItemsManager
 from todoist.managers.projects import ProjectsManager
+from todoist.models import Project
 
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
@@ -48,11 +50,16 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
         projectsManager  = Mock(spec=ProjectsManager)
         itemsManager     = Mock(spec=ItemsManager)
 
+        mockProject: MagicMock = MagicMock(spec=Project)   # So I can get subscription
+        mockProject['id']      = 'DEADBEEF'
+        mockProject['name']    = 'MockProject'
+
+        mockState = MagicMock()
+        mockState['projects'].return_value = [mockProject]
+
         adapter._todoist.projects.return_value = projectsManager
         adapter._todoist.items.return_value    = itemsManager
-
-        mockProject: MagicMock = MagicMock()   # So I can get subscription
-        mockProject['id']      = 'MockProjectId'
+        type(adapter._todoist).state    = PropertyMock(mockState)
 
         adapter._todoist.projects.add.return_value = mockProject
 

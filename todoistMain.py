@@ -1,5 +1,11 @@
+from typing import Dict
+from typing import List
+from typing import cast
+
 from todoist.api import SyncError
 from todoist.api import TodoistAPI
+from todoist.models import Item
+from todoist.models import Project
 
 from gittodoistclone.general.Preferences import Preferences
 
@@ -66,7 +72,36 @@ def getProjects():
             print(f'{se=}')
 
 
+def getProjectTasks():
+
+    api_token: str = Preferences().todoistApiToken
+
+    todoist: TodoistAPI = TodoistAPI(api_token)
+    todoist.sync()
+    projects: List[Project] = todoist.state['projects']
+
+    mockProject: Project = cast(Project, None)
+    for project in projects:
+
+        project = cast(Project, project)
+        projectName: str = project["name"]
+        if projectName == 'MockProject':
+            mockProject = project
+            break
+
+    mockProjectId: int = mockProject['id']
+    print(f'{mockProjectId=}')
+
+    dataItems: Dict[str, Item] = todoist.projects.get_data(project_id=mockProjectId)
+
+    # noinspection PyTypeChecker
+    items: List[Item] = dataItems['items']
+    for item in items:
+        print(f'{item["content"]=}  {item["id"]=} {item["parent_id"]=}')
+
+
 if __name__ == '__main__':
     # addSimpleTask()
     # addTaskToProject()
-    getProjects()
+    # getProjects()
+    getProjectTasks()
