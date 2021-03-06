@@ -5,7 +5,7 @@ from logging import getLogger
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
-from github.Project import Project
+from todoist.models import Project
 
 from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.TodoistAdapter import ProjectName
@@ -15,6 +15,9 @@ from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 from gittodoistclone.general.Preferences import Preferences
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
+
+NUMBER_OF_TEST_MILESTONE_TASKS: int = 2
+NUMBER_OF_TEST_DEV_TASKS:       int = 4
 
 
 class TestTodoistAdapterReal(TestTodoistAdapterBase):
@@ -83,6 +86,22 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         expectedId: int = project['id']
 
         self.assertEqual(expectedId, actualId, 'I was supposed to get an actual ID')
+
+    def testGetProjectTasks(self):
+
+        adapter: TodoistAdapter = self._adapter
+
+        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+
+        projectId: int = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+
+        mileStoneTasks, devTasks = adapter._getProjectTasks(projectId=projectId)
+
+        self.assertIsNotNone(mileStoneTasks, 'I need some test milestone tasks')
+        self.assertIsNotNone(devTasks, 'I need some test developer tasks')
+
+        self.assertEqual(NUMBER_OF_TEST_MILESTONE_TASKS, len(mileStoneTasks), 'I gotta have some mock milestone tasks')
+        self.assertEqual(NUMBER_OF_TEST_DEV_TASKS,       len(devTasks),       'I gotta have some mock dev tasks')
 
 
 def suite() -> TestSuite:

@@ -2,6 +2,7 @@
 from typing import List
 from typing import Callable
 from typing import NewType
+from typing import Tuple
 from typing import cast
 from typing import Dict
 
@@ -27,6 +28,7 @@ class CloneInformation:
 
 ProjectName       = NewType('ProjectName', str)
 ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
+Tasks             = NewType('Projects', List[Item])
 
 
 class TodoistAdapter:
@@ -119,3 +121,35 @@ class TodoistAdapter:
             projectDictionary[projectName] = project
 
         return projectDictionary
+
+    def _getProjectTasks(self, projectId: int) -> Tuple[Tasks, Tasks]:
+        """
+
+        Args:
+            projectId:  The project ID from which we need its task lists
+
+        Returns: A tuple of two lists;  The first are the milestone tasks;  The second are
+        potential child tasks whose parentis one of the milestone tasks
+
+        """
+
+        todoist: TodoistAPI = self._todoist
+        dataItems: Dict[str, Item] = todoist.projects.get_data(project_id=projectId)
+
+        # noinspection PyTypeChecker
+        mileStoneTasks: Tasks = Tasks([])
+        devTasks:       Tasks = Tasks([])
+
+        # noinspection PyTypeChecker
+        items: List[Item] = dataItems['items']
+        for item in items:
+
+            parentId: int = item["parent_id"]
+            self.logger.warning(f'{item["content"]=}  {item["id"]=} {parentId=}')
+
+            if parentId is None:
+                mileStoneTasks.append(item)
+            else:
+                devTasks.append(item)
+
+        return mileStoneTasks, devTasks
