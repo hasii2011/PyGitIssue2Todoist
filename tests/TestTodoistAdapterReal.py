@@ -5,10 +5,12 @@ from logging import getLogger
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
+from todoist.models import Item
 from todoist.models import Project
 
 from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.TodoistAdapter import ProjectName
+from gittodoistclone.adapters.TodoistAdapter import ProjectTasks
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 
@@ -23,6 +25,19 @@ NUMBER_OF_TEST_DEV_TASKS:       int = 4
 class TestTodoistAdapterReal(TestTodoistAdapterBase):
     """
     This unit test uses real credentials to test the todoist adapter.
+
+    For the tests against the MockProject make sure your account as a project with
+    the following name and structure
+
+    ```
+        MockProject
+            MockMileStone1
+                MockTask1
+                MockTask2
+            MockMileStone2
+                MockTask3
+                MockTask4
+    ```
     """
     clsLogger: Logger = None
 
@@ -87,7 +102,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         self.assertEqual(expectedId, actualId, 'I was supposed to get an actual ID')
 
-    def testGetProjectTasks(self):
+    def testGetProjectTaskItems(self):
 
         adapter: TodoistAdapter = self._adapter
 
@@ -95,13 +110,56 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectId: int = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
 
-        mileStoneTasks, devTasks = adapter._getProjectTasks(projectId=projectId)
+        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 
-        self.assertIsNotNone(mileStoneTasks, 'I need some test milestone tasks')
-        self.assertIsNotNone(devTasks, 'I need some test developer tasks')
+        self.assertIsNotNone(projectTasks.mileStoneTasks, 'I need some test milestone tasks')
+        self.assertIsNotNone(projectTasks.devTasks, 'I need some test developer tasks')
 
-        self.assertEqual(NUMBER_OF_TEST_MILESTONE_TASKS, len(mileStoneTasks), 'I gotta have some mock milestone tasks')
-        self.assertEqual(NUMBER_OF_TEST_DEV_TASKS,       len(devTasks),       'I gotta have some mock dev tasks')
+        self.assertEqual(NUMBER_OF_TEST_MILESTONE_TASKS, len(projectTasks.mileStoneTasks), 'I gotta have some mock milestone tasks')
+        self.assertEqual(NUMBER_OF_TEST_DEV_TASKS,       len(projectTasks.devTasks),       'I gotta have some mock dev tasks')
+
+    def testGetProjectTaskItemsForNewProject(self):
+
+        adapter: TodoistAdapter = self._adapter
+
+        # projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+
+        # projectId: int = adapter._getProjectId(projectName=ProjectName('NewProject'), projectDictionary=projectDictionary)
+        projectId: int = self._getAProjectId(projectName=ProjectName('NewProject'))
+        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
+
+        self.assertIsNotNone(projectTasks, 'I a basic data class return')
+        self.assertIsNotNone(projectTasks.mileStoneTasks, 'I need some test milestone tasks')
+        self.assertIsNotNone(projectTasks.devTasks, 'I need some test developer tasks')
+
+        self.assertEqual(0, len(projectTasks.mileStoneTasks), 'New Projects have no milestone tasks')
+        self.assertEqual(0, len(projectTasks.devTasks),       'New Projects have no dev tasks')
+
+    def testGetMilestoneTaskItemExisting(self):
+
+        adapter: TodoistAdapter = self._adapter
+
+        projectId: int = self._getAProjectId(projectName=ProjectName('MockProject'))
+
+        info: CloneInformation = CloneInformation()
+        info.repositoryTask    = 'MockProject'
+        info.milestoneNameTask = 'MockMilestone2'
+        info.tasksToClone      = ['MockTask3', 'MockTask4']
+
+        milestoneTaskItem: Item = adapter._getMilestoneTaskItem(projectId=projectId, milestoneNameTask='MockMilestone2', progressCb=self._sampleCallback)
+
+        itemName: str = milestoneTaskItem['content']
+        self.assertEqual('MockMilestone2', itemName, 'Should get existing item')
+
+    def _getAProjectId(self, projectName: ProjectName) -> int:
+
+        adapter: TodoistAdapter = self._adapter
+
+        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+
+        projectId: int = adapter._getProjectId(projectName=projectName, projectDictionary=projectDictionary)
+
+        return projectId
 
 
 def suite() -> TestSuite:
