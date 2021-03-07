@@ -11,6 +11,7 @@ from wx import EVT_MENU
 from wx import EXPAND
 from wx import FRAME_EX_METAL
 from wx import HORIZONTAL
+from wx import ID_PREFERENCES
 from wx import OK
 from wx import ID_ABOUT
 from wx import ID_EXIT
@@ -24,8 +25,6 @@ from wx import Menu
 from wx import MenuBar
 from wx import Window
 
-from wx import NewIdRef as wxNewIdRef
-
 from wx.adv import AboutDialogInfo
 from wx.adv import AboutBox
 
@@ -33,7 +32,9 @@ from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.Version import Version
 
 from gittodoistclone.ui.CustomEvents import EVT_ISSUES_SELECTED
+from gittodoistclone.ui.CustomEvents import EVT_REPOSITORY_SELECTED
 from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
+from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
 
 from gittodoistclone.ui.GitHubPanel import GitHubPanel
 from gittodoistclone.ui.TodoistPanel import CloneInformation
@@ -69,7 +70,8 @@ class ApplicationFrame(Frame):
             self.SetPosition(pt=appPosition)
 
         self.Bind(EVT_CLOSE, self.Close)
-        self.Bind(EVT_ISSUES_SELECTED, self._onIssuesSelected)
+        self.Bind(EVT_REPOSITORY_SELECTED, self._onRepositorySelected)
+        self.Bind(EVT_ISSUES_SELECTED,     self._onIssuesSelected)
 
     def Close(self, force=False):
 
@@ -88,9 +90,7 @@ class ApplicationFrame(Frame):
         fileMenu: Menu = Menu()
         helpMenu: Menu = Menu()
 
-        idConfigure: int = wxNewIdRef()
-
-        fileMenu.Append(idConfigure, 'Configure', 'Configure Application IDs')
+        fileMenu.Append(ID_PREFERENCES, 'Configure', 'Configure Application IDs')
         fileMenu.AppendSeparator()
         fileMenu.Append(ID_EXIT, '&Quit', "Quit Application")
 
@@ -102,7 +102,7 @@ class ApplicationFrame(Frame):
 
         self.SetMenuBar(menuBar)
 
-        self.Bind(EVT_MENU, self._onConfigure, id=idConfigure)
+        self.Bind(EVT_MENU, self._onConfigure, id=ID_PREFERENCES)
         self.Bind(EVT_MENU, self._onAbout,     id=ID_ABOUT)
         self.Bind(EVT_MENU, self.Close,        id=ID_EXIT)
 
@@ -119,6 +119,14 @@ class ApplicationFrame(Frame):
         # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
 
         return leftPanel, rightPanel
+
+    # noinspection PyUnusedLocal
+    def _onRepositorySelected(self, event: RepositorySelectedEvent):
+
+        self.logger.info(f'Clear the github issues list and todoist panel selection lists')
+
+        self._githubPanel.clearIssues()
+        self._todoistPanel.clearTasks()
 
     def _onIssuesSelected(self, event: IssuesSelectedEvent):
 

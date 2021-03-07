@@ -42,8 +42,10 @@ from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthentic
 
 from gittodoistclone.general.Preferences import Preferences
 
-from gittodoistclone.ui.BasePanel import BasePanel
 from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
+from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
+
+from gittodoistclone.ui.BasePanel import BasePanel
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
 
 
@@ -74,6 +76,9 @@ class GitHubPanel(BasePanel):
 
     def selectedIssueNames(self) -> List[str]:
         return self._selectedIssueNames
+
+    def clearIssues(self):
+        self._issueList.Clear()
 
     def _layoutContent(self) -> BoxSizer:
 
@@ -154,6 +159,11 @@ class GitHubPanel(BasePanel):
 
         self.__populateMilestones(repoName)
 
+        evt: RepositorySelectedEvent = RepositorySelectedEvent()
+
+        parent = self.GetParent()
+        PostEvent(parent, evt)
+
     def _onMilestoneSelected(self, event: CommandEvent):
 
         repoName:      str = self._repositorySelection.GetStringSelection()
@@ -187,7 +197,7 @@ class GitHubPanel(BasePanel):
             repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
 
             self._repositorySelection.SetItems(repoNames)
-        except AdapterAuthenticationError as e:
+        except AdapterAuthenticationError:
             self.__handleAuthenticationError()
 
     def __populateMilestones(self, repoName: str):

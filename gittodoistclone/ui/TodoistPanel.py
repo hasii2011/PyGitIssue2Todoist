@@ -83,6 +83,9 @@ class TodoistPanel(BasePanel):
 
         return sizer
 
+    def clearTasks(self):
+        self._taskList.Clear()
+
     def _createTodoTaskList(self) -> StaticBoxSizer:
 
         taskWxID: int = wxNewIdRef()
