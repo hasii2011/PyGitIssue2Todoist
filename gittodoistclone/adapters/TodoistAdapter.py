@@ -43,6 +43,7 @@ class TodoistAdapter:
         self.logger:             Logger            = getLogger(__name__)
         self._todoist:           TodoistAPI        = TodoistAPI(apiToken)
         self._projectDictionary: ProjectDictionary = ProjectDictionary({})
+        self._devTasks:          Tasks             = Tasks([])
 
     def createTasks(self, info: CloneInformation, progressCb: Callable):
         """
@@ -54,21 +55,16 @@ class TodoistAdapter:
 
         self.logger.info(f'{progressCb.__name__} - {info=}')
 
-        todoist: TodoistAPI = self._todoist
+        # todoist: TodoistAPI = self._todoist
 
         progressCb('Starting')
 
-        projectId = self._determineProjectIdFromRepoName(info, progressCb)
-
+        projectId:         int  = self._determineProjectIdFromRepoName(info, progressCb)
         milestoneTaskItem: Item = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
 
         tasks: List[str] = info.tasksToClone
-        #
-        # To create subtasks first create in project then move them to the milestone task
-        #
         for task in tasks:
-            subTask: Item = todoist.items.add(task, project_id=projectId)
-            subTask.move(parent_id=milestoneTaskItem['id'])
+            self._createTaskItem(taskName=task, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         progressCb('Start Sync')
         response: Dict[str, str] = self._todoist.sync()
@@ -117,21 +113,32 @@ class TodoistAdapter:
         return projectId
 
     def _getMilestoneTaskItem(self, projectId: int, milestoneNameTask: str, progressCb: Callable) -> Item:
+        """
+        Has the side effect that it sets self._devTasks
+
+        Args:
+            projectId:          The project to search under
+            milestoneNameTask:  The name of the milestone task
+            progressCb:         The callback to report status to
+
+        Returns:  Either an existing milestone task or a newly created one
+        """
 
         todoist: TodoistAPI = self._todoist
 
         # noinspection PyUnusedLocal
-        projectTasks: ProjectTasks = self._getProjectTaskItems(projectId=projectId)
+        projectTasks   = self._getProjectTaskItems(projectId=projectId)
+        self._devTasks = projectTasks.devTasks
 
-        milestoneTaskItem: Item = cast(Item, None)
+        milestoneTaskItem:  Item  = cast(Item, None)
         mileStoneTaskItems: Tasks = projectTasks.mileStoneTasks
         for taskItem in mileStoneTaskItems:
-            self.logger.warning(f'MileStone Task: {taskItem["content"]}')
+            self.logger.debug(f'MileStone Task: {taskItem["content"]}')
             if taskItem['content'] == milestoneNameTask:
                 milestoneTaskItem = taskItem
                 progressCb(f'Found existing milestone: {milestoneNameTask}')
                 break
-
+        # if none found create new one
         if milestoneTaskItem is None:
             milestoneTaskItem = todoist.items.add(milestoneNameTask, project_id=projectId)
             progressCb(f'Added milestone: {milestoneNameTask}')
@@ -202,3 +209,31 @@ class TodoistAdapter:
         projectTasks: ProjectTasks = ProjectTasks(mileStoneTasks=mileStoneTasks, devTasks=devTasks)
 
         return projectTasks
+
+    def _createTaskItem(self, taskName: str, projectId: int, parentMileStoneTaskItem: Item):
+        """
+        Create a new task if it does not already exist in Todoist
+        Assumes self._devTasks has all the project's tasks
+
+        Args:
+            taskName:       Task to potentially create
+            projectId:      Project id of potential task
+            parentMileStoneTaskItem: parent item if task needs to be created
+        """
+        assert self._devTasks is not None, 'Internal error should at least be empty'
+
+        todoist: TodoistAPI = self._todoist
+
+        foundTaskItem: Item = cast(Item, None)
+        devTasks:      Tasks = self._devTasks
+        for taskItem in devTasks:
+            taskItem: Item = cast(Item, taskItem)
+            if taskItem['content'] == taskName:
+                foundTaskItem = taskItem
+                break
+        #
+        # To create subtasks first create in project then move them to the milestone task
+        #
+        if foundTaskItem is None:
+            subTask: Item = todoist.items.add(taskName, project_id=projectId)
+            subTask.move(parent_id=parentMileStoneTaskItem['id'])
