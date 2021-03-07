@@ -64,8 +64,8 @@ class GitHubPanel(BasePanel):
         self.logger:      Logger       = getLogger(__name__)
 
         preferences: Preferences = Preferences()
-        self._preferences: Preferences = preferences
-        self._selectedIssueNames: List[str] = []
+        self._preferences:        Preferences = preferences
+        self._selectedIssueNames: List[str]   = []
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
 
@@ -79,6 +79,7 @@ class GitHubPanel(BasePanel):
 
     def clearIssues(self):
         self._issueList.Clear()
+        self._selectedIssueNames = []
 
     def _layoutContent(self) -> BoxSizer:
 
