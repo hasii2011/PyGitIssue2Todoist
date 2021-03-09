@@ -22,11 +22,11 @@ python:
 # command to install dependencies
 install:
   # pip install -r requirements.txt
-  - pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 wxPython
-  - pip install wxPython
-  - pip install PyGithub
-  - pip install todoist-python
-  - pip install html-testRunner
+  - pip3 install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 wxPython
+  # - pip install wxPython
+  - pip3 install PyGithub
+  - pip3 install todoist-python
+  - pip3 install html-testRunner
 
 
 # command to run tests
