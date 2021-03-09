@@ -39,6 +39,7 @@ from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
 from gittodoistclone.ui.GitHubPanel import GitHubPanel
 from gittodoistclone.ui.TodoistPanel import CloneInformation
 from gittodoistclone.ui.TodoistPanel import TodoistPanel
+from gittodoistclone.ui.dialogs.DlgAbout import DlgAbout
 
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
 
@@ -152,14 +153,17 @@ class ApplicationFrame(Frame):
     # noinspection PyUnusedLocal
     def _onAbout(self, event: CommandEvent):
 
-        info: AboutDialogInfo = AboutDialogInfo()
+        # info: AboutDialogInfo = AboutDialogInfo()
+        #
+        # info.Name    = Version.applicationName()
+        # info.Version = Version.applicationVersion()
+        #
+        # info.Website = ('https://github.com/hasii2011/gittodoistclone/wiki', 'Get the best information')
+        #
+        # info.Developers = ["Humberto A. Sanchez II", "Opie Dope Baby Jesus", "Gabby 10Meows"]
+        #
+        # info.SetCopyright(' ')
+        # AboutBox(info)
 
-        info.Name    = Version.applicationName()
-        info.Version = Version.applicationVersion()
-
-        info.Website = ('https://github.com/hasii2011/gittodoistclone/wiki', 'Get the best information')
-
-        info.Developers = ["Humberto A. Sanchez II", "Opie Dope Baby Jesus", "Gabby 10Meows"]
-
-        info.SetCopyright(' ')
-        AboutBox(info)
+        dlg: DlgAbout = DlgAbout(parent=self)
+        dlg.ShowModal()

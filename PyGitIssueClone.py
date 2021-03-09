@@ -13,6 +13,7 @@ from pkg_resources import resource_filename
 from pathlib import Path
 
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.general.Version import Version
 from gittodoistclone.ui.ClonerApplication import ClonerApplication
 
 
@@ -51,7 +52,7 @@ class PyGitIssueClone:
         import platform
 
         print("Versions: ")
-        # print(f"PyUt:     {PyutVersion.getPyUtVersion()}")
+        print(f"PyGitIssueClone:  {Version.applicationVersion()}")
         print(f'Platform: {platform.platform()}')
         print(f'    System:       {platform.system()}')
         print(f'    Version:      {platform.version()}')
