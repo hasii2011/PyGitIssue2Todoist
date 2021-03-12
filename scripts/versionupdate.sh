@@ -19,6 +19,7 @@ VERSION_FILE='gittodoistclone/resources/version.txt'
 
 traviscli  --repo-slug ${REPO_SLUG} --file ${VERSION_FILE}
 
-STATUS=$?
+PACKAGE_LIST='./gittodoistclone/resources/packages.txt'
+PACKAGE_VERSIONS='./gittodoistclone/resources/packageversions.txt'
 
-exit ${STATUS}
+pkgversions -p ${PACKAGE_LIST} -o ${PACKAGE_VERSIONS}

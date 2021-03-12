@@ -1,19 +1,27 @@
 
+from typing import Dict
+from typing import List
+from typing import NewType
+from typing import TextIO
+
 from logging import Logger
 from logging import getLogger
 
 from os import sep as osSep
+from os import linesep as osLineSep
 
 from sys import version as pythonVersion
 
 from pkg_resources import resource_filename
-from pkg_resources import get_distribution
 
 from wx import __version__ as wxVersion
 
-from importlib.metadata import version
-
 from gittodoistclone.general.Singleton import Singleton
+
+PackageName    = NewType('PackageName', str)
+PackageVersion = NewType('PackageVersion', str)
+
+PackageVersionsMap = NewType('PackageVersionsMap', Dict[PackageName, PackageVersion])
 
 
 class Version(Singleton):
@@ -22,6 +30,8 @@ class Version(Singleton):
     RESOURCES_PATH:         str = f'gittodoistclone{osSep}resources'
 
     RESOURCE_ENV_VAR:       str = 'RESOURCEPATH'
+
+    PACKAGE_VERSIONS_FILENAME: str = 'packageversions.txt'
 
     __appName__: str = 'PyGitIssueClone'
     __version__: str = '0.9-Beta'
@@ -33,7 +43,8 @@ class Version(Singleton):
 
     def init(self):
 
-        self.logger: Logger = Version.clsLogger
+        self.logger:       Logger             = Version.clsLogger
+        self._pkgVersions: PackageVersionsMap = self._getPackageVersions()
 
     @property
     def applicationName(self) -> str:
@@ -61,11 +72,11 @@ class Version(Singleton):
 
     @property
     def pyGithubVersion(self) -> str:
-        return get_distribution('PyGithub').version
+        return self._pkgVersions['PyGithub']
 
     @property
     def todoistVersion(self) -> str:
-        return version('todoist-python')
+        return self._pkgVersions['todoist-python']
 
     @classmethod
     def retrieveResourceText(cls, bareFileName: str) -> str:
@@ -104,3 +115,22 @@ class Version(Singleton):
             fqFileName:      str = f'{pathToResources}{osSep}{Version.RESOURCES_PATH}{osSep}{bareFileName}'
 
         return fqFileName
+
+    def _getPackageVersions(self) -> PackageVersionsMap:
+
+        packageVersionMap: PackageVersionsMap = PackageVersionsMap({})
+
+        fqFileName: str = Version.retrieveResourcePath(Version.PACKAGE_VERSIONS_FILENAME)
+        self.logger.debug(f'{fqFileName}')
+
+        readDescriptor:     TextIO = open(fqFileName,  mode='r')
+        packageNameVersion: str    = readDescriptor.readline()
+        while packageNameVersion:
+
+            nameVersion: List[str] = packageNameVersion.split('=')
+
+            packageVersionMap[nameVersion[0]] = nameVersion[1].strip(osLineSep)
+
+            packageNameVersion = readDescriptor.readline()
+
+        return packageVersionMap

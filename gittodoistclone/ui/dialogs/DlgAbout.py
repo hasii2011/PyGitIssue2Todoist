@@ -6,7 +6,7 @@ from wx import BOTH
 from wx import CAPTION
 from wx import EVT_BUTTON
 from wx import EVT_CLOSE
-from wx import FONTFAMILY_TELETYPE
+from wx import FONTFAMILY_DEFAULT
 from wx import HORIZONTAL
 from wx import ID_ANY
 from wx import DefaultPosition
@@ -41,7 +41,7 @@ class DlgAbout(Dialog):
 
         self._versionFont: Font = self.GetFont()
 
-        self._versionFont.SetFamily(FONTFAMILY_TELETYPE)
+        self._versionFont.SetFamily(FONTFAMILY_DEFAULT)
 
         self._version: Version = Version()  # Get the singleton
 
