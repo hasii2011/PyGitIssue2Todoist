@@ -1,0 +1,2 @@
+todoist-python
+PyGithub

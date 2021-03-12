@@ -52,7 +52,7 @@ class PyGitIssueClone:
         import platform
 
         print("Versions: ")
-        print(f"PyGitIssueClone:  {Version.applicationVersion()}")
+        print(f"PyGitIssueClone:  {Version().applicationVersion}")
         print(f'Platform: {platform.platform()}')
         print(f'    System:       {platform.system()}')
         print(f'    Version:      {platform.version()}')

@@ -1,0 +1,9 @@
+
+wheel~=0.36.2
+setuptools~=52.0.0
+py2app~=0.23
+PyGithub~=1.54.1
+wxPython~=4.1.1
+epr~=0.25
+traviscli~=0.2.0
+html-testRunner~=1.2.1

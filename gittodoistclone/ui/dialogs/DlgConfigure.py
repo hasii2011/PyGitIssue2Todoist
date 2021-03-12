@@ -62,7 +62,9 @@ class DlgConfigure(Dialog):
         mainSizer.Add(inp, 1, EXPAND | ALL)
         mainSizer.Add(hs, 1, EXPAND | ALL)
 
+        # noinspection PyUnresolvedReferences
         self.SetAutoLayout(True)
+        # noinspection PyUnresolvedReferences
         self.SetSizer(border)
 
         border.Fit(self)

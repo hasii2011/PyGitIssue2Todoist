@@ -43,6 +43,8 @@ class DlgAbout(Dialog):
 
         self._versionFont.SetFamily(FONTFAMILY_TELETYPE)
 
+        self._version: Version = Version()  # Get the singleton
+
         dlgButtonsContainer: Sizer = self._createDialogButtonsContainer()
 
         # Main sizer
@@ -52,7 +54,9 @@ class DlgAbout(Dialog):
         mainSizer.Add(dialogSizer,         0, ALL | ALIGN_LEFT, 5)
         mainSizer.Add(dlgButtonsContainer, 0, ALL | ALIGN_CENTER, 5)
 
-        # self.SetAutoLayout(True)
+        # noinspection PyUnresolvedReferences
+        self.SetAutoLayout(True)
+        # noinspection PyUnresolvedReferences
         self.SetSizer(mainSizer)
         self.Center(BOTH)
         self.SetBackgroundColour(WHITE)
@@ -87,15 +91,17 @@ class DlgAbout(Dialog):
         Returns:  The container
         """
 
-        pyVersionText:      str = f'Python Version:   {Version.pythonVersion()}'
-        wxVersionText:      str = f'WxPython Version: {Version.wxPythonVersion()}'
-        pyGithubText:       str = f'PyGithub Version: {Version.pyGithubVersion()}'
-        todoistVersionText: str = f'Todoist Version:  {Version.todoistVersion()}'
+        version: Version = self._version
 
-        appNameVersionText: str = f'{Version.applicationName()} - {Version.applicationVersion()}'
+        pyVersionText:      str = f'Python Version:   {version.pythonVersion}'
+        wxVersionText:      str = f'WxPython Version: {version.wxPythonVersion}'
+        pyGithubText:       str = f'PyGithub Version: {version.pyGithubVersion}'
+        todoistVersionText: str = f'Todoist Version:  {version.todoistVersion}'
 
-        appNameVersion:  StaticText = StaticText(self, ID_ANY, appNameVersionText,        style=CAPTION)
-        longVersion:     StaticText = StaticText(self, ID_ANY, Version.applicationLongVersion(), style=CAPTION)
+        appNameVersionText: str = f'{version.applicationName} - {version.applicationVersion}'
+
+        appNameVersion:  StaticText = StaticText(self, ID_ANY, appNameVersionText,             style=CAPTION)
+        longVersion:     StaticText = StaticText(self, ID_ANY, version.applicationLongVersion, style=CAPTION)
         appSeparator:    StaticLine = StaticLine(self, ID_ANY, style=LI_HORIZONTAL)
         pyVersion:       StaticText = StaticText(self, ID_ANY, pyVersionText,           style=CAPTION)
         wxVersion:       StaticText = StaticText(self, ID_ANY, wxVersionText,           style=CAPTION)
