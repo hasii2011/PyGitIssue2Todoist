@@ -13,6 +13,7 @@ from wx import HORIZONTAL
 from wx import ICON_ERROR
 from wx import LB_ALWAYS_SB
 from wx import LB_OWNERDRAW
+from wx import MessageDialog
 from wx import OK
 from wx import PD_ELAPSED_TIME
 from wx import VERTICAL
@@ -36,6 +37,7 @@ from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 from gittodoistclone.ui.BasePanel import BasePanel
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
@@ -127,6 +129,10 @@ class TodoistPanel(BasePanel):
         except AdapterAuthenticationError as e:
             self._progressDlg.Destroy()
             self.__handleAuthenticationError(event)
+        except TaskCreationError as tce:
+            self._progressDlg.Destroy()
+            booBoo: MessageDialog = MessageDialog(parent=None, message=tce.message, caption='Task Creation Error!', style=OK | ICON_ERROR)
+            booBoo.ShowModal()
 
     def __setupProgressDialog(self) -> ProgressDialog:
 

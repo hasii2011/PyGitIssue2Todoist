@@ -11,11 +11,14 @@ from dataclasses import field
 from logging import Logger
 from logging import getLogger
 
+from todoist.api import SyncError
+
 from todoist import TodoistAPI
 from todoist.models import Item
 from todoist.models import Project
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 
 @dataclass
@@ -72,7 +75,15 @@ class TodoistAdapter:
             raise AdapterAuthenticationError(response)
         else:
             progressCb('Committing')
-            self._todoist.commit()
+            try:
+                self._todoist.commit()
+            except SyncError as e:
+                eDict = e.args[1]
+                eMsg: str = eDict['error']
+                taskCreationError: TaskCreationError = TaskCreationError()
+                taskCreationError.message = eMsg
+                raise taskCreationError
+
             progressCb('Done')
 
     def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable):

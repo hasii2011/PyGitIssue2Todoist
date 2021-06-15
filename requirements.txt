@@ -1,7 +1,7 @@
 
 wheel~=0.36.2
-setuptools~=52.0.0
-py2app~=0.23
+setuptools~=57.0.0
+py2app~=0.24
 PyGithub~=1.54.1
 wxPython~=4.1.1
 epr~=0.25
