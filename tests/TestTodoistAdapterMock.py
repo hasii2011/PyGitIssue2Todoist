@@ -11,8 +11,10 @@ from unittest.mock import PropertyMock
 
 from todoist.managers.items import ItemsManager
 from todoist.managers.projects import ProjectsManager
+
 from todoist.models import Project
 
+from gittodoistclone.adapters.TodoistAdapter import ProjectData
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 
@@ -57,8 +59,13 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
         mockState = MagicMock()
         mockState['projects'].return_value = [mockProject]
 
-        adapter._todoist.projects.return_value = projectsManager
+        projectDataItems: ProjectData = ProjectData({'items': []})
+
+        projectsManager.get_data.return_value = projectDataItems
+
+        type(adapter._todoist).projects = PropertyMock(return_value=projectsManager)
         adapter._todoist.items.return_value    = itemsManager
+
         type(adapter._todoist).state    = PropertyMock(mockState)
 
         adapter._todoist.projects.add.return_value = mockProject

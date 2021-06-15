@@ -2,6 +2,7 @@
 from typing import List
 from typing import Callable
 from typing import NewType
+from typing import Union
 from typing import cast
 from typing import Dict
 
@@ -14,6 +15,9 @@ from logging import getLogger
 from todoist.api import SyncError
 
 from todoist import TodoistAPI
+
+from todoist.managers.projects import ProjectsManager
+
 from todoist.models import Item
 from todoist.models import Project
 
@@ -37,6 +41,15 @@ Tasks             = NewType('Projects', List[Item])
 class ProjectTasks:
     mileStoneTasks: Tasks = field(default_factory=list)
     devTasks:       Tasks = field(default_factory=list)
+
+
+Items            = NewType('Items', Dict[str, str])
+Project          = NewType('Project', Dict[str, str])
+ProjectNotes     = NewType('ProjectNotes', List[str])
+Sections         = NewType('Sections', List[str])
+ProjectDataTypes = NewType('ProjectDataTypes', Union[Items, Project, ProjectNotes, Sections])
+
+ProjectData = NewType('ProjectData', Dict[str, ProjectDataTypes])
 
 
 class TodoistAdapter:
@@ -195,8 +208,10 @@ class TodoistAdapter:
 
         """
 
-        todoist: TodoistAPI = self._todoist
-        dataItems: Dict[str, Item] = todoist.projects.get_data(project_id=projectId)
+        todoist:   TodoistAPI  = self._todoist
+
+        projectsManager: ProjectsManager = todoist.projects
+        dataItems:       ProjectData = projectsManager.get_data(project_id=projectId)
 
         # noinspection PyTypeChecker
         mileStoneTasks: Tasks = Tasks([])
