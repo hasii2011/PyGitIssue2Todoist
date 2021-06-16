@@ -92,9 +92,13 @@ class TodoistAdapter:
                 self._todoist.commit()
             except SyncError as e:
                 eDict = e.args[1]
-                eMsg: str = eDict['error']
+                eMsg: str  = eDict['error']
+                eCode: int = eDict['error_code']
+
                 taskCreationError: TaskCreationError = TaskCreationError()
-                taskCreationError.message = eMsg
+                taskCreationError.message  = eMsg
+                taskCreationError.errorCode = eCode
+
                 raise taskCreationError
 
             progressCb('Done')
