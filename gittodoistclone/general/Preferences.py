@@ -46,12 +46,14 @@ class Preferences(Singleton):
     STARTUP_Y:      str = 'startup_y'
     STARTUP_WIDTH:  str = 'startup_width'
     STARTUP_HEIGHT: str = 'startup_height'
+    CLEAN_TODOIST_CACHE: str = 'clean_todoist_cache'
 
     MAIN_PREFERENCES: PREFERENCES_NAME_VALUES = {
         STARTUP_WIDTH:             str(DEFAULT_APP_WIDTH),
         STARTUP_HEIGHT:            str(DEFAULT_APP_HEIGHT),
         STARTUP_X:                 str(NO_DEFAULT_X),
-        STARTUP_Y:                 str(NO_DEFAULT_Y)
+        STARTUP_Y:                 str(NO_DEFAULT_Y),
+        CLEAN_TODOIST_CACHE:       'False',
     }
 
     preferencesFileLocationAndName: str = None
@@ -149,6 +151,15 @@ class Preferences(Singleton):
     @startupHeight.setter
     def startupHeight(self, newHeight: int):
         self._config.set(Preferences.MAIN_SECTION, Preferences.STARTUP_HEIGHT, str(newHeight))
+        self.__saveConfig()
+
+    @property
+    def cleanTodoistCache(self) -> bool:
+        return self._config.getboolean(Preferences.MAIN_SECTION, Preferences.CLEAN_TODOIST_CACHE)
+
+    @cleanTodoistCache.setter
+    def cleanTodoistCache(self, newValue: bool):
+        self._config.set(Preferences.MAIN_SECTION, Preferences.CLEAN_TODOIST_CACHE, str(newValue))
         self.__saveConfig()
 
     def _loadConfiguration(self):

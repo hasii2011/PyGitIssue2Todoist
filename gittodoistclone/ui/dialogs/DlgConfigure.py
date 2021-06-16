@@ -1,79 +1,66 @@
 
-from typing import Tuple
+from typing import cast
 
-from wx import ALIGN_CENTER_VERTICAL
-from wx import ALIGN_LEFT
-from wx import ALL
 from wx import BOTH
 from wx import CANCEL
+from wx import DEFAULT_DIALOG_STYLE
 from wx import EVT_BUTTON
+from wx import EVT_CHECKBOX
 from wx import EVT_CLOSE
-from wx import EXPAND
-from wx import HORIZONTAL
 from wx import ICON_ERROR
 from wx import ID_ANY
 from wx import ID_CANCEL
 from wx import ID_OK
 from wx import OK
-from wx import TOP
-from wx import VERTICAL
 
 from wx import StaticText
 from wx import TextCtrl
+from wx import CheckBox
 from wx import CommandEvent
-from wx import DefaultPosition
-from wx import DefaultSize
-from wx import Dialog
-from wx import BoxSizer
-from wx import StdDialogButtonSizer
-from wx import StaticBox
-from wx import StaticBoxSizer
+
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
 
-from wx.lib.agw.genericmessagedialog import GenericMessageDialog
+from wx.lib.sized_controls import SizedDialog
+from wx.lib.sized_controls import SizedPanel
 
+from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.general.Preferences import Preferences
 
-FrameWidth  = 400       # Canvas width
-FrameHeight = 300       # and height
 
-
-class DlgConfigure(Dialog):
+class DlgConfigure(SizedDialog):
 
     def __init__(self, parent: Window, wxID: int = wxNewIdRef()):
 
-        super().__init__(parent, wxID, 'Configure', DefaultPosition, DefaultSize)
+        super().__init__(parent, wxID, 'Configure', style=DEFAULT_DIALOG_STYLE)
 
         self._preferences: Preferences = Preferences()
-
         self.Center(BOTH)
+        pane: SizedPanel = self.GetContentsPane()
+        pane.SetSizerType('form')
 
-        box:       StaticBox      = StaticBox(self, ID_ANY, "")
-        mainSizer: StaticBoxSizer = StaticBoxSizer(box, VERTICAL)
+        self._txtTodoistToken:    TextCtrl = cast(TextCtrl, None)
+        self._txtGithubToken:     TextCtrl = cast(TextCtrl, None)
+        self._txtGithubName:      TextCtrl = cast(TextCtrl, None)
+        self._cacheOptionControl: CheckBox = cast(CheckBox, None)
 
-        border: BoxSizer = BoxSizer()
-        border.Add(mainSizer, 1, EXPAND | ALL, 3)
+        self._createTokenControls(pane)
+        self._createCacheOptionControl(pane)
+        self._setPreferencesValues()
 
-        inp: BoxSizer             = self.__createTokenContainers()
-        hs:  StdDialogButtonSizer  = self._createDialogButtonsContainer()
-        mainSizer.Add(inp, 1, EXPAND | ALL)
-        mainSizer.Add(hs, 1, EXPAND | ALL)
+        self.SetButtonSizer(self.CreateStdDialogButtonSizer(OK | CANCEL))
 
-        # noinspection PyUnresolvedReferences
-        self.SetAutoLayout(True)
-        # noinspection PyUnresolvedReferences
-        self.SetSizer(border)
-
-        border.Fit(self)
-        border.SetSizeHints(self)
+        self.Fit()
+        self.SetMinSize(self.GetSize())
 
         self.Bind(EVT_BUTTON, self.__onCmdOk, id=ID_OK)
         self.Bind(EVT_BUTTON, self.__onClose, id=ID_CANCEL)
 
+        self.Bind(EVT_CHECKBOX, self.__OnCacheOption, self._cacheOptionControl)
         self.Bind(EVT_CLOSE,  self.__onClose)
+
 
     @property
     def todoistToken(self) -> str:
@@ -83,43 +70,44 @@ class DlgConfigure(Dialog):
     def githubToken(self) -> str:
         return self._txtGithubToken.GetValue()
 
-    def _createDialogButtonsContainer(self, buttons=OK | CANCEL) -> StdDialogButtonSizer:
+    def _createTokenControls(self, sizedPanel: SizedPanel):
 
-        hs: StdDialogButtonSizer = self.CreateSeparatedButtonSizer(buttons)
-        return hs
+        txtTodoistToken = self.__createTextInputControls('Todoist Token:', sizedPanel)
+        txtGithubToken  = self.__createTextInputControls('Github Token:', sizedPanel)
+        txtGithubName   = self.__createTextInputControls('Github User Name:', sizedPanel)
 
-    def __createTokenContainers(self) -> BoxSizer:
+        self._txtTodoistToken = txtTodoistToken
+        self._txtGithubToken  = txtGithubToken
+        self._txtGithubName  = txtGithubName
 
-        szrTodoist,    txtTodoistToken = self.__createTextInputContainer('Todoist Token:')
-        szrGithub,     txtGithubToken  = self.__createTextInputContainer('Github Token:')
-        szrGithubName, txtGithubName   = self. __createTextInputContainer('Github User Name:')
+    def _createCacheOptionControl(self, sizedPanel: SizedPanel):
 
-        self._txtTodoistToken: TextCtrl = txtTodoistToken
-        self._txtGithubToken:  TextCtrl = txtGithubToken
-        self._txtGithubName:   TextCtrl = txtGithubName
+        checkBoxPanel: SizedPanel = SizedPanel(sizedPanel, ID_ANY)
+        checkBoxPanel.SetSizerType('horizontal')
+        # noinspection PyUnresolvedReferences
+        checkBoxPanel.SetSizerProps(expand=True)
 
-        mainTokensContainer: BoxSizer = BoxSizer(VERTICAL)
+        self._cacheOptionControl = CheckBox(parent=checkBoxPanel, label="Allow Todoist Cache Cleanup", id=ID_ANY)
 
-        mainTokensContainer.Add(szrTodoist,    1, ALIGN_LEFT | TOP, 5)
-        mainTokensContainer.Add(szrGithub,     1, ALIGN_LEFT | TOP, 9)
-        mainTokensContainer.Add(szrGithubName, 1, ALIGN_LEFT | TOP, 2)
+    def _setPreferencesValues(self):
 
-        self.__setPreferencesValues()
+        preferences: Preferences = self._preferences
 
-        return mainTokensContainer
+        self._txtTodoistToken.SetValue(preferences.todoistApiToken)
+        self._txtGithubToken.SetValue(preferences.githubApiToken)
+        self._txtGithubName.SetValue(preferences.githubUserName)
 
-    def __createTextInputContainer(self, label: str) -> Tuple[BoxSizer, TextCtrl]:
+        if preferences.cleanTodoistCache is True:
+            self._cacheOptionControl.SetValue(True)
+        else:
+            self._cacheOptionControl.SetValue(False)
 
-        boxSizer: BoxSizer = BoxSizer(HORIZONTAL)
+    def __createTextInputControls(self, label: str, sizedPanel: SizedPanel) -> TextCtrl:
 
-        label:   StaticText = StaticText(self, ID_ANY, label)
-        txtCtrl: TextCtrl   = TextCtrl(self, ID_ANY, "", size=(175, -1))
-
-        boxSizer.Add(label,   1, ALIGN_CENTER_VERTICAL)
-        boxSizer.Add(txtCtrl, 1, ALIGN_CENTER_VERTICAL)
-
-        boxSizer.Fit(self)
-        return boxSizer, txtCtrl
+        # noinspection PyUnusedLocal
+        sText:   StaticText = StaticText(sizedPanel, ID_ANY, label)
+        txtCtrl: TextCtrl   = TextCtrl(sizedPanel, ID_ANY, "", size=(315, -1))
+        return txtCtrl
 
     def __onCmdOk(self, event: CommandEvent):
         """
@@ -130,7 +118,7 @@ class DlgConfigure(Dialog):
         self._preferences.githubApiToken  = self._txtGithubToken.GetValue()
         self._preferences.githubUserName  = self._txtGithubName.GetValue()
 
-        if self.__areAllValueSupplied() is True:
+        if self.__areAllValuesSupplied() is True:
             event.Skip(skip=True)
             self.SetReturnCode(OK)
             self.EndModal(OK)
@@ -147,7 +135,13 @@ class DlgConfigure(Dialog):
         self.SetReturnCode(CANCEL)
         self.EndModal(CANCEL)
 
-    def __areAllValueSupplied(self) -> bool:
+    def __OnCacheOption(self, event: CommandEvent):
+        if event.IsChecked() is True:
+            self._preferences.cleanTodoistCache = True
+        else:
+            self._preferences.cleanTodoistCache = False
+
+    def __areAllValuesSupplied(self) -> bool:
 
         ans: bool = True
         preferences: Preferences = self._preferences
@@ -160,11 +154,3 @@ class DlgConfigure(Dialog):
             ans = False
 
         return ans
-
-    def __setPreferencesValues(self):
-
-        preferences: Preferences = self._preferences
-
-        self._txtTodoistToken.SetValue(preferences.todoistApiToken)
-        self._txtGithubToken.SetValue(preferences.githubApiToken)
-        self._txtGithubName.SetValue(preferences.githubUserName)

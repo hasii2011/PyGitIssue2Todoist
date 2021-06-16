@@ -25,11 +25,7 @@ from wx import Menu
 from wx import MenuBar
 from wx import Window
 
-from wx.adv import AboutDialogInfo
-from wx.adv import AboutBox
-
 from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.general.Version import Version
 
 from gittodoistclone.ui.CustomEvents import EVT_ISSUES_SELECTED
 from gittodoistclone.ui.CustomEvents import EVT_REPOSITORY_SELECTED
@@ -60,7 +56,7 @@ class ApplicationFrame(Frame):
 
         self._createApplicationMenuBar()
         self._githubPanel, self._todoistPanel = self._createApplicationContentArea()
-        self.SetThemeEnabled(True)
+        # self.SetThemeEnabled(True)
 
         x, y = self._preferences.appStartupPosition
 
@@ -116,6 +112,7 @@ class ApplicationFrame(Frame):
         mainSizer.Add(leftPanel,  1, EXPAND)
         mainSizer.Add(rightPanel, 1, EXPAND)
 
+        # noinspection PyUnresolvedReferences
         self.SetSizer(mainSizer)
         # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
 

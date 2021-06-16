@@ -27,7 +27,7 @@ class TestADialog(App):
         TestBase.setUpLogging()
         self.logger: Logger = getLogger('TestADialog')
         frameTop: Frame = Frame(parent=None, id=TestADialog.FRAME_ID, title="Test A Dialog", size=(600, 400), style=DEFAULT_FRAME_STYLE)
-        frameTop.Show(False)
+        # frameTop.Show(False)
 
         Preferences.determinePreferencesLocation()
 
@@ -43,13 +43,13 @@ class TestADialog(App):
             dlg: DlgConfigure = cast(DlgConfigure, dlg)
             if dlg.ShowModal() == OK:
                 preferences: Preferences = Preferences()
-                self._frameTop.Close(force=True)
+                # self._frameTop.Close(force=True)
                 self.logger.info(f'{preferences.todoistApiToken=}')
                 self.logger.info(f'{preferences.githubUserName=}')
                 self.logger.info(f'{preferences.githubApiToken=}')
             else:
                 self.logger.warning(f'Cancelled')
-                self._frameTop.Close(force=True)
+                # self._frameTop.Close(force=True)
 
         self.logger.info(f"After dialog show")
         sysExit()   # brutal !!

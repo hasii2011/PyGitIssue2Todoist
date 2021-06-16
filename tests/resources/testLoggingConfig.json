@@ -24,8 +24,7 @@
         },
         "TestADialog": {
             "level":     "INFO",
-            "propagate": "False",
-            "handlers":  ["consoleHandler"]
+            "propagate": "False"
         },
         "TestGithubAdapter": {
             "level":     "INFO",
