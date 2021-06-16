@@ -13,11 +13,11 @@ from wx import HORIZONTAL
 from wx import ICON_ERROR
 from wx import LB_ALWAYS_SB
 from wx import LB_OWNERDRAW
-from wx import MessageDialog
 from wx import OK
 from wx import PD_ELAPSED_TIME
 from wx import VERTICAL
 
+from wx import MessageDialog
 from wx import Button
 from wx import ProgressDialog
 from wx import CommandEvent
@@ -32,6 +32,7 @@ from wx import MilliSleep as wxMilliSleep
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.ErrorHandler import ErrorHandler
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
@@ -55,6 +56,7 @@ class TodoistPanel(BasePanel):
 
         contentSizer: BoxSizer = self._layoutContent()
 
+        # noinspection PyUnresolvedReferences
         self.SetSizer(contentSizer)
         self.Fit()
 
@@ -72,6 +74,7 @@ class TodoistPanel(BasePanel):
 
         self._cloneInformation = newInfo
         self._taskList.SetItems(newInfo.tasksToClone)
+        # noinspection PyUnresolvedReferences
         self._createTaskButton.Enable(True)
 
     def _layoutContent(self) -> BoxSizer:
@@ -93,6 +96,7 @@ class TodoistPanel(BasePanel):
         taskWxID: int = wxNewIdRef()
 
         self._taskList: ListBox = ListBox(self, taskWxID, style=LB_OWNERDRAW | LB_ALWAYS_SB)
+        # noinspection PyUnresolvedReferences
         self._taskList.Enable(False)
 
         sz = StaticBoxSizer(VERTICAL, self, "Todoist Tasks")
@@ -108,7 +112,8 @@ class TodoistPanel(BasePanel):
 
         self._createTaskButton: Button = Button(self, id=createTaskWxID, style=BU_LEFT, label='Create Tasks')
 
-        self._createTaskButton.Enable(False)
+        # noinspection PyUnresolvedReferences
+        self._createTaskButton.Disable()
         bSizer.Add(self._createTaskButton, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
 
         self.Bind(EVT_BUTTON, self._onCreateTaskClicked, id=createTaskWxID)
@@ -131,8 +136,13 @@ class TodoistPanel(BasePanel):
             self.__handleAuthenticationError(event)
         except TaskCreationError as tce:
             self._progressDlg.Destroy()
-            booBoo: MessageDialog = MessageDialog(parent=None, message=tce.message, caption='Task Creation Error!', style=OK | ICON_ERROR)
-            booBoo.ShowModal()
+            errorHandler: ErrorHandler = ErrorHandler()
+
+            if errorHandler.isErrorHandled(tce.errorCode) is True:
+                errorHandler.handleError(tce.message, tce.errorCode)
+            else:
+                booBoo: MessageDialog = MessageDialog(parent=None, message=tce.message, caption='Task Creation Error!', style=OK | ICON_ERROR)
+                booBoo.ShowModal()
 
     def __setupProgressDialog(self) -> ProgressDialog:
 

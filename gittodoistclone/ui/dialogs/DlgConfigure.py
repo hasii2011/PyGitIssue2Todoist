@@ -61,7 +61,6 @@ class DlgConfigure(SizedDialog):
         self.Bind(EVT_CHECKBOX, self.__OnCacheOption, self._cacheOptionControl)
         self.Bind(EVT_CLOSE,  self.__onClose)
 
-
     @property
     def todoistToken(self) -> str:
         return self._txtTodoistToken.GetValue()
