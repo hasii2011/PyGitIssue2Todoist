@@ -2,3 +2,7 @@
 img2py -n embeddedImage -i AboutDialogBaseLogo.png AboutDialogBaseLogo.py 
 
 
+Use Gimp to round edges on an image
+
+
+
