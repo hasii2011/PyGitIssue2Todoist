@@ -3,11 +3,11 @@
 #
 #  The generated .icns file should be copied to gittodoistclone/resources/
 #
-#  The file Pyut.iconset/icon_512x512@2x.png is reduced to 33% of the original size
-#  and copied into src/org/pyut/resources/img/ImgPyut.png
+#  The file BaseLogo.iconset/icon_512x512@2x.png is reduced to 33% of the original size
+#
 #
 ICON_SET_DIR='BaseLogo.iconset'
-ICON_IMAGE='BaseLogo-512.png'
+ICON_IMAGE='BaseLogo-512-Rounded.png'
 
 mkdir ${ICON_SET_DIR}
 
