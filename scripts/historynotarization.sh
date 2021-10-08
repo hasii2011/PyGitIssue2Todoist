@@ -3,7 +3,8 @@
 #
 #  assumes xcode is installed
 #  assumes I added an entry APP_PASSWORD to my keychain
-#
+#  This command line is pre-Xcode-13
+
 clear
 
 
