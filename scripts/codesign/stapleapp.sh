@@ -2,7 +2,7 @@
 function changeToProjectRoot {
 
     export areHere=`basename ${PWD}`
-    if [[ ${areHere} = "codsigning" ]]; then
+    if [[ ${areHere} = "codesign" ]]; then
         cd ../..
     fi
 }
