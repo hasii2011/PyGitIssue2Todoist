@@ -164,10 +164,11 @@ class TodoistPanel(BasePanel):
         eDlg = GenericMessageDialog(self, 'The supplied todoist token is invalid', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()
         eDlg.Destroy()
-        with DlgConfigure(self) as cDlg:
-            cDlg: DlgConfigure = cast(DlgConfigure, cDlg)
+        with DlgConfigure(self) as aDlg:
+            cDlg: DlgConfigure = cast(DlgConfigure, aDlg)
             if cDlg.ShowModal() == OK:
-                self._apiToken: str = Preferences().todoistApiToken
-                self._todoistAdapter: TodoistAdapter = TodoistAdapter(self._apiToken)
+                # The following 2 already defined in init
+                self._apiToken       = Preferences().todoistApiToken
+                self._todoistAdapter = TodoistAdapter(self._apiToken)
 
                 self._onCreateTaskClicked(event)    # Dang I hate recursion

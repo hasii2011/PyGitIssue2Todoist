@@ -1,4 +1,8 @@
 
+from typing import Tuple
+from typing import Dict
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -8,10 +12,6 @@ from os import getenv
 from os import sep as osSep
 
 from configparser import ConfigParser
-
-from typing import Tuple
-
-from typing import Dict
 
 from gittodoistclone.general.Singleton import Singleton
 
@@ -56,7 +56,7 @@ class Preferences(Singleton):
         CLEAN_TODOIST_CACHE:       'False',
     }
 
-    preferencesFileLocationAndName: str = None
+    preferencesFileLocationAndName: str = cast(str, None)
     """
     Class variable where we store our name
     """
@@ -135,8 +135,8 @@ class Preferences(Singleton):
 
     @property
     def startupWidth(self) -> int:
-        width: str = self._config.getint(Preferences.MAIN_SECTION, Preferences.STARTUP_WIDTH)
-        return int(width)
+        width: int = self._config.getint(Preferences.MAIN_SECTION, Preferences.STARTUP_WIDTH)
+        return width
 
     @startupWidth.setter
     def startupWidth(self, newWidth: int):
@@ -145,8 +145,8 @@ class Preferences(Singleton):
 
     @property
     def startupHeight(self) -> int:
-        height: str = self._config.getint(Preferences.MAIN_SECTION, Preferences.STARTUP_HEIGHT)
-        return int(height)
+        height: int = self._config.getint(Preferences.MAIN_SECTION, Preferences.STARTUP_HEIGHT)
+        return height
 
     @startupHeight.setter
     def startupHeight(self, newHeight: int):

@@ -1,4 +1,6 @@
 
+from typing import Optional
+
 from logging import Logger
 from logging import getLogger
 
@@ -50,7 +52,7 @@ class Resources:
             # Maybe we are in an app
             #
             from os import environ
-            pathToResources: str = environ.get(f'{Resources.RESOURCE_ENV_VAR}')
-            fqFileName:      str = f'{pathToResources}/{Resources.RESOURCES_PATH}/{bareFileName}'
+            pathToResources: Optional[str] = environ.get(f'{Resources.RESOURCE_ENV_VAR}')
+            fqFileName = f'{pathToResources}/{Resources.RESOURCES_PATH}/{bareFileName}'
 
         return fqFileName

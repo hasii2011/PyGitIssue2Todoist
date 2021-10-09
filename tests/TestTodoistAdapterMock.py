@@ -1,4 +1,6 @@
 
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -25,7 +27,7 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
     """
     This unit test uses mocks to test the todoist adapter.
     """
-    clsLogger: Logger = None
+    clsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):

@@ -48,7 +48,7 @@ class TestAll:
 
     def runHtmlTestRunner(self) -> int:
 
-        runner = HTMLTestRunner(report_name='PyutTestResults', combine_reports=True, add_timestamp=True)
+        runner = HTMLTestRunner(report_name='PyUtTestResults', combine_reports=True, add_timestamp=True)
         status = runner.run(self._testSuite)
         if len(status.failures) != 0:
             return 1
@@ -76,7 +76,7 @@ class TestAll:
                 fixedName: str = module.replace('/', '.')
                 m = import_module(fixedName)
                 # noinspection PyUnresolvedReferences
-                fSuite.addTest(m.suite())
+                fSuite.addTest(m.suite())   # type: ignore
             except (ValueError, Exception) as e:
                 self.logger.error(f'Module import problem with: {module}:  {e}')
         return fSuite

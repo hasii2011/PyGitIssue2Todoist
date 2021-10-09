@@ -1,4 +1,6 @@
 
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -39,7 +41,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
                 MockTask4
     ```
     """
-    clsLogger: Logger = None
+    clsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):

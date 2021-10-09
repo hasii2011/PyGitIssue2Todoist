@@ -1,4 +1,6 @@
 
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -12,7 +14,7 @@ class TestTodoistAdapterBase(TestBase):
 
     EXPECTED_NUMBER_OF_CALLBACKS: int = 6
 
-    baseClsLogger: Logger = None
+    baseClsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):

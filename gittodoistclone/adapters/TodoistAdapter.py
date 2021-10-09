@@ -34,20 +34,23 @@ class CloneInformation:
 
 ProjectName       = NewType('ProjectName', str)
 ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
-Tasks             = NewType('Projects', List[Item])
+Tasks             = NewType('Tasks', List[Item])
 
 
 @dataclass
 class ProjectTasks:
-    mileStoneTasks: Tasks = field(default_factory=list)
-    devTasks:       Tasks = field(default_factory=list)
+    # Figure this out later...
+    # Incompatible types in assignment (expression has type "List[_T]", variable has type "Tasks")
+    mileStoneTasks: Tasks = field(default_factory=list)     # type: ignore
+    devTasks:       Tasks = field(default_factory=list)     # type: ignore
 
 
 Items            = NewType('Items', Dict[str, str])
-Project          = NewType('Project', Dict[str, str])
+# Project          = NewType('Project', Dict[str, str])
 ProjectNotes     = NewType('ProjectNotes', List[str])
 Sections         = NewType('Sections', List[str])
-ProjectDataTypes = NewType('ProjectDataTypes', Union[Items, Project, ProjectNotes, Sections])
+
+ProjectDataTypes = NewType('ProjectDataTypes', Union[Items, Project, ProjectNotes, Sections])   # type: ignore
 
 ProjectData = NewType('ProjectData', Dict[str, ProjectDataTypes])
 
@@ -134,7 +137,7 @@ class TodoistAdapter:
         if projectName in projectDictionary:
             project: Project = projectDictionary[projectName]
         else:
-            project: Project = self._createProject(projectName)
+            project = self._createProject(projectName)
 
         projectId: int = project['id']
 
@@ -188,11 +191,11 @@ class TodoistAdapter:
 
         projectDictionary: ProjectDictionary = ProjectDictionary({})
 
-        for project in projects:
+        for aProject in projects:
 
-            project: Project = cast(Project, project)
+            project: Project = cast(Project, aProject)
 
-            projectName: str = project["name"]
+            projectName: ProjectName = project["name"]
             projectId:   int = project['id']
 
             self.logger.debug(f'{projectName:12} - {projectId=}')
@@ -256,8 +259,8 @@ class TodoistAdapter:
 
         foundTaskItem: Item = cast(Item, None)
         devTasks:      Tasks = self._devTasks
-        for taskItem in devTasks:
-            taskItem: Item = cast(Item, taskItem)
+        for devTask in devTasks:
+            taskItem: Item = cast(Item, devTask)
             if taskItem['content'] == taskName:
                 foundTaskItem = taskItem
                 break

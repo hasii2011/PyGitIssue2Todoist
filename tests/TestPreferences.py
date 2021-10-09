@@ -1,4 +1,6 @@
 
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -20,7 +22,7 @@ class TestPreferences(TestBase):
     """
     BACKUP_SUFFIX: str = '.backup'
 
-    clsLogger: Logger = None
+    clsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):

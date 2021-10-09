@@ -1,5 +1,6 @@
 
 from typing import List
+from typing import Optional
 from typing import cast
 
 from logging import Logger
@@ -8,8 +9,8 @@ from logging import getLogger
 from github import Github
 from github import BadCredentialsException
 
-from github.Milestone import Milestone
 from github.Issue import Issue
+from github.Milestone import Milestone
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 
@@ -76,12 +77,12 @@ class GithubAdapter:
         issueTitles: IssueTitles = []
 
         if milestoneTitle == GithubAdapter.ALL_ISSUES_INDICATOR:
-            for issue in open_issues:
-                issueTitles.append(issue.title)
+            for openIssue in open_issues:
+                issueTitles.append(openIssue.title)
         else:
-            for issue in open_issues:
-                issue: Issue = cast(Issue, issue)
-                mileStone: Milestone = issue.milestone
+            for openIssue in open_issues:
+                issue: Issue = cast(Issue, openIssue)
+                mileStone: Optional[Milestone] = issue.milestone
                 if mileStone is not None and mileStone.title == milestoneTitle:
                     issueTitles.append(issue.title)
 

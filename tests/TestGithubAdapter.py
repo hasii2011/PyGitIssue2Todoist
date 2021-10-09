@@ -1,4 +1,6 @@
 
+from typing import cast
+
 from logging import Logger
 from logging import getLogger
 
@@ -23,7 +25,7 @@ class TestGithubAdapter(TestBase):
     TEST_REPOSITORY_NAME: str = 'hasii2011/StarTrekPy'
     TEST_MILESTONE_TITLE: str = '0.7 Release'
 
-    clsLogger: Logger = None
+    clsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):
