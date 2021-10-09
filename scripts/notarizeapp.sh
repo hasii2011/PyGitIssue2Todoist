@@ -3,9 +3,13 @@
 function changeToProjectRoot {
 
     export areHere=`basename ${PWD}`
+    if [[ ${areHere} = "codesign" ]]; then
+        cd ../..
+    fi
     if [[ ${areHere} = "scripts" ]]; then
         cd ..
     fi
+
 }
 
 changeToProjectRoot

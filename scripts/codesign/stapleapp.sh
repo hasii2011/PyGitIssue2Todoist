@@ -5,6 +5,10 @@ function changeToProjectRoot {
     if [[ ${areHere} = "codesign" ]]; then
         cd ../..
     fi
+    if [[ ${areHere} = "scripts" ]]; then
+        cd ..
+    fi
+
 }
 
 

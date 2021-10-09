@@ -3,15 +3,19 @@
 function changeToProjectRoot {
 
     export areHere=`basename ${PWD}`
+    if [[ ${areHere} = "codesign" ]]; then
+        cd ../..
+    fi
     if [[ ${areHere} = "scripts" ]]; then
         cd ..
     fi
+
 }
 
 changeToProjectRoot
 
 #
-#  assumes xcode is installed
+#  assumes xcode 13 is installed
 #
 clear
 
