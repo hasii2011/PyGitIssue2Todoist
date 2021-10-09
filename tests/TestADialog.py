@@ -13,7 +13,9 @@ from wx import App
 from wx import Frame
 
 from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+# noinspection SpellCheckingInspection
+# from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
 
 from tests.TestBase import TestBase
 
@@ -37,19 +39,25 @@ class TestADialog(App):
         self.initTest()
         return True
 
+    # noinspection SpellCheckingInspection
     def initTest(self):
-
-        with DlgConfigure(self._frameTop) as dlg:
-            dlg: DlgConfigure = cast(DlgConfigure, dlg)
+        # with DlgConfigure(self._frameTop) as dlg:
+        #     dlg: DlgConfigure = cast(DlgConfigure, dlg)
+        #     if dlg.ShowModal() == OK:
+        #         preferences: Preferences = Preferences()
+        #         # self._frameTop.Close(force=True)
+        #         self.logger.info(f'{preferences.todoistApiToken=}')
+        #         self.logger.info(f'{preferences.githubUserName=}')
+        #         self.logger.info(f'{preferences.githubApiToken=}')
+        #     else:
+        #         self.logger.warning(f'Cancelled')
+        #         # self._frameTop.Close(force=True)
+        with DlgHelp(self._frameTop) as dlg:
+            dlg: DlgHelp = cast(DlgHelp, dlg)
             if dlg.ShowModal() == OK:
-                preferences: Preferences = Preferences()
-                # self._frameTop.Close(force=True)
-                self.logger.info(f'{preferences.todoistApiToken=}')
-                self.logger.info(f'{preferences.githubUserName=}')
-                self.logger.info(f'{preferences.githubApiToken=}')
+                self.logger.warning('Clicked Ok')
             else:
                 self.logger.warning(f'Cancelled')
-                # self._frameTop.Close(force=True)
 
         self.logger.info(f"After dialog show")
         sysExit()   # brutal !!
