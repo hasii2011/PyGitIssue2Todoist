@@ -4,8 +4,7 @@ __pycache__/
 /html/
 build/
 dist/
-/pyenv-3.8.5-github-todoist-wxpython/
-/pyenv-3.8.5-alternate/
+/pyenv-venv-3.9.0/
 /pyenv-venv-3.9.1/
 UNKNOWN.egg-info
 /.eggs/
