@@ -2,27 +2,27 @@
 
 # Introduction
 
-This mac application can read your github repositories and converts your github issues to todoist tasks.
+This OS X application can read your GitHub repositories and convert your GitHub issues to todoist tasks.
 
 # Translation
 
 The translation is as follows:
 
-Github repositories --> todoist projects
-Github milestones   --> todoist top level tasks
-Github issues       --> todoist subtasks under a top level task
+* GitHub's repositories --> todoist projects
+* GitHub's milestones   --> todoist top level tasks
+* GitHub's issues       --> todoist subtasks under a top level task
 
-If you don't use milestones and associate tasks with them the top-level task is called "All"
+If you don't use milestones and associate tasks with them the top-level task is called _All_
 
 # Requirements
 
 The application gathers the following:
 
-* A Github API token
-* Your Github username
+* A GitHub API token
+* Your GitHub username
 * A Todoist API token
 
-The instructions on how to acquire/generate these tokens is [here](https://github.com/hasii2011/gittodoistclone/wiki).
+The instructions on how to acquire/generate these tokens are [here](https://github.com/hasii2011/gittodoistclone/wiki).
 
 
 # Format of configuration file
@@ -42,9 +42,8 @@ todoist_api_token = PutYourTodoistKeyHere
 [Main]
 startup_width = 1024
 startup_height = 768
-startup_x = -1
-startup_y = -1
-
-
+startup_x = 0
+startup_y = 0
+clean_todoist_cache = True
 ```
 
