@@ -11,7 +11,8 @@ APP = ['PyGitIssueClone.py']
 DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingConfiguration.json']),
               ('gittodoistclone/resources', ['gittodoistclone/resources/play.png']),
               ('gittodoistclone/resources', ['gittodoistclone/resources/version.txt']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/packageversions.txt'])
+              ('gittodoistclone/resources', ['gittodoistclone/resources/packageversions.txt']),
+              ('gittodoistclone/resources', ['gittodoistclone/resources/SimpleHelp.html'])
               ]
 OPTIONS = {}
 

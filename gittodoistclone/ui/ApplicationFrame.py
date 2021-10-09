@@ -16,7 +16,6 @@ from wx import OK
 from wx import ID_ABOUT
 from wx import ID_EXIT
 
-
 from wx import BoxSizer
 from wx import Size
 from wx import CommandEvent
@@ -24,6 +23,8 @@ from wx import Frame
 from wx import Menu
 from wx import MenuBar
 from wx import Window
+
+from wx import NewIdRef as wxNewIdRef
 
 from gittodoistclone.general.Preferences import Preferences
 
@@ -38,9 +39,12 @@ from gittodoistclone.ui.TodoistPanel import TodoistPanel
 from gittodoistclone.ui.dialogs.DlgAbout import DlgAbout
 
 from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
 
 
 class ApplicationFrame(Frame):
+
+    HELP_MENU_ID: int = wxNewIdRef()
 
     def __init__(self, parent: Window, wxID: int, title: str):
 
@@ -70,6 +74,7 @@ class ApplicationFrame(Frame):
         self.Bind(EVT_REPOSITORY_SELECTED, self._onRepositorySelected)
         self.Bind(EVT_ISSUES_SELECTED,     self._onIssuesSelected)
 
+    # noinspection PyUnusedLocal
     def Close(self, force=False):
 
         ourSize: Tuple[int, int] = self.GetSize()
@@ -91,6 +96,7 @@ class ApplicationFrame(Frame):
         fileMenu.AppendSeparator()
         fileMenu.Append(ID_EXIT, '&Quit', "Quit Application")
 
+        helpMenu.Append(ApplicationFrame.HELP_MENU_ID, "&MiniHelp", "Simple Help")
         helpMenu.AppendSeparator()
         helpMenu.Append(ID_ABOUT, '&About', 'Tell you about me')
 
@@ -99,6 +105,7 @@ class ApplicationFrame(Frame):
 
         self.SetMenuBar(menuBar)
 
+        self.Bind(EVT_MENU, self._onMiniHelp,  id=ApplicationFrame.HELP_MENU_ID)
         self.Bind(EVT_MENU, self._onConfigure, id=ID_PREFERENCES)
         self.Bind(EVT_MENU, self._onAbout,     id=ID_ABOUT)
         self.Bind(EVT_MENU, self.Close,        id=ID_EXIT)
@@ -139,6 +146,12 @@ class ApplicationFrame(Frame):
         self._todoistPanel.tasksToClone = cloneInformation
 
     # noinspection PyUnusedLocal
+    def _onMiniHelp(self, event: CommandEvent):
+
+        dlg: DlgHelp = DlgHelp(self)
+        dlg.ShowModal()
+
+    # noinspection PyUnusedLocal
     def _onConfigure(self, event: CommandEvent):
 
         dlg: DlgConfigure = DlgConfigure(self)
@@ -149,18 +162,6 @@ class ApplicationFrame(Frame):
 
     # noinspection PyUnusedLocal
     def _onAbout(self, event: CommandEvent):
-
-        # info: AboutDialogInfo = AboutDialogInfo()
-        #
-        # info.Name    = Version.applicationName()
-        # info.Version = Version.applicationVersion()
-        #
-        # info.Website = ('https://github.com/hasii2011/gittodoistclone/wiki', 'Get the best information')
-        #
-        # info.Developers = ["Humberto A. Sanchez II", "Opie Dope Baby Jesus", "Gabby 10Meows"]
-        #
-        # info.SetCopyright(' ')
-        # AboutBox(info)
 
         dlg: DlgAbout = DlgAbout(parent=self)
         dlg.ShowModal()
