@@ -9,4 +9,4 @@ epr~=0.25
 traviscli~=0.3.0
 pkgversions~=0.2.0
 html-testRunner~=1.2.1
-# mypy~=0.910
+mypy~=0.910
