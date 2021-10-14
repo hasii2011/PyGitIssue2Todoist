@@ -36,9 +36,9 @@ from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
-from gittodoistclone.adapters.GithubAdapter import AbbreviatedGitIssues
-from gittodoistclone.adapters.GithubAdapter import GithubAdapter
-from gittodoistclone.adapters.GithubAdapter import RepositoryNames
+from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
+from gittodoistclone.adapters.GitHubAdapter import GithubAdapter
+from gittodoistclone.adapters.GitHubAdapter import RepositoryNames
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 
 from gittodoistclone.general.Preferences import Preferences

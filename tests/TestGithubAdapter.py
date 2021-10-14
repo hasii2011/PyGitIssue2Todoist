@@ -12,10 +12,10 @@ from unittest.mock import Mock
 from unittest.mock import PropertyMock
 from unittest.mock import patch
 
-from gittodoistclone.adapters.GithubAdapter import GithubAdapter
-from gittodoistclone.adapters.GithubAdapter import RepositoryNames
-from gittodoistclone.adapters.GithubAdapter import MilestoneTitles
-from gittodoistclone.adapters.GithubAdapter import AbbreviatedGitIssues
+from gittodoistclone.adapters.GitHubAdapter import GithubAdapter
+from gittodoistclone.adapters.GitHubAdapter import RepositoryNames
+from gittodoistclone.adapters.GitHubAdapter import MilestoneTitles
+from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
 
 from tests.TestBase import TestBase
 
