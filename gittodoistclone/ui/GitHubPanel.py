@@ -36,6 +36,7 @@ from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.adapters.GithubAdapter import AbbreviatedGitIssues
 from gittodoistclone.adapters.GithubAdapter import GithubAdapter
 from gittodoistclone.adapters.GithubAdapter import RepositoryNames
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
@@ -71,6 +72,7 @@ class GitHubPanel(BasePanel):
 
         contentSizer: BoxSizer = self._layoutContent()
 
+        # noinspection PyUnresolvedReferences
         self.SetSizer(contentSizer)
         self.Fit()
 
@@ -120,6 +122,7 @@ class GitHubPanel(BasePanel):
 
         self._milestoneList: ListBox = ListBox(self,  milestoneSelectionWxId, style=LB_SINGLE | LB_OWNERDRAW)
 
+        # noinspection PyUnresolvedReferences
         self._milestoneList.Enable(False)
         sz = StaticBoxSizer(VERTICAL, self, "Repository Milestone Titles")
         sz.Add(self._milestoneList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
@@ -134,6 +137,7 @@ class GitHubPanel(BasePanel):
 
         self._issueList: ListBox = ListBox(self,  issueWxID, style=LB_MULTIPLE | LB_OWNERDRAW)
 
+        # noinspection PyUnresolvedReferences
         self._issueList.Enable(False)
         sz = StaticBoxSizer(VERTICAL, self, "Repository Issues")
         sz.Add(self._issueList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
@@ -147,6 +151,7 @@ class GitHubPanel(BasePanel):
 
         self._cloneButton: Button = Button(self, id=cloneWxID, style=BU_LEFT, label='Clone')
 
+        # noinspection PyUnresolvedReferences
         self._cloneButton.Enable(False)
         bSizer.Add(self._cloneButton, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
 
@@ -206,15 +211,28 @@ class GitHubPanel(BasePanel):
         mileStoneTitles: List[str] = self._githubAdapter.getMileStoneTitles(repoName)
 
         self._milestoneList.SetItems(mileStoneTitles)
+        # noinspection PyUnresolvedReferences
         self._milestoneList.Enable(True)
 
     def __populateIssues(self, repoName: str, milestoneTitle: str):
 
-        issueTitles: List[str] = self._githubAdapter.getIssueTitles(repoName, milestoneTitle)
+        abbreviatedGitIssues: AbbreviatedGitIssues = self._githubAdapter.getAbbreviatedIssues(repoName, milestoneTitle)
 
+        issueTitles: List[str] = self.__extractTitles(abbreviatedGitIssues)
         self._issueList.SetItems(issueTitles)
+
+        # noinspection PyUnresolvedReferences
         self._issueList.Enable(True)
+        # noinspection PyUnresolvedReferences
         self._cloneButton.Enable(True)
+
+    def __extractTitles(self, abbreviatedGitIssues: AbbreviatedGitIssues) -> List[str]:
+
+        issueTitles: List[str] = []
+        for simpleGitIssues in abbreviatedGitIssues:
+            issueTitles.append(simpleGitIssues.issueTitle)
+
+        return issueTitles
 
     def __handleAuthenticationError(self):
 

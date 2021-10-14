@@ -1,4 +1,4 @@
-
+from dataclasses import dataclass
 from typing import List
 from typing import Optional
 from typing import cast
@@ -18,7 +18,16 @@ from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthentic
 
 RepositoryNames = List[str]
 MilestoneTitles = List[str]
-IssueTitles     = List[str]
+
+
+@dataclass
+class AbbreviatedGitIssue:
+
+    issueTitle:   str = ''
+    issueHTMLURL: str = ''
+
+
+AbbreviatedGitIssues = List[AbbreviatedGitIssue]
 
 
 class GithubAdapter:
@@ -69,21 +78,40 @@ class GithubAdapter:
 
         return mileStoneTitles
 
-    def getIssueTitles(self, repoName: str, milestoneTitle: str) -> IssueTitles:
+    def getAbbreviatedIssues(self, repoName: str, milestoneTitle: str) -> AbbreviatedGitIssues:
+        """
+        Given a repo name and a milestone title return a simplified list of Git issues
 
-        repo:        Repository    = self._github.get_repo(repoName)
-        open_issues: PaginatedList = repo.get_issues(state=GithubAdapter.OPEN_ISSUE_INDICATOR)
+        Args:
+            repoName:       The Github repository name
+            milestoneTitle: The milestone title that we filter on
 
-        issueTitles: IssueTitles = []
+        Returns:
+            A list of abbreviated Git issues
+        """
+
+        repo:        Repository      = self._github.get_repo(repoName)
+        openGitIssues: PaginatedList = repo.get_issues(state=GithubAdapter.OPEN_ISSUE_INDICATOR)
+
+        simpleGitIssues: AbbreviatedGitIssues = []
 
         if milestoneTitle == GithubAdapter.ALL_ISSUES_INDICATOR:
-            for openIssue in open_issues:
-                issueTitles.append(openIssue.title)
+            for openIssue in openGitIssues:
+                simpleGitIssues.append(self._createAbbreviatedGitIssue(openIssue))
         else:
-            for openIssue in open_issues:
-                issue: Issue = cast(Issue, openIssue)
-                mileStone: Optional[Milestone] = issue.milestone
+            for openIssue in openGitIssues:
+                fullGitIssue: Issue = cast(Issue, openIssue)
+                mileStone: Optional[Milestone] = fullGitIssue.milestone
                 if mileStone is not None and mileStone.title == milestoneTitle:
-                    issueTitles.append(issue.title)
+                    simpleGitIssues.append(self._createAbbreviatedGitIssue(fullGitIssue))
 
-        return issueTitles
+        return simpleGitIssues
+
+    def _createAbbreviatedGitIssue(self, fullGitIssue: Issue) -> AbbreviatedGitIssue:
+
+        simpleIssue: AbbreviatedGitIssue = AbbreviatedGitIssue()
+
+        simpleIssue.issueTitle   = fullGitIssue.title
+        simpleIssue.issueHTMLURL = fullGitIssue.html_url
+
+        return simpleIssue

@@ -15,7 +15,7 @@ from unittest.mock import patch
 from gittodoistclone.adapters.GithubAdapter import GithubAdapter
 from gittodoistclone.adapters.GithubAdapter import RepositoryNames
 from gittodoistclone.adapters.GithubAdapter import MilestoneTitles
-from gittodoistclone.adapters.GithubAdapter import IssueTitles
+from gittodoistclone.adapters.GithubAdapter import AbbreviatedGitIssues
 
 from tests.TestBase import TestBase
 
@@ -24,6 +24,7 @@ class TestGithubAdapter(TestBase):
 
     TEST_REPOSITORY_NAME: str = 'hasii2011/StarTrekPy'
     TEST_MILESTONE_TITLE: str = '0.7 Release'
+    TEST_ISSUE_URL:       str = 'https://www.ElderAbuseInTheWhiteHouse'
 
     clsLogger: Logger = cast(Logger, None)
 
@@ -98,6 +99,7 @@ class TestGithubAdapter(TestBase):
                 type(mockMileStone1).title = PropertyMock(return_value=TestGithubAdapter.TEST_MILESTONE_TITLE)
 
                 type(mockIssue1).title = PropertyMock(return_value='MockIssue1')
+                type(mockIssue1).html_url = PropertyMock(return_value=TestGithubAdapter.TEST_ISSUE_URL)
                 type(mockIssue1).milestone = PropertyMock(return_value=mockMileStone1)
 
                 githubAdapter._github.get_repo.return_value = mockRepo
@@ -106,10 +108,11 @@ class TestGithubAdapter(TestBase):
                 #
                 # Done patching
                 #
-                issuesTitles: IssueTitles = githubAdapter.getIssueTitles(TestGithubAdapter.TEST_REPOSITORY_NAME, TestGithubAdapter.TEST_MILESTONE_TITLE)
-                self.assertTrue(len(issuesTitles) != 0, "We should have found some open issues")
+                simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getAbbreviatedIssues(TestGithubAdapter.TEST_REPOSITORY_NAME,
+                                                                                           TestGithubAdapter.TEST_MILESTONE_TITLE)
+                self.assertTrue(len(simpleGitIssues) != 0, "We should have found some open issues")
 
-                for issueTitle in issuesTitles:
+                for issueTitle in simpleGitIssues:
                     self.logger.info(f'{issueTitle=}')
 
 
