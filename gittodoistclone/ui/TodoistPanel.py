@@ -1,4 +1,5 @@
 
+from typing import List
 from typing import cast
 
 from logging import Logger
@@ -33,8 +34,10 @@ from wx import MilliSleep as wxMilliSleep
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.ErrorHandler import ErrorHandler
+
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
+from gittodoistclone.adapters.TodoistAdapter import TaskInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 
 from gittodoistclone.general.Preferences import Preferences
@@ -73,7 +76,10 @@ class TodoistPanel(BasePanel):
     def tasksToClone(self, newInfo: CloneInformation):
 
         self._cloneInformation = newInfo
-        self._taskList.SetItems(newInfo.tasksToClone)
+        tasksToClone: List[TaskInfo] = newInfo.tasksToClone
+        for taskToClone in tasksToClone:
+            self._taskList.Append(taskToClone.gitIssueName, taskToClone)
+
         # noinspection PyUnresolvedReferences
         self._createTaskButton.Enable(True)
 

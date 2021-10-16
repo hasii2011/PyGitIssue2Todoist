@@ -26,10 +26,16 @@ from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationErr
 
 
 @dataclass
+class TaskInfo:
+    gitIssueName: str = ''
+    gitIssueURL:  str = ''
+
+
+@dataclass
 class CloneInformation:
     repositoryTask:    str = ''
     milestoneNameTask: str = ''
-    tasksToClone:      List[str] = field(default_factory=list)
+    tasksToClone:      List[TaskInfo] = field(default_factory=list)
 
 
 ProjectName       = NewType('ProjectName', str)
@@ -81,9 +87,9 @@ class TodoistAdapter:
         projectId:         int  = self._determineProjectIdFromRepoName(info, progressCb)
         milestoneTaskItem: Item = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
 
-        tasks: List[str] = info.tasksToClone
-        for task in tasks:
-            self._createTaskItem(taskName=task, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
+        tasks: List[TaskInfo] = info.tasksToClone
+        for taskInfo in tasks:
+            self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         progressCb('Start Sync')
         response: Dict[str, str] = self._todoist.sync()
@@ -243,13 +249,13 @@ class TodoistAdapter:
 
         return projectTasks
 
-    def _createTaskItem(self, taskName: str, projectId: int, parentMileStoneTaskItem: Item):
+    def _createTaskItem(self, taskInfo: TaskInfo, projectId: int, parentMileStoneTaskItem: Item):
         """
         Create a new task if it does not already exist in Todoist
         Assumes self._devTasks has all the project's tasks
 
         Args:
-            taskName:       Task to potentially create
+            taskInfo:       The task (with information) to potentially create
             projectId:      Project id of potential task
             parentMileStoneTaskItem: parent item if task needs to be created
         """
@@ -261,12 +267,12 @@ class TodoistAdapter:
         devTasks:      Tasks = self._devTasks
         for devTask in devTasks:
             taskItem: Item = cast(Item, devTask)
-            if taskItem['content'] == taskName:
+            if taskItem['content'] == taskInfo.gitIssueName:
                 foundTaskItem = taskItem
                 break
         #
         # To create subtasks first create in project then move them to the milestone task
         #
         if foundTaskItem is None:
-            subTask: Item = todoist.items.add(taskName, project_id=projectId)
+            subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
             subTask.move(parent_id=parentMileStoneTaskItem['id'])

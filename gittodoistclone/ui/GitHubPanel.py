@@ -36,6 +36,7 @@ from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssue
 from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
 from gittodoistclone.adapters.GitHubAdapter import GithubAdapter
 from gittodoistclone.adapters.GitHubAdapter import RepositoryNames
@@ -65,8 +66,8 @@ class GitHubPanel(BasePanel):
         self.logger:      Logger       = getLogger(__name__)
 
         preferences: Preferences = Preferences()
-        self._preferences:        Preferences = preferences
-        self._selectedIssueNames: List[str]   = []
+        self._preferences:             Preferences           = preferences
+        self._selectedSimpleGitIssues: AbbreviatedGitIssues  = []
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
 
@@ -76,12 +77,9 @@ class GitHubPanel(BasePanel):
         self.SetSizer(contentSizer)
         self.Fit()
 
-    def selectedIssueNames(self) -> List[str]:
-        return self._selectedIssueNames
-
     def clearIssues(self):
         self._issueList.Clear()
-        self._selectedIssueNames = []
+        self._selectedSimpleGitIssues = []
 
     def _layoutContent(self) -> BoxSizer:
 
@@ -185,15 +183,16 @@ class GitHubPanel(BasePanel):
         self.logger.info(f'{selectedIndices=}')
 
         for idx in selectedIndices:
-            self._selectedIssueNames.append(self._issueList.GetString(idx))
+            simpleGitIssue: AbbreviatedGitIssue = self._issueList.GetClientData(idx)
+            self._selectedSimpleGitIssues.append(simpleGitIssue)
 
-        self.logger.info(f'{self._selectedIssueNames=}')
+        self.logger.info(f'{self._selectedSimpleGitIssues=}')
 
         repositoryName: str = self._repositorySelection.GetStringSelection()
         milestoneName:  str = self._milestoneList.GetStringSelection()
         evt: IssuesSelectedEvent = IssuesSelectedEvent(repositoryName=repositoryName,
                                                        milestoneName=milestoneName,
-                                                       selectedIssues=self._selectedIssueNames)
+                                                       selectedSimpleGitIssues=self._selectedSimpleGitIssues)
         parent = self.GetParent()
         PostEvent(parent, evt)
 
@@ -215,11 +214,18 @@ class GitHubPanel(BasePanel):
         self._milestoneList.Enable(True)
 
     def __populateIssues(self, repoName: str, milestoneTitle: str):
-
+        """
+        The UI control can only display strings
+        Args:
+            repoName:       The repository name
+            milestoneTitle: The milestone for which we will filter
+        """
         abbreviatedGitIssues: AbbreviatedGitIssues = self._githubAdapter.getAbbreviatedIssues(repoName, milestoneTitle)
 
-        issueTitles: List[str] = self.__extractTitles(abbreviatedGitIssues)
-        self._issueList.SetItems(issueTitles)
+        for abbreviatedGitIssue in abbreviatedGitIssues:
+            simpleGitIssue: AbbreviatedGitIssue = cast(AbbreviatedGitIssue, abbreviatedGitIssue)
+            # Insert string in list box;  Attach client data to it
+            self._issueList.Append(simpleGitIssue.issueTitle, simpleGitIssue)
 
         # noinspection PyUnresolvedReferences
         self._issueList.Enable(True)
