@@ -1,5 +1,4 @@
 
-from typing import List
 from typing import cast
 
 from logging import Logger
@@ -18,7 +17,6 @@ from todoist.managers.projects import ProjectsManager
 from todoist.models import Project
 
 from gittodoistclone.adapters.TodoistAdapter import ProjectData
-from gittodoistclone.adapters.TodoistAdapter import TaskInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 
@@ -92,21 +90,6 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
 
         self.assertTrue(self._cbInvoked, 'Looks like callback was never invoked')
         self.assertEqual(TestTodoistAdapterMock.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
-
-    def _createTasksToClone(self) -> List[TaskInfo]:
-        taskList: List[TaskInfo] = []
-
-        taskNames: List[str] = ['TaskOpie', 'TaskGabby10Meows', 'TaskFranny']
-
-        for taskName in taskNames:
-            taskInfo: TaskInfo = TaskInfo()
-
-            taskInfo.gitIssueName = taskName
-            taskInfo.gitIssueURL  = f'https://{taskName}.org'
-
-            taskList.append(taskInfo)
-
-        return taskList
 
 
 def suite() -> TestSuite:

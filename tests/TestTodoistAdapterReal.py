@@ -65,7 +65,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci: CloneInformation = CloneInformation()
         ci.repositoryTask    = 'MockUser/MockRepo'
         ci.milestoneNameTask = 'MockMilestone'
-        ci.tasksToClone      = ['TaskOpie', 'TaskGabby10Meows', 'TaskFranny']
+        ci.tasksToClone      = self._createTasksToClone()
 
         preferences: Preferences = Preferences()
         adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistApiToken)
