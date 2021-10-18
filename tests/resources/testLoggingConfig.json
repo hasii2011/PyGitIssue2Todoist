@@ -33,8 +33,7 @@
         },
         "TestTodoistAdapterReal": {
             "level":     "INFO",
-            "propagate": "False",
-            "handlers":  ["consoleHandler"]
+            "propagate": "False"
         },
         "tests.TestTodoistAdapterBase": {
             "level":     "INFO",

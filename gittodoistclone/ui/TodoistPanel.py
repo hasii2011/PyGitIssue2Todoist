@@ -41,6 +41,7 @@ from gittodoistclone.adapters.TodoistAdapter import TaskInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 from gittodoistclone.ui.BasePanel import BasePanel
@@ -140,7 +141,7 @@ class TodoistPanel(BasePanel):
         except AdapterAuthenticationError as e:
             self._progressDlg.Destroy()
             self.__handleAuthenticationError(event)
-        except TaskCreationError as tce:
+        except (TaskCreationError, NoteCreationError) as tce:
             self._progressDlg.Destroy()
             errorHandler: ErrorHandler = ErrorHandler()
 

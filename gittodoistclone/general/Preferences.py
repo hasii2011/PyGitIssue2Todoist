@@ -13,6 +13,7 @@ from os import sep as osSep
 
 from configparser import ConfigParser
 
+from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Singleton import Singleton
 
 from gittodoistclone.general.exceptions.PreferencesLocationNotSet import PreferencesLocationNotSet
@@ -46,6 +47,8 @@ class Preferences(Singleton):
     STARTUP_Y:      str = 'startup_y'
     STARTUP_WIDTH:  str = 'startup_width'
     STARTUP_HEIGHT: str = 'startup_height'
+
+    GITHUB_URL_OPTION:   str = 'github_url_option'
     CLEAN_TODOIST_CACHE: str = 'clean_todoist_cache'
 
     MAIN_PREFERENCES: PREFERENCES_NAME_VALUES = {
@@ -54,6 +57,11 @@ class Preferences(Singleton):
         STARTUP_X:                 str(NO_DEFAULT_X),
         STARTUP_Y:                 str(NO_DEFAULT_Y),
         CLEAN_TODOIST_CACHE:       'False',
+    }
+    #
+    # Do not list the authentication keys here;  The are initialized as part of the initial authentication workflow
+    GITHUB_PREFERENCES: PREFERENCES_NAME_VALUES = {
+        GITHUB_URL_OPTION: GitHubURLOption.AddAsDescription.value,
     }
 
     preferencesFileLocationAndName: str = cast(str, None)
@@ -162,6 +170,17 @@ class Preferences(Singleton):
         self._config.set(Preferences.MAIN_SECTION, Preferences.CLEAN_TODOIST_CACHE, str(newValue))
         self.__saveConfig()
 
+    @property
+    def githubURLOption(self) -> GitHubURLOption:
+        strOption: str = self._config.get(Preferences.GITHUB_SECTION, Preferences.GITHUB_URL_OPTION)
+        retValue:   GitHubURLOption = GitHubURLOption(strOption)
+        return retValue
+
+    @githubURLOption.setter
+    def githubURLOption(self, newValue: GitHubURLOption):
+        self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_URL_OPTION, newValue.value)
+        self.__saveConfig()
+
     def _loadConfiguration(self):
         """
         Load preferences from configuration file
@@ -203,8 +222,16 @@ class Preferences(Singleton):
             if self._config.has_option(Preferences.MAIN_SECTION, prefName) is False:
                 self.__addMissingMainPreference(prefName, Preferences.MAIN_PREFERENCES[prefName])
 
+        # There is only a few GitHub preferences;  The other values are created as part of authentication
+        for prefName in Preferences.GITHUB_PREFERENCES.keys():
+            if self._config.has_option(Preferences.GITHUB_SECTION, prefName) is False:
+                self.__addMissingGitHubPreference(prefName, Preferences.GITHUB_PREFERENCES[prefName])
+
     def __addMissingMainPreference(self, preferenceName, value: str):
         self.__addMissingPreference(Preferences.MAIN_SECTION, preferenceName, value)
+
+    def __addMissingGitHubPreference(self, preferenceName, value: str):
+        self.__addMissingPreference(Preferences.GITHUB_SECTION, preferenceName, value)
 
     def __addMissingPreference(self, sectionName: str, preferenceName: str, value: str):
         self._config.set(sectionName, preferenceName, value)

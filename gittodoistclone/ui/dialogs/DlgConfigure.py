@@ -1,4 +1,5 @@
 
+from typing import List
 from typing import cast
 
 from wx import BOTH
@@ -7,17 +8,23 @@ from wx import DEFAULT_DIALOG_STYLE
 from wx import EVT_BUTTON
 from wx import EVT_CHECKBOX
 from wx import EVT_CLOSE
+from wx import EVT_RADIOBOX
 from wx import ICON_ERROR
 from wx import ID_ANY
 from wx import ID_CANCEL
 from wx import ID_OK
+from wx import NOT_FOUND
 from wx import OK
+from wx import RA_SPECIFY_COLS
 
+from wx import DefaultPosition
+from wx import DefaultSize
+
+from wx import RadioBox
 from wx import StaticText
 from wx import TextCtrl
 from wx import CheckBox
 from wx import CommandEvent
-
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
@@ -27,6 +34,7 @@ from wx.lib.sized_controls import SizedPanel
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Preferences import Preferences
 
 
@@ -45,8 +53,10 @@ class DlgConfigure(SizedDialog):
         self._txtGithubToken:     TextCtrl = cast(TextCtrl, None)
         self._txtGithubName:      TextCtrl = cast(TextCtrl, None)
         self._cacheOptionControl: CheckBox = cast(CheckBox, None)
+        self._radioBoxURLOption:  RadioBox = cast(RadioBox, None)
 
         self._createTokenControls(pane)
+        self._createGitHubURLOptionControl(pane)
         self._createCacheOptionControl(pane)
         self._setPreferencesValues()
 
@@ -58,6 +68,7 @@ class DlgConfigure(SizedDialog):
         self.Bind(EVT_BUTTON, self.__onCmdOk, id=ID_OK)
         self.Bind(EVT_BUTTON, self.__onClose, id=ID_CANCEL)
 
+        self.Bind(EVT_RADIOBOX, self.__onGitHubURLOptionChanged, self._radioBoxURLOption)
         self.Bind(EVT_CHECKBOX, self.__OnCacheOption, self._cacheOptionControl)
         self.Bind(EVT_CLOSE,  self.__onClose)
 
@@ -89,6 +100,16 @@ class DlgConfigure(SizedDialog):
 
         self._cacheOptionControl = CheckBox(parent=checkBoxPanel, label="Allow Todoist Cache Cleanup", id=ID_ANY)
 
+    def _createGitHubURLOptionControl(self, sizedPanel: SizedPanel):
+
+        options: List[str] = [GitHubURLOption.DoNotAdd.value, GitHubURLOption.AddAsDescription. value,
+                              GitHubURLOption.AddAsComment.value, GitHubURLOption.HyperLinkedTaskName.value
+                              ]
+        self._radioBoxURLOption = RadioBox(parent=sizedPanel, id=ID_ANY,
+                                           label="Include GitHub Issue URL", pos=DefaultPosition, size=DefaultSize,
+                                           choices=options, majorDimension=1, style=RA_SPECIFY_COLS
+                                           )
+
     def _setPreferencesValues(self):
 
         preferences: Preferences = self._preferences
@@ -96,6 +117,10 @@ class DlgConfigure(SizedDialog):
         self._txtTodoistToken.SetValue(preferences.todoistApiToken)
         self._txtGithubToken.SetValue(preferences.githubApiToken)
         self._txtGithubName.SetValue(preferences.githubUserName)
+
+        idx: int = self._radioBoxURLOption.FindString(preferences.githubURLOption.value, bCase=False)
+        assert idx != NOT_FOUND, "Developer Error; Enumeration may have changed"
+        self._radioBoxURLOption.SetSelection(idx)
 
         if preferences.cleanTodoistCache is True:
             self._cacheOptionControl.SetValue(True)
@@ -134,6 +159,16 @@ class DlgConfigure(SizedDialog):
         """
         self.SetReturnCode(CANCEL)
         self.EndModal(CANCEL)
+
+    def __onGitHubURLOptionChanged(self, event: CommandEvent):
+
+        selectedIdx: int = event.GetInt()
+        print(f'__onGitHubURLOptionChanged - {selectedIdx}')
+
+        selectedOption: str             = self._radioBoxURLOption.GetString(selectedIdx)
+        newOption:      GitHubURLOption = GitHubURLOption(selectedOption)
+
+        self._preferences.githubURLOption = newOption
 
     def __OnCacheOption(self, event: CommandEvent):
         if event.IsChecked() is True:

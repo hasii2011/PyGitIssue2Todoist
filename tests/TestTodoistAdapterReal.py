@@ -8,6 +8,7 @@ from unittest import TestSuite
 from unittest import main as unitTestMain
 
 from todoist.models import Item
+from todoist.models import Note
 from todoist.models import Project
 
 from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
@@ -17,6 +18,7 @@ from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
 
@@ -28,7 +30,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
     """
     This unit test uses real credentials to test the todoist adapter.
 
-    For the tests against the MockProject make sure your account as a project with
+    For the tests against the MockProject make sure your account has a project with
     the following name and structure
 
     ```
@@ -152,6 +154,29 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         itemName: str = milestoneTaskItem['content']
         self.assertEqual('MockMilestone2', itemName, 'Should get existing item')
+
+    def testAddNoteToSubTask(self):
+        adapter: TodoistAdapter = self._adapter
+
+        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+
+        projectId: int = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+
+        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
+
+        devTasks = projectTasks.devTasks
+        for devTask in devTasks:
+            taskName: str = devTask["content"]
+            taskId:   int = devTask["id"]
+            self.logger.info(f'{taskName} - {taskId=}')
+
+            try:
+                noteToAdd: str = f'https://{taskName}-{taskId}.com'
+
+                note: Note = adapter.addNoteToTask(itemId=taskId, noteContent=noteToAdd)
+                self.logger.info(f'Note added: {note}')
+            except NoteCreationError as nce:
+                self.logger.error(f'{nce.errorCode=} {nce.message=}')
 
     def _getAProjectId(self, projectName: ProjectName) -> int:
 

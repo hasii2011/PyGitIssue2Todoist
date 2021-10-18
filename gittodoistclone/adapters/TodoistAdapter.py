@@ -19,9 +19,11 @@ from todoist import TodoistAPI
 from todoist.managers.projects import ProjectsManager
 
 from todoist.models import Item
+from todoist.models import Note
 from todoist.models import Project
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 
@@ -111,6 +113,39 @@ class TodoistAdapter:
                 raise taskCreationError
 
             progressCb('Done')
+
+    def addNoteToTask(self, itemId: int, noteContent: str) -> Note:
+        """
+        Currently only support creating text notes
+
+        Args:
+            itemId:         The id of the task to add this note to
+            noteContent:    The content of the note
+
+        Returns:  The created Note time
+        """
+
+        todoist: TodoistAPI = self._todoist
+        try:
+            note: Note = todoist.notes.add(itemId, noteContent)
+            # note: Note = todoist.notes.add(9999, noteContent)
+
+            response: Dict[str, str] = todoist.commit()
+
+            if "error_tag" in response:
+                raise AdapterAuthenticationError(response)
+        except SyncError as e:
+            eDict = e.args[1]
+            eMsg: str = eDict['error']
+            eCode: int = eDict['error_code']
+
+            noteCreationError: NoteCreationError = NoteCreationError()
+            noteCreationError.message   = eMsg
+            noteCreationError.errorCode = eCode
+
+            raise noteCreationError
+
+        return note
 
     def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable):
         """
@@ -236,7 +271,7 @@ class TodoistAdapter:
             for item in items:
 
                 parentId: int = item["parent_id"]
-                self.logger.warning(f'{item["content"]=}  {item["id"]=} {parentId=}')
+                self.logger.debug(f'{item["content"]=}  {item["id"]=} {parentId=}')
 
                 if parentId is None:
                     mileStoneTasks.append(item)
@@ -274,5 +309,6 @@ class TodoistAdapter:
         # To create subtasks first create in project then move them to the milestone task
         #
         if foundTaskItem is None:
+            # TODO: when user preference is set add URL as either description or note
             subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
             subTask.move(parent_id=parentMileStoneTaskItem['id'])
