@@ -35,6 +35,7 @@ The instructions on how to acquire/generate these tokens are [here](https://gith
 [Github]
 github_api_token = PutYourGithubKeyHere
 github_user_name = PutYourGithubUserNameHere
+github_url_option = Hyper Linked Task Name
 
 [Todoist]
 todoist_api_token = PutYourTodoistKeyHere

@@ -14,8 +14,10 @@ from todoist.models import Project
 from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.TodoistAdapter import ProjectName
 from gittodoistclone.adapters.TodoistAdapter import ProjectTasks
+from gittodoistclone.adapters.TodoistAdapter import TaskInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
+from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
@@ -177,6 +179,29 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
                 self.logger.info(f'Note added: {note}')
             except NoteCreationError as nce:
                 self.logger.error(f'{nce.errorCode=} {nce.message=}')
+
+    def testAddTaskAsHyperlink(self):
+        # markdown Link format
+        # [here](https://github.com/hasii2011/gittodoistclone/wiki/How-to-use-gittodoistclone)
+
+        hyperLinkedTask: TaskInfo = TaskInfo()
+        hyperLinkedTask.gitIssueName = f'I am linked'
+        hyperLinkedTask.gitIssueURL  = 'https://hsanchezii.wordpress.com'
+
+        ci: CloneInformation = CloneInformation()
+        ci.repositoryTask    = 'MockUser/MockRepo'
+        ci.milestoneNameTask = 'MockMilestone'
+        ci.tasksToClone      = [hyperLinkedTask]
+
+        preferences: Preferences = Preferences()
+
+        savedOption: GitHubURLOption = preferences.githubURLOption
+        preferences.githubURLOption  = GitHubURLOption.HyperLinkedTaskName
+        
+        adapter: TodoistAdapter = self._adapter
+        adapter.createTasks(ci, self._sampleCallback)
+
+        preferences.githubURLOption = savedOption
 
     def _getAProjectId(self, projectName: ProjectName) -> int:
 

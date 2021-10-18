@@ -23,6 +23,8 @@ from todoist.models import Note
 from todoist.models import Project
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.general.GitHubURLOption import GitHubURLOption
+from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
@@ -69,6 +71,7 @@ class TodoistAdapter:
 
         self.logger:             Logger            = getLogger(__name__)
         self._todoist:           TodoistAPI        = TodoistAPI(apiToken)
+        self._preferences:       Preferences       = Preferences()
         self._projectDictionary: ProjectDictionary = ProjectDictionary({})
         self._devTasks:          Tasks             = Tasks([])
 
@@ -310,5 +313,18 @@ class TodoistAdapter:
         #
         if foundTaskItem is None:
             # TODO: when user preference is set add URL as either description or note
-            subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
+            option: GitHubURLOption = self._preferences.githubURLOption
+            if option == GitHubURLOption.DoNotAdd:
+                subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
+            elif option == GitHubURLOption.AddAsDescription:
+                subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
+            elif option == GitHubURLOption.AddAsComment:
+                subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
+                taskId: int = subTask["id"]
+                note: Note = self.addNoteToTask(itemId=taskId, noteContent=taskInfo.gitIssueURL)
+                self.logger.info(f'Note added: {note}')
+            else:   # Add as hyper link
+                linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
+                subTask = todoist.items.add(linkedTaskName, project_id=projectId)
+
             subTask.move(parent_id=parentMileStoneTaskItem['id'])
