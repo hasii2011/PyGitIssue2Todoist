@@ -61,7 +61,7 @@ class Preferences(Singleton):
     #
     # Do not list the authentication keys here;  The are initialized as part of the initial authentication workflow
     GITHUB_PREFERENCES: PREFERENCES_NAME_VALUES = {
-        GITHUB_URL_OPTION: GitHubURLOption.AddAsDescription.value,
+        GITHUB_URL_OPTION: GitHubURLOption.HyperLinkedTaskName.value,
     }
 
     preferencesFileLocationAndName: str = cast(str, None)
