@@ -6,6 +6,7 @@ build/
 dist/
 /pyenv-venv-3.9.0/
 /pyenv-venv-3.9.1/
+/pyenv-venv-pyut-copy-3.9.0/
 UNKNOWN.egg-info
 /.eggs/
 

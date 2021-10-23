@@ -44,7 +44,8 @@ rm -v PyGitIssueClone.app/Contents/Resources/lib/python3.9/numpy/f2py/tests/src/
 # This is a real certificate - expires 21 September 2026
 #
 export IDENTITY="Developer ID Application: Humberto Sanchez II (NA8Z96F8V9)"
-export OPTIONS="--verbose --timestamp --options=runtime "
+# export OPTIONS="--verbose --timestamp --options=runtime "
+export OPTIONS="--verbose --force --timestamp --options=runtime "
 
 echo "Sign frameworks"
 echo "" > ${LOGFILE}

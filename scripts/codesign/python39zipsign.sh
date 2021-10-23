@@ -45,7 +45,8 @@ echo "Unzip it"
 
 
 export IDENTITY="Developer ID Application: Humberto Sanchez II (NA8Z96F8V9)"
-export OPTIONS="--verbose --timestamp --options=runtime "
+# export OPTIONS="--verbose --timestamp --options=runtime "
+export OPTIONS="--force --verbose --timestamp --options=runtime "
 
 find "${PYTHON_UNZIP_DIR}/PIL/.dylibs" -iname '*.dylib' |
     while read libfile; do

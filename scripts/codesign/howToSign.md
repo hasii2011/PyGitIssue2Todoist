@@ -17,5 +17,4 @@ Once the above completes remove the zip created by `notarizeapp.sh` and rezip th
 That is the file I put on the GitHub release as a binary.
 
 
-
 https://developer.apple.com/forums/thread/130855
