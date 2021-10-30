@@ -1,4 +1,5 @@
-<img width="34" height="17" src="/Users/humberto.a.sanchez.ii/PycharmProjects/gittodoistclone/gittodoistclone/resources/gplv3-with-text-136x68.png"/> 
+<img width="34" height="17" src="./gittodoistclone/resources/gplv3-with-text-136x68.png"/> 
+
 [![Build Status](https://travis-ci.com/hasii2011/gittodoistclone.svg?branch=master)](https://travis-ci.com/hasii2011/gittodoistclone)
 
 # Introduction
@@ -50,4 +51,4 @@ clean_todoist_cache = True
 ```
 # License
 
-See both [gpl-3.0.txt](gpl-3.0.txt) and [LICENSE](LICENSE)
+See both [gpl-3.0.txt](g	pl-3.0.txt) and [LICENSE](LICENSE)
