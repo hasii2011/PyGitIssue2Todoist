@@ -47,4 +47,6 @@ startup_x = 0
 startup_y = 0
 clean_todoist_cache = True
 ```
+# License
 
+See both [gpl-3.0.txt](gpl-3.0.txt) and [LICENSE](LICENSE)
