@@ -11,6 +11,7 @@ from gittodoistclone.general.Preferences import Preferences
 
 Preferences.determinePreferencesLocation()
 
+# Used for prototyping
 
 def addSimpleTask():
     api_token: str = Preferences().todoistApiToken

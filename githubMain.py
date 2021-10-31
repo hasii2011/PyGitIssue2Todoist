@@ -9,6 +9,7 @@ Preferences.determinePreferencesLocation()
 INTEGRATION_TOKEN: str = Preferences().githubApiToken
 USERNAME:          str = 'hasii2011'
 
+# Used for prototyping
 
 def getIssuesInRepos():
 
