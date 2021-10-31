@@ -51,4 +51,4 @@ clean_todoist_cache = True
 ```
 # License
 
-See both [gpl-3.0.txt](g	pl-3.0.txt) and [LICENSE](LICENSE)
+See both [gpl-3.0.txt](gpl-3.0.txt) and [LICENSE](LICENSE)
