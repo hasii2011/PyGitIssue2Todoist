@@ -12,9 +12,11 @@ from shutil import copyfile
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
-from tests.TestBase import TestBase
+from gittodoistclone.general.exceptions.InvalidPreference import InvalidPreference
 
 from gittodoistclone.general.Preferences import Preferences
+
+from tests.TestBase import TestBase
 
 
 class TestPreferences(TestBase):
@@ -51,6 +53,25 @@ class TestPreferences(TestBase):
 
         self.assertEqual('77777', preferences.todoistApiToken, 'Uh oh, token did not change')
 
+    def testCreateTasksInParentProjectFalse(self):
+        preferences: Preferences = Preferences()
+        preferences.createTasksInParentProject = False
+        self.assertFalse(preferences.createTasksInParentProject, "Did not change to 'False'")
+
+    def testCreateTasksInParentProjectTrue(self):
+        preferences: Preferences = Preferences()
+        preferences.createTasksInParentProject = True
+        self.assertTrue(preferences.createTasksInParentProject, "Did not change to 'True'")
+
+    def testParentProjectName(self):
+        pass
+
+    def testParentProjectNameEmpty(self):
+        self.assertRaises(InvalidPreference, lambda: self.__setParentProjectNameToEmpty())
+
+    def testParentProjectNameNone(self):
+        self.assertRaises(InvalidPreference, lambda: self.__setParentProjectNameToNone())
+
     def _backupPreferences(self):
 
         preferencesFileName: str = Preferences.getPreferencesLocation()
@@ -76,6 +97,14 @@ class TestPreferences(TestBase):
             osRemove(source)
         else:
             osRemove(target)
+
+    def __setParentProjectNameToNone(self):
+        preferences: Preferences = Preferences()
+        preferences.parentProjectName = None
+
+    def __setParentProjectNameToEmpty(self):
+        preferences: Preferences = Preferences()
+        preferences.parentProjectName = None
 
 
 def suite() -> TestSuite:

@@ -16,6 +16,7 @@ from configparser import ConfigParser
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Singleton import Singleton
 
+from gittodoistclone.general.exceptions.InvalidPreference import InvalidPreference
 from gittodoistclone.general.exceptions.PreferencesLocationNotSet import PreferencesLocationNotSet
 
 
@@ -49,7 +50,10 @@ class Preferences(Singleton):
     STARTUP_HEIGHT: str = 'startup_height'
 
     GITHUB_URL_OPTION:   str = 'github_url_option'
-    CLEAN_TODOIST_CACHE: str = 'clean_todoist_cache'
+
+    CLEAN_TODOIST_CACHE:            str = 'clean_todoist_cache'
+    CREATE_TASKS_IN_PARENT_PROJECT: str = 'create_tasks_in_parent_project'
+    PARENT_PROJECT_NAME:            str = 'parent_project_name'
 
     MAIN_PREFERENCES: PREFERENCES_NAME_VALUES = {
         STARTUP_WIDTH:             str(DEFAULT_APP_WIDTH),
@@ -62,6 +66,11 @@ class Preferences(Singleton):
     # Do not list the authentication keys here;  The are initialized as part of the initial authentication workflow
     GITHUB_PREFERENCES: PREFERENCES_NAME_VALUES = {
         GITHUB_URL_OPTION: GitHubURLOption.HyperLinkedTaskName.value,
+    }
+    TODOIST_PREFERENCES: PREFERENCES_NAME_VALUES = {
+        TODOIST_API_TOKEN_KEY:          'PutYourTodoistKeyHere',
+        CREATE_TASKS_IN_PARENT_PROJECT: 'True',
+        PARENT_PROJECT_NAME:            'Developer'
     }
 
     preferencesFileLocationAndName: str = cast(str, None)
@@ -181,6 +190,28 @@ class Preferences(Singleton):
         self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_URL_OPTION, newValue.value)
         self.__saveConfig()
 
+    @property
+    def createTasksInParentProject(self) -> bool:
+        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.CREATE_TASKS_IN_PARENT_PROJECT)
+
+    @createTasksInParentProject.setter
+    def createTasksInParentProject(self, newValue: bool):
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.CREATE_TASKS_IN_PARENT_PROJECT, str(newValue))
+        self.__saveConfig()
+
+    @property
+    def parentProjectName(self) -> str:
+        return self._config.get(Preferences.TODOIST_SECTION, Preferences.PARENT_PROJECT_NAME)
+
+    @parentProjectName.setter
+    def parentProjectName(self, newValue: str):
+        if newValue is None or newValue == '':
+            invalidPreference: InvalidPreference = InvalidPreference()
+            invalidPreference.preferenceName = 'parentProjectName'
+            raise invalidPreference
+
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.PARENT_PROJECT_NAME, newValue)
+
     def _loadConfiguration(self):
         """
         Load preferences from configuration file
@@ -227,11 +258,18 @@ class Preferences(Singleton):
             if self._config.has_option(Preferences.GITHUB_SECTION, prefName) is False:
                 self.__addMissingGitHubPreference(prefName, Preferences.GITHUB_PREFERENCES[prefName])
 
+        for prefName in Preferences.TODOIST_PREFERENCES.keys():
+            if self._config.has_option(Preferences.TODOIST_SECTION, prefName) is False:
+                self.__addMissingTodoistPreference(prefName, Preferences.TODOIST_PREFERENCES[prefName])
+
     def __addMissingMainPreference(self, preferenceName, value: str):
         self.__addMissingPreference(Preferences.MAIN_SECTION, preferenceName, value)
 
     def __addMissingGitHubPreference(self, preferenceName, value: str):
         self.__addMissingPreference(Preferences.GITHUB_SECTION, preferenceName, value)
+
+    def __addMissingTodoistPreference(self, preferenceName: str, value: str):
+        self.__addMissingPreference(Preferences.TODOIST_SECTION, preferenceName, value)
 
     def __addMissingPreference(self, sectionName: str, preferenceName: str, value: str):
         self._config.set(sectionName, preferenceName, value)
