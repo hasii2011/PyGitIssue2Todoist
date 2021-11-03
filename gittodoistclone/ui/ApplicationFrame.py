@@ -41,7 +41,7 @@ from gittodoistclone.ui.TodoistPanel import CloneInformation
 from gittodoistclone.ui.TodoistPanel import TodoistPanel
 from gittodoistclone.ui.dialogs.DlgAbout import DlgAbout
 
-from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
 
 

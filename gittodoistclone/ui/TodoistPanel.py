@@ -45,7 +45,7 @@ from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationErr
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 from gittodoistclone.ui.BasePanel import BasePanel
-from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 
 class TodoistPanel(BasePanel):

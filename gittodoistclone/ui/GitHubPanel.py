@@ -48,7 +48,7 @@ from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
 from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
 
 from gittodoistclone.ui.BasePanel import BasePanel
-from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 
 class GitHubPanel(BasePanel):

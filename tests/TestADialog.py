@@ -14,7 +14,7 @@ from wx import Frame
 
 from gittodoistclone.general.Preferences import Preferences
 # noinspection SpellCheckingInspection
-from gittodoistclone.ui.dialogs.DlgConfigure import DlgConfigure
+from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 # from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
 
 from tests.TestBase import TestBase
