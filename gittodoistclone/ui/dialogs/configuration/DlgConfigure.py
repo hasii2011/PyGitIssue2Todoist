@@ -7,7 +7,6 @@ from wx import BOTH
 from wx import CANCEL
 from wx import DEFAULT_DIALOG_STYLE
 from wx import EVT_BUTTON
-from wx import EVT_CHECKBOX
 from wx import EVT_CLOSE
 from wx import EVT_RADIOBOX
 from wx import ICON_ERROR
@@ -27,7 +26,6 @@ from wx import DefaultSize
 from wx import RadioBox
 from wx import StaticText
 from wx import TextCtrl
-from wx import CheckBox
 from wx import CommandEvent
 from wx import Window
 
@@ -55,7 +53,6 @@ class DlgConfigure(SizedDialog):
         self._txtTodoistToken:    TextCtrl = cast(TextCtrl, None)
         self._txtGithubToken:     TextCtrl = cast(TextCtrl, None)
         self._txtGithubName:      TextCtrl = cast(TextCtrl, None)
-        self._cacheOptionControl: CheckBox = cast(CheckBox, None)
         self._radioBoxURLOption:  RadioBox = cast(RadioBox, None)
 
         self.Center(BOTH)
@@ -84,7 +81,6 @@ class DlgConfigure(SizedDialog):
         self.Bind(EVT_BUTTON, self.__onClose, id=ID_CANCEL)
 
         self.Bind(EVT_RADIOBOX, self.__onGitHubURLOptionChanged, self._radioBoxURLOption)
-        self.Bind(EVT_CHECKBOX, self.__OnCacheOption, self._cacheOptionControl)
         self.Bind(EVT_CLOSE,  self.__onClose)
 
     # noinspection SpellCheckingInspection
@@ -105,15 +101,6 @@ class DlgConfigure(SizedDialog):
         self._txtTodoistToken = txtTodoistToken
         self._txtGithubToken  = txtGithubToken
         self._txtGithubName  = txtGithubName
-
-    def _createCacheOptionControl(self, sizedPanel: SizedPanel):
-
-        checkBoxPanel: SizedPanel = SizedPanel(sizedPanel, ID_ANY)
-        checkBoxPanel.SetSizerType('horizontal')
-        # noinspection PyUnresolvedReferences
-        checkBoxPanel.SetSizerProps(expand=True)
-
-        self._cacheOptionControl = CheckBox(parent=checkBoxPanel, label="Allow Todoist Cache Cleanup", id=ID_ANY)
 
     def _createGitHubURLOptionControl(self, sizedPanel: SizedPanel):
 
@@ -136,11 +123,6 @@ class DlgConfigure(SizedDialog):
         idx: int = self._radioBoxURLOption.FindString(preferences.githubURLOption.value, bCase=False)
         assert idx != NOT_FOUND, "Developer Error; Enumeration may have changed"
         self._radioBoxURLOption.SetSelection(idx)
-
-        if preferences.cleanTodoistCache is True:
-            self._cacheOptionControl.SetValue(True)
-        else:
-            self._cacheOptionControl.SetValue(False)
 
     def __createTextInputControls(self, label: str, sizedPanel: SizedPanel) -> TextCtrl:
 
@@ -184,12 +166,6 @@ class DlgConfigure(SizedDialog):
         newOption:      GitHubURLOption = GitHubURLOption(selectedOption)
 
         self._preferences.githubURLOption = newOption
-
-    def __OnCacheOption(self, event: CommandEvent):
-        if event.IsChecked() is True:
-            self._preferences.cleanTodoistCache = True
-        else:
-            self._preferences.cleanTodoistCache = False
 
     def __areAllValuesSupplied(self) -> bool:
 

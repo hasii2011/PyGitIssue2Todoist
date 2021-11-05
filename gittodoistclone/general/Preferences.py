@@ -37,7 +37,7 @@ class Preferences(Singleton):
 
     MAIN_SECTION:    str = 'Main'
 
-    GITHUB_SECTION:  str = 'Github'
+    GITHUB_SECTION:  str = 'GitHub'
     TODOIST_SECTION: str = 'Todoist'
 
     TODOIST_API_TOKEN_KEY: str = 'todoist_api_token'
@@ -60,17 +60,19 @@ class Preferences(Singleton):
         STARTUP_HEIGHT:            str(DEFAULT_APP_HEIGHT),
         STARTUP_X:                 str(NO_DEFAULT_X),
         STARTUP_Y:                 str(NO_DEFAULT_Y),
-        CLEAN_TODOIST_CACHE:       'False',
     }
-    #
-    # Do not list the authentication keys here;  The are initialized as part of the initial authentication workflow
+
     GITHUB_PREFERENCES: PREFERENCES_NAME_VALUES = {
-        GITHUB_URL_OPTION: GitHubURLOption.HyperLinkedTaskName.value,
+        GITHUB_API_TOKEN_KEY: 'PutYourGithubKeyHere',
+        GITHUB_USER_NAME_KEY: 'PutYourGithubUserNameHere',
+        GITHUB_URL_OPTION:    GitHubURLOption.HyperLinkedTaskName.value,
     }
+
     TODOIST_PREFERENCES: PREFERENCES_NAME_VALUES = {
-        TODOIST_API_TOKEN_KEY:          'PutYourTodoistKeyHere',
+        TODOIST_API_TOKEN_KEY:   'PutYourTodoistKeyHere',
+        CLEAN_TODOIST_CACHE:     'False',
         TASKS_IN_PARENT_PROJECT: 'True',
-        PARENT_PROJECT_NAME:            'Developer'
+        PARENT_PROJECT_NAME:     'Developer'
     }
 
     preferencesFileLocationAndName: str = cast(str, None)
@@ -171,15 +173,6 @@ class Preferences(Singleton):
         self.__saveConfig()
 
     @property
-    def cleanTodoistCache(self) -> bool:
-        return self._config.getboolean(Preferences.MAIN_SECTION, Preferences.CLEAN_TODOIST_CACHE)
-
-    @cleanTodoistCache.setter
-    def cleanTodoistCache(self, newValue: bool):
-        self._config.set(Preferences.MAIN_SECTION, Preferences.CLEAN_TODOIST_CACHE, str(newValue))
-        self.__saveConfig()
-
-    @property
     def githubURLOption(self) -> GitHubURLOption:
         strOption: str = self._config.get(Preferences.GITHUB_SECTION, Preferences.GITHUB_URL_OPTION)
         retValue:   GitHubURLOption = GitHubURLOption(strOption)
@@ -188,6 +181,15 @@ class Preferences(Singleton):
     @githubURLOption.setter
     def githubURLOption(self, newValue: GitHubURLOption):
         self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_URL_OPTION, newValue.value)
+        self.__saveConfig()
+
+    @property
+    def cleanTodoistCache(self) -> bool:
+        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.CLEAN_TODOIST_CACHE)
+
+    @cleanTodoistCache.setter
+    def cleanTodoistCache(self, newValue: bool):
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.CLEAN_TODOIST_CACHE, str(newValue))
         self.__saveConfig()
 
     @property
@@ -220,7 +222,7 @@ class Preferences(Singleton):
         self.__ensureConfigurationFileExists()
         self._config.read(Preferences.getPreferencesLocation())
         self.__createNeededSectionsIfNecessary()
-        self.__createNeededConfigurationKeys()
+        # self.__createNeededConfigurationKeys()
         self.__createApplicationPreferences()
         self.__saveConfig()
 
@@ -236,17 +238,6 @@ class Preferences(Singleton):
         self.logger.debug(f'hasSection: {hasSection} - {sectionName}')
         if hasSection is False:
             self._config.add_section(sectionName)
-
-    def __createNeededConfigurationKeys(self):
-
-        if self._config.has_option(Preferences.TODOIST_SECTION, Preferences.TODOIST_API_TOKEN_KEY) is False:
-            self._config.set(Preferences.TODOIST_SECTION, Preferences.TODOIST_API_TOKEN_KEY, 'PutYourTodoistKeyHere')
-
-        if self._config.has_option(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY) is False:
-            self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_API_TOKEN_KEY, 'PutYourGithubKeyHere')
-
-        if self._config.has_option(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY) is False:
-            self._config.set(Preferences.GITHUB_SECTION, Preferences.GITHUB_USER_NAME_KEY, 'PutYourGithubUserNameHere')
 
     def __createApplicationPreferences(self):
 
