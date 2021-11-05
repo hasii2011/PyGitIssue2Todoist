@@ -16,7 +16,8 @@ from wx.lib.sized_controls import SizedPanel
 
 class TextContainer(SizedPanel):
     """
-    This container is generic
+    This container is meant to be used whenever the UI needs a labelled input text;
+    Conveniently created via a SizedPanel;
     """
     HORIZONTAL_GAP: int = 3
 
@@ -25,9 +26,13 @@ class TextContainer(SizedPanel):
 
         Args:
             parent:     The parent window
+
             labelText:  How to label the text input
+
             valueChangedCallback:  The method to call when the value changes;  The method should expect the
             first parameter to be a string argument that is the new value
+
+            textControlSize:  A tuple of (width, height) for the text input
         """
 
         super().__init__(parent)
@@ -52,9 +57,21 @@ class TextContainer(SizedPanel):
         parent.Bind(EVT_TEXT, self._onTextValueChanged, id=self._textId)
 
     def textControlEnabled(self, newValue: bool):
+        """
+        Allows the developer to either enable or disable the text input control
+
+        Args:
+            newValue:  'True' means enable input;  'False' means disable input
+        """
         self._textControl.Enable(newValue)
 
     def textValue(self, newValue: str):
+        """
+        The write only property for value of the contained text control;  Presumably, only the user can change the
+        it by typing it in.  This invokes a callback to the constructed UI to update the value
+        Args:
+            newValue:  The value to set
+        """
         self._textValue = newValue
         self._textControl.SetValue(newValue)
 
