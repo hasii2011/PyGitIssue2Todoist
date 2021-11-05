@@ -3,7 +3,7 @@ from typing import cast
 
 from wx import Notebook
 
-from gittodoistclone.ui.dialogs.configuration.PreferencesPanel import PreferencesPanel
+from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import PreferencesPanel
 from gittodoistclone.ui.dialogs.configuration.TextContainer import TextContainer
 
 
