@@ -11,11 +11,11 @@ from wx import Notebook
 from wx import NewIdRef as wxNewIdRef
 
 
-from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import PreferencesPanel
+from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
 from gittodoistclone.ui.dialogs.configuration.TextContainer import TextContainer
 
 
-class TodoistConfigurationPanel(PreferencesPanel):
+class TodoistConfigurationPanel(AbstractConfigurationPanel):
 
     def __init__(self, parent: Notebook):
 

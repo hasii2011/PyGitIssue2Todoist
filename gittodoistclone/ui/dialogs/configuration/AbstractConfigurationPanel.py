@@ -4,7 +4,7 @@ from wx.lib.sized_controls import SizedPanel
 from gittodoistclone.general.Preferences import Preferences
 
 
-class PreferencesPanel(SizedPanel):
+class AbstractConfigurationPanel(SizedPanel):
     """
     A generally abstract class to capture the behaviour of our configuration panels;  It
     is unclear to me whether the constructor here should call the abstract methods or

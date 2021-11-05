@@ -3,11 +3,11 @@ from typing import cast
 
 from wx import Notebook
 
-from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import PreferencesPanel
+from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
 from gittodoistclone.ui.dialogs.configuration.TextContainer import TextContainer
 
 
-class TokensConfigurationPanel(PreferencesPanel):
+class TokensConfigurationPanel(AbstractConfigurationPanel):
 
     def __init__(self, parent: Notebook):
 
