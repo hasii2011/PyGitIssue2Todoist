@@ -2,6 +2,7 @@
 from typing import List
 from typing import cast
 
+from wx import BK_DEFAULT
 from wx import BOTH
 from wx import CANCEL
 from wx import DEFAULT_DIALOG_STYLE
@@ -13,7 +14,9 @@ from wx import ICON_ERROR
 from wx import ID_ANY
 from wx import ID_CANCEL
 from wx import ID_OK
+from wx import NB_LEFT
 from wx import NOT_FOUND
+from wx import Notebook
 from wx import OK
 from wx import RA_SPECIFY_COLS
 
@@ -36,6 +39,7 @@ from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.ui.dialogs.configuration.TokenPanel import TokenPanel
 
 
 class DlgConfigure(SizedDialog):
@@ -45,9 +49,6 @@ class DlgConfigure(SizedDialog):
         super().__init__(parent, wxID, 'Configure', style=DEFAULT_DIALOG_STYLE)
 
         self._preferences: Preferences = Preferences()
-        self.Center(BOTH)
-        pane: SizedPanel = self.GetContentsPane()
-        pane.SetSizerType('form')
 
         self._txtTodoistToken:    TextCtrl = cast(TextCtrl, None)
         self._txtGithubToken:     TextCtrl = cast(TextCtrl, None)
@@ -55,10 +56,19 @@ class DlgConfigure(SizedDialog):
         self._cacheOptionControl: CheckBox = cast(CheckBox, None)
         self._radioBoxURLOption:  RadioBox = cast(RadioBox, None)
 
-        self._createTokenControls(pane)
-        self._createGitHubURLOptionControl(pane)
-        self._createCacheOptionControl(pane)
-        self._setPreferencesValues()
+        self.Center(BOTH)
+        pane: SizedPanel = self.GetContentsPane()
+
+        pane.SetSizerType('vertical')
+
+        book: Notebook = Notebook(pane, ID_ANY, style=BK_DEFAULT | NB_LEFT)
+
+        tokenPanel: TokenPanel = TokenPanel(book)
+        book.AddPage(tokenPanel, 'Tokens')
+
+        # self._createGitHubURLOptionControl(pane)
+        # self._createCacheOptionControl(pane)
+        # self._setPreferencesValues()
 
         self.SetButtonSizer(self.CreateStdDialogButtonSizer(OK | CANCEL))
 
@@ -114,9 +124,9 @@ class DlgConfigure(SizedDialog):
 
         preferences: Preferences = self._preferences
 
-        self._txtTodoistToken.SetValue(preferences.todoistApiToken)
-        self._txtGithubToken.SetValue(preferences.githubApiToken)
-        self._txtGithubName.SetValue(preferences.githubUserName)
+        # self._txtTodoistToken.SetValue(preferences.todoistApiToken)
+        # self._txtGithubToken.SetValue(preferences.githubApiToken)
+        # self._txtGithubName.SetValue(preferences.githubUserName)
 
         idx: int = self._radioBoxURLOption.FindString(preferences.githubURLOption.value, bCase=False)
         assert idx != NOT_FOUND, "Developer Error; Enumeration may have changed"
