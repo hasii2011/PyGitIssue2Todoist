@@ -55,13 +55,13 @@ class TestPreferences(TestBase):
 
     def testCreateTasksInParentProjectFalse(self):
         preferences: Preferences = Preferences()
-        preferences.createTasksInParentProject = False
-        self.assertFalse(preferences.createTasksInParentProject, "Did not change to 'False'")
+        preferences.tasksInParentProject = False
+        self.assertFalse(preferences.tasksInParentProject, "Did not change to 'False'")
 
     def testCreateTasksInParentProjectTrue(self):
         preferences: Preferences = Preferences()
-        preferences.createTasksInParentProject = True
-        self.assertTrue(preferences.createTasksInParentProject, "Did not change to 'True'")
+        preferences.tasksInParentProject = True
+        self.assertTrue(preferences.tasksInParentProject, "Did not change to 'True'")
 
     def testParentProjectName(self):
         pass

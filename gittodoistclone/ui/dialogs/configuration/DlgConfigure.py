@@ -14,7 +14,8 @@ from wx import ICON_ERROR
 from wx import ID_ANY
 from wx import ID_CANCEL
 from wx import ID_OK
-from wx import NB_LEFT
+
+from wx import NB_TOP
 from wx import NOT_FOUND
 from wx import Notebook
 from wx import OK
@@ -39,7 +40,8 @@ from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.ui.dialogs.configuration.TokenPanel import TokenPanel
+from gittodoistclone.ui.dialogs.configuration.TodoistConfigurationPanel import TodoistConfigurationPanel
+from gittodoistclone.ui.dialogs.configuration.TokensConfigurationPanel import TokensConfigurationPanel
 
 
 class DlgConfigure(SizedDialog):
@@ -61,10 +63,13 @@ class DlgConfigure(SizedDialog):
 
         pane.SetSizerType('vertical')
 
-        book: Notebook = Notebook(pane, ID_ANY, style=BK_DEFAULT | NB_LEFT)
+        book: Notebook = Notebook(pane, ID_ANY, style=BK_DEFAULT | NB_TOP)
 
-        tokenPanel: TokenPanel = TokenPanel(book)
-        book.AddPage(tokenPanel, 'Tokens')
+        tokensConfigurationPanel:  TokensConfigurationPanel  = TokensConfigurationPanel(book)
+        todoistConfigurationPanel: TodoistConfigurationPanel = TodoistConfigurationPanel(book)
+
+        book.AddPage(tokensConfigurationPanel,  'Tokens',  select=False)
+        book.AddPage(todoistConfigurationPanel, 'Todoist', select=True)
 
         # self._createGitHubURLOptionControl(pane)
         # self._createCacheOptionControl(pane)
@@ -149,9 +154,9 @@ class DlgConfigure(SizedDialog):
         If Skip(true) is called, the event processing system continues searching for a further handler
         function for this event,  even though it has been processed already in the current handler.
         """
-        self._preferences.todoistApiToken = self._txtTodoistToken.GetValue()
-        self._preferences.githubApiToken  = self._txtGithubToken.GetValue()
-        self._preferences.githubUserName  = self._txtGithubName.GetValue()
+        # self._preferences.todoistApiToken = self._txtTodoistToken.GetValue()
+        # self._preferences.githubApiToken  = self._txtGithubToken.GetValue()
+        # self._preferences.githubUserName  = self._txtGithubName.GetValue()
 
         if self.__areAllValuesSupplied() is True:
             event.Skip(skip=True)

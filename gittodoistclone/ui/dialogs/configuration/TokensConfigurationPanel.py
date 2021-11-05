@@ -1,25 +1,23 @@
+
 from typing import cast
+
+from wx import Notebook
 
 from gittodoistclone.ui.dialogs.configuration.PreferencesPanel import PreferencesPanel
 from gittodoistclone.ui.dialogs.configuration.TextContainer import TextContainer
 
 
-class TokenPanel(PreferencesPanel):
+class TokensConfigurationPanel(PreferencesPanel):
 
-    VERTICAL_GAP:   int = 5
-
-    def __init__(self, parent):
-
-        super().__init__(parent)
-
-        self.SetSizerType('vertical')
+    def __init__(self, parent: Notebook):
 
         self._txtTodoistContainer:      TextContainer = cast(TextContainer, None)
         self._txtGitHubTokenContainer:  TextContainer = cast(TextContainer, None)
         self._txtGitHubNameContainer:   TextContainer = cast(TextContainer, None)
 
-        self._createControls()
-        self._setControlValues()
+        super().__init__(parent)
+
+        self.SetSizerType('vertical')
 
     def _createControls(self):
         """

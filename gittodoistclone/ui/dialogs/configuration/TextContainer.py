@@ -6,7 +6,6 @@ from wx import EVT_TEXT
 from wx import ID_ANY
 
 from wx import CommandEvent
-from wx import Size
 from wx import StaticText
 from wx import TextCtrl
 
@@ -45,9 +44,6 @@ class TextContainer(SizedPanel):
         # noinspection PyUnresolvedReferences
         textControl.SetSizerProps(expand=True, halign='right')
 
-        # self.Add(textLabel,   WX_SIZER_CHANGEABLE, ALL | ALIGN_CENTER_VERTICAL, TextContainer.HORIZONTAL_GAP)
-        # self.Add(textControl, WX_SIZER_CHANGEABLE, ALL, TextContainer.HORIZONTAL_GAP)
-
         self._textControl:  TextCtrl = textControl
         self._textValue:    str      = ''
 
@@ -55,12 +51,15 @@ class TextContainer(SizedPanel):
         self.SetSizerProps(expand=True)
         parent.Bind(EVT_TEXT, self._onTextValueChanged, id=self._textId)
 
+    def textControlEnabled(self, newValue: bool):
+        self._textControl.Enable(newValue)
+
     def textValue(self, newValue: str):
         self._textValue = newValue
         self._textControl.SetValue(newValue)
 
-    # Write only property
-    textValue = property(None, textValue)
+    # Write only property   TODO fix mypy error
+    textValue = property(None, textValue)   # type: ignore
 
     def _onTextValueChanged(self, event: CommandEvent):
 

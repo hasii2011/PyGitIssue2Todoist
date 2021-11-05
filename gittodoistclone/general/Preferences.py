@@ -52,7 +52,7 @@ class Preferences(Singleton):
     GITHUB_URL_OPTION:   str = 'github_url_option'
 
     CLEAN_TODOIST_CACHE:            str = 'clean_todoist_cache'
-    CREATE_TASKS_IN_PARENT_PROJECT: str = 'create_tasks_in_parent_project'
+    TASKS_IN_PARENT_PROJECT:        str = 'tasks_in_parent_project'
     PARENT_PROJECT_NAME:            str = 'parent_project_name'
 
     MAIN_PREFERENCES: PREFERENCES_NAME_VALUES = {
@@ -69,7 +69,7 @@ class Preferences(Singleton):
     }
     TODOIST_PREFERENCES: PREFERENCES_NAME_VALUES = {
         TODOIST_API_TOKEN_KEY:          'PutYourTodoistKeyHere',
-        CREATE_TASKS_IN_PARENT_PROJECT: 'True',
+        TASKS_IN_PARENT_PROJECT: 'True',
         PARENT_PROJECT_NAME:            'Developer'
     }
 
@@ -191,12 +191,12 @@ class Preferences(Singleton):
         self.__saveConfig()
 
     @property
-    def createTasksInParentProject(self) -> bool:
-        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.CREATE_TASKS_IN_PARENT_PROJECT)
+    def tasksInParentProject(self) -> bool:
+        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.TASKS_IN_PARENT_PROJECT)
 
-    @createTasksInParentProject.setter
-    def createTasksInParentProject(self, newValue: bool):
-        self._config.set(Preferences.TODOIST_SECTION, Preferences.CREATE_TASKS_IN_PARENT_PROJECT, str(newValue))
+    @tasksInParentProject.setter
+    def tasksInParentProject(self, newValue: bool):
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.TASKS_IN_PARENT_PROJECT, str(newValue))
         self.__saveConfig()
 
     @property
@@ -211,6 +211,7 @@ class Preferences(Singleton):
             raise invalidPreference
 
         self._config.set(Preferences.TODOIST_SECTION, Preferences.PARENT_PROJECT_NAME, newValue)
+        self.__saveConfig()
 
     def _loadConfiguration(self):
         """
