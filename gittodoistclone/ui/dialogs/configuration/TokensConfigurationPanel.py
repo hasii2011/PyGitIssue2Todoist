@@ -30,8 +30,7 @@ class TokensConfigurationPanel(AbstractConfigurationPanel):
 
     def _setControlValues(self):
         """
-        Implement parent empty method
-        Set the default values on the controls.
+        Set the current configuration values on the controls.
         """
         self._txtTodoistContainer.textValue     = self._preferences.todoistApiToken
         self._txtGitHubNameContainer.textValue  = self._preferences.githubUserName

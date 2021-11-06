@@ -45,7 +45,7 @@ class TodoistConfigurationPanel(AbstractConfigurationPanel):
 
     def _setControlValues(self):
         """
-        Set the default values on the controls.
+        Set the current configuration values on the controls.
         """
         chkBoxValue: bool = self._preferences.tasksInParentProject
         self._tasksInParentOption.SetValue(chkBoxValue)

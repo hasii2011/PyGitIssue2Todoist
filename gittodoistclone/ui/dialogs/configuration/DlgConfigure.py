@@ -38,6 +38,7 @@ from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Preferences import Preferences
+from gittodoistclone.ui.dialogs.configuration.GitHubConfigurationPanel import GitHubConfigurationPanel
 from gittodoistclone.ui.dialogs.configuration.TodoistConfigurationPanel import TodoistConfigurationPanel
 from gittodoistclone.ui.dialogs.configuration.TokensConfigurationPanel import TokensConfigurationPanel
 
@@ -64,9 +65,11 @@ class DlgConfigure(SizedDialog):
 
         tokensConfigurationPanel:  TokensConfigurationPanel  = TokensConfigurationPanel(book)
         todoistConfigurationPanel: TodoistConfigurationPanel = TodoistConfigurationPanel(book)
+        gitHubConfigurationPanel:  GitHubConfigurationPanel = GitHubConfigurationPanel(book)
 
         book.AddPage(tokensConfigurationPanel,  'Tokens',  select=False)
-        book.AddPage(todoistConfigurationPanel, 'Todoist', select=True)
+        book.AddPage(todoistConfigurationPanel, 'Todoist', select=False)
+        book.AddPage(gitHubConfigurationPanel,  'GitHub',  select=True)
 
         # self._createGitHubURLOptionControl(pane)
         # self._createCacheOptionControl(pane)
