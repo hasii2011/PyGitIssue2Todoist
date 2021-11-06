@@ -2,7 +2,10 @@
 from wx import BK_DEFAULT
 from wx import BOTH
 from wx import CANCEL
-from wx import DEFAULT_DIALOG_STYLE
+from wx import CAPTION
+from wx import CLOSE_BOX
+
+from wx import DIALOG_EX_METAL
 from wx import EVT_BUTTON
 from wx import EVT_CLOSE
 from wx import ID_ANY
@@ -28,10 +31,14 @@ from gittodoistclone.ui.dialogs.configuration.TokensConfigurationPanel import To
 class DlgConfigure(SizedDialog):
 
     def __init__(self, parent: Window, wxID: int = wxNewIdRef()):
+        """
 
-        super().__init__(parent, wxID, 'Configure', style=DEFAULT_DIALOG_STYLE)
+        Args:
+            parent:   Parent window
+            wxID:   A control ID if caller wants one
+        """
 
-        # self._preferences: Preferences = Preferences()
+        super().__init__(parent, wxID, 'Configure', style=CAPTION | CLOSE_BOX | DIALOG_EX_METAL)
 
         self.Center(BOTH)
         pane: SizedPanel = self.GetContentsPane()
@@ -44,9 +51,9 @@ class DlgConfigure(SizedDialog):
         todoistConfigurationPanel: TodoistConfigurationPanel = TodoistConfigurationPanel(book)
         gitHubConfigurationPanel:  GitHubConfigurationPanel = GitHubConfigurationPanel(book)
 
-        book.AddPage(tokensConfigurationPanel,  'Tokens',  select=False)
+        book.AddPage(tokensConfigurationPanel,  'Tokens',  select=True)
         book.AddPage(todoistConfigurationPanel, 'Todoist', select=False)
-        book.AddPage(gitHubConfigurationPanel,  'GitHub',  select=True)
+        book.AddPage(gitHubConfigurationPanel,  'GitHub',  select=False)
 
         self.SetButtonSizer(self.CreateStdDialogButtonSizer(OK | CANCEL))
 
