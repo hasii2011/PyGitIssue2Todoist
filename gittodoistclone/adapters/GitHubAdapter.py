@@ -15,6 +15,8 @@ from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.adapters.GitHubConnectionError import GitHubConnectionError
+from gittodoistclone.adapters.GitHubGeneralError import GitHubGeneralError
 
 RepositoryNames = List[str]
 MilestoneTitles = List[str]
@@ -51,6 +53,8 @@ class GithubAdapter:
 
         repos: PaginatedList = self._github.search_repositories(query=query)
 
+        import urllib3.exceptions
+
         try:
             repoNames: RepositoryNames = []
             for repository in repos:
@@ -59,6 +63,15 @@ class GithubAdapter:
         except BadCredentialsException as e:
             self.logger.error(f'{e=}')
             raise AdapterAuthenticationError(e)
+        # Can't figure out what kind of outer error this;  Use simplest
+        except Exception as ge:
+            self.logger.error(f'{ge}')
+            reason = ge.args[0].reason
+            self.logger.error(f'{reason=}')
+            if isinstance(reason, urllib3.exceptions.NewConnectionError):
+                raise GitHubConnectionError(ge)
+
+            raise GitHubGeneralError(ge)
 
         return repoNames
 

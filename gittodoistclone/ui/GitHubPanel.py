@@ -41,6 +41,7 @@ from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
 from gittodoistclone.adapters.GitHubAdapter import GithubAdapter
 from gittodoistclone.adapters.GitHubAdapter import RepositoryNames
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.adapters.GitHubConnectionError import GitHubConnectionError
 
 from gittodoistclone.general.Preferences import Preferences
 
@@ -204,6 +205,8 @@ class GitHubPanel(BasePanel):
             self._repositorySelection.SetItems(repoNames)
         except AdapterAuthenticationError:
             self.__handleAuthenticationError()
+        except GitHubConnectionError:
+            self.__handleGitHubConnectionError()
 
     def __populateMilestones(self, repoName: str):
 
@@ -242,7 +245,7 @@ class GitHubPanel(BasePanel):
 
     def __handleAuthenticationError(self):
 
-        eDlg = GenericMessageDialog(self, 'Github authentication error', "", agwStyle=ICON_ERROR | OK)
+        eDlg = GenericMessageDialog(None, 'GitHub authentication error', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()
         eDlg.Destroy()
 
@@ -254,3 +257,9 @@ class GitHubPanel(BasePanel):
                 self._githubAdapter = GithubAdapter(userName=userName, authenticationToken=githubToken)
 
                 self.__populateRepositories()  # I hate recursion
+
+    def __handleGitHubConnectionError(self):
+
+        eDlg = GenericMessageDialog(None, 'GitHub connection error.  Try again later', "", agwStyle=ICON_ERROR | OK)
+        eDlg.ShowModal()
+        eDlg.Destroy()
