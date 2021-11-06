@@ -160,9 +160,11 @@ class ApplicationFrame(Frame):
 
         dlg: DlgConfigure = DlgConfigure(self)
         if dlg.ShowModal() == OK:
-            todoistToken: str = dlg.todoistToken
-            githubToken:  str = dlg.githubToken
-            self.logger.info(f'{todoistToken=} - {githubToken=}')
+            preferences: Preferences = Preferences()
+            todoistToken:   str = preferences.todoistApiToken
+            githubToken:    str = preferences.githubApiToken
+            gitHubUserName: str = preferences.githubUserName
+            self.logger.debug(f'{todoistToken=} - {githubToken=} {gitHubUserName=}')
 
     # noinspection PyUnusedLocal
     def _onAbout(self, event: CommandEvent):
