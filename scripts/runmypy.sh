@@ -10,7 +10,6 @@ function changeToProjectRoot {
 
 changeToProjectRoot
 
-# cd src > /dev/null 2>&1
 echo "current: `pwd`"
 
 mypy --config-file gittodoistclone/.mypi.ini --show-error-codes --no-color-output gittodoistclone tests
