@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+
 from typing import List
 from typing import Optional
 from typing import cast
+
+from dataclasses import dataclass
 
 from logging import Logger
 from logging import getLogger
@@ -66,12 +68,17 @@ class GithubAdapter:
         # Can't figure out what kind of outer error this;  Use simplest
         except Exception as ge:
             self.logger.error(f'{ge}')
-            reason = ge.args[0].reason
-            self.logger.error(f'{reason=}')
-            if isinstance(reason, urllib3.exceptions.NewConnectionError):
+            args = ge.args
+            if isinstance(args, tuple):
+                self.logger.error(f'GitHub error:  {ge}')
                 raise GitHubConnectionError(ge)
+            else:
+                reason = ge.args[0].reason
+                self.logger.error(f'{reason=}')
+                if isinstance(reason, urllib3.exceptions.NewConnectionError):
+                    raise GitHubConnectionError(ge)
 
-            raise GitHubGeneralError(ge)
+                raise GitHubGeneralError(ge)
 
         return repoNames
 

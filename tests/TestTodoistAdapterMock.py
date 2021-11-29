@@ -89,7 +89,7 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
         adapter.createTasks(info=ci, progressCb=self._sampleCallback)
 
         self.assertTrue(self._cbInvoked, 'Looks like callback was never invoked')
-        self.assertEqual(TestTodoistAdapterMock.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
+        self.assertEqual(TestTodoistAdapterBase.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
 
 
 def suite() -> TestSuite:

@@ -15,7 +15,7 @@ class TestTodoistAdapterBase(TestBase):
     Base class for the todoist adapter unit tests.  Capture common code here
     """
 
-    EXPECTED_NUMBER_OF_CALLBACKS: int = 6
+    EXPECTED_NUMBER_OF_CALLBACKS: int = 7
 
     baseClsLogger: Logger = cast(Logger, None)
 

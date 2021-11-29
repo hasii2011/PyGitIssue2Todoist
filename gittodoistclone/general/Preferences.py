@@ -72,7 +72,7 @@ class Preferences(Singleton):
         TODOIST_API_TOKEN_KEY:   'PutYourTodoistKeyHere',
         CLEAN_TODOIST_CACHE:     'False',
         TASKS_IN_PARENT_PROJECT: 'True',
-        PARENT_PROJECT_NAME:     'Developer'
+        PARENT_PROJECT_NAME:     'Development'
     }
 
     preferencesFileLocationAndName: str = cast(str, None)

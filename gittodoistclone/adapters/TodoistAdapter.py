@@ -82,19 +82,19 @@ class TodoistAdapter:
             info:  The cloned information
             progressCb: A progress callback to return status
         """
-
         self.logger.info(f'{progressCb.__name__} - {info=}')
-
-        # todoist: TodoistAPI = self._todoist
 
         progressCb('Starting')
 
-        projectId:         int  = self._determineProjectIdFromRepoName(info, progressCb)
-        milestoneTaskItem: Item = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
+        projectId: int = self._determineProjectIdFromRepoName(info, progressCb)
+        if self._preferences.tasksInParentProject is True:
+            self._createTasksInParentProject(info, progressCb, projectId)
+        else:
+            milestoneTaskItem = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
 
-        tasks: List[TaskInfo] = info.tasksToClone
-        for taskInfo in tasks:
-            self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
+            tasks: List[TaskInfo] = info.tasksToClone
+            for taskInfo in tasks:
+                self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         progressCb('Start Sync')
         response: Dict[str, str] = self._todoist.sync()
@@ -116,6 +116,28 @@ class TodoistAdapter:
                 raise taskCreationError
 
             progressCb('Done')
+
+    def _createTasksInParentProject(self, info, progressCb, projectId):
+        """
+
+        Args:
+            info:
+            progressCb:
+            projectId:
+        """
+
+        tasks:     List[TaskInfo] = info.tasksToClone
+
+        justRepoName:      str  = info.repositoryTask.split('/')[1]
+        repoTaskId:        int  = self._getIdForRepoName(parentId=projectId, repoName=justRepoName)
+        milestoneTaskItem: Item = self._getMileStoneTaskFromParentTask(projectId=projectId, repoTaskId=repoTaskId,
+                                                                       milestoneName=info.milestoneNameTask, progressCb=progressCb)
+
+        # milestoneTaskItem.move(parent_id=taskId)
+        milestoneId: int = milestoneTaskItem['id']
+        self._devTasks = self._findAllSubTasksOfMilestoneTask(projectId=projectId, milestoneId=milestoneId)
+        for taskInfo in tasks:
+            self._createTaskItem(taskInfo=taskInfo, projectId=milestoneId, parentMileStoneTaskItem=milestoneTaskItem)
 
     def addNoteToTask(self, itemId: int, noteContent: str) -> Note:
         """
@@ -150,20 +172,27 @@ class TodoistAdapter:
 
         return note
 
-    def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable):
+    def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable) -> int:
         """
+        Either gets a project ID from the repo name or one for the user specified project
 
         Args:
             info:  The cloned information
             progressCb: A progress callback to return status
-        """
 
+        Returns:  An appropriate parent ID for newly created tasks
+        """
         self._projectDictionary = self._getCurrentProjects()
 
-        justRepoName:       str = info.repositoryTask.split('/')[1]
-        projectId:          int = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
+        if self._preferences.tasksInParentProject is True:
+            projectName: ProjectName = ProjectName(self._preferences.parentProjectName)
+            projectId:   int         = self._getProjectId(projectName=projectName, projectDictionary=self._projectDictionary)
+            progressCb(f'Using parent project: {self._preferences.parentProjectName}')
+        else:
+            justRepoName: str = info.repositoryTask.split('/')[1]
+            projectId = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
 
-        progressCb(f'Added {justRepoName}')
+            progressCb(f'Added {justRepoName}')
 
         return projectId
 
@@ -252,19 +281,18 @@ class TodoistAdapter:
         """
 
         Args:
-            projectId:  The project ID from which we need its task lists
+            projectId:  The project ID from which we need its task lists or an id
+            of a parent task
 
         Returns: A tuple of two lists;  The first are the milestone tasks;  The second are
         potential child tasks whose parents are one of the milestone tasks
-
         """
 
         todoist:   TodoistAPI  = self._todoist
 
         projectsManager: ProjectsManager = todoist.projects
-        dataItems:       ProjectData = projectsManager.get_data(project_id=projectId)
+        dataItems: ProjectData = projectsManager.get_data(project_id=projectId)
 
-        # noinspection PyTypeChecker
         mileStoneTasks: Tasks = Tasks([])
         devTasks:       Tasks = Tasks([])
 
@@ -305,14 +333,14 @@ class TodoistAdapter:
         devTasks:      Tasks = self._devTasks
         for devTask in devTasks:
             taskItem: Item = cast(Item, devTask)
-            if taskItem['content'] == taskInfo.gitIssueName:
+            # Might have name embedded as URL
+            if taskInfo.gitIssueName in taskItem['content']:
                 foundTaskItem = taskItem
                 break
         #
         # To create subtasks first create in project then move them to the milestone task
         #
         if foundTaskItem is None:
-            # TODO: when user preference is set add URL as either description or note
             option: GitHubURLOption = self._preferences.githubURLOption
             if option == GitHubURLOption.DoNotAdd:
                 subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
@@ -328,3 +356,90 @@ class TodoistAdapter:
                 subTask = todoist.items.add(linkedTaskName, project_id=projectId)
 
             subTask.move(parent_id=parentMileStoneTaskItem['id'])
+
+    def _getIdForRepoName(self, parentId: int, repoName: str) -> int:
+
+        projectData: Dict = self._todoist.projects.get_data(parentId)
+        items:       List = projectData['items']
+
+        itemNames: Dict[str, int] = self._createItemNameMap(items=items)
+
+        # Either use the id of the one found or create it
+        if repoName in itemNames:
+            repoId: int = itemNames[repoName]
+        else:
+            todoist: TodoistAPI = self._todoist
+            repoTask: Item = todoist.items.add(repoName, project_id=parentId)
+            repoTask.move(project_id=parentId)
+            repoId = repoTask['id']
+
+        return repoId
+
+    def _createItemNameMap(self, items) -> Dict[str, int]:
+
+        itemMap: Dict[str, int] = {}
+        for item in items:
+            itemName: str = item['content']
+            itemId:   int = item['id']
+
+            itemMap[itemName] = itemId
+            self.logger.warning(f'TaskName: {item["content"]}')
+
+        return itemMap
+
+    def _getMileStoneTaskFromParentTask(self, projectId: int, repoTaskId: int, milestoneName: str, progressCb: Callable) -> Item:
+        """
+
+        Args:
+            projectId:      The id of the parent project
+            repoTaskId:     The id of the repo task under parent project
+            milestoneName:  The milestone name under the repo task;
+            progressCb:     The callback to report status to
+
+        Returns:  Either an existing milestone task or a newly created one
+        """
+        progressCb(f'Retrieving milestone task: {milestoneName}')
+        todoist: TodoistAPI = self._todoist
+
+        projectData: Dict = self._todoist.projects.get_data(project_id=projectId)
+        items:       List = projectData['items']
+
+        itemNames: Dict[str, int] = self._createItemNameMap(items=items)
+
+        if milestoneName in itemNames:
+            singleItemList: List = [x for x in items if x['content'] == milestoneName]
+            progressCb(f'Found existing milestone: {milestoneName}')
+            milestoneTaskItem: Item = singleItemList[0]
+        else:
+            milestoneTaskItem = todoist.items.add(milestoneName, project_id=projectId)
+            progressCb(f'Added milestone: {milestoneName}')
+            milestoneTaskItem.move(parent_id=repoTaskId)
+
+        return milestoneTaskItem
+
+    def _findAllSubTasksOfMilestoneTask(self, projectId: int, milestoneId: int) -> Tasks:
+        """
+
+        Args:
+            projectId:  The Id of the parent task where all GitHub tasks reside
+            milestoneId:    The milestone task Id
+
+        Returns:
+            The list of subtasks that are leaf tasks end of the projectId->repoTaskId->milestoneId task branch
+        """
+        subTasks: Tasks = Tasks([])
+
+        todoist:   TodoistAPI  = self._todoist
+
+        projectsManager: ProjectsManager = todoist.projects
+
+        dataItems: ProjectData = projectsManager.get_data(project_id=projectId)
+        items: List[Item] = dataItems['items']
+
+        for item in items:
+            parentId: int = item["parent_id"]
+            self.logger.debug(f'{item["content"]=}  {item["id"]=} {parentId=}')
+            if parentId == milestoneId:
+                subTasks.append(item)
+
+        return subTasks
