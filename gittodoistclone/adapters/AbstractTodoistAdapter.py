@@ -23,7 +23,6 @@ from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
-from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 Tasks             = NewType('Tasks', List[Item])
 ProjectName       = NewType('ProjectName', str)
@@ -36,7 +35,7 @@ class AbstractTodoistAdapter:
 
     def __init__(self, apiToken: str):
         """
-
+        Initialize common protected properties
         Args:
             apiToken: The login token for the todoist API
         """
@@ -73,7 +72,7 @@ class AbstractTodoistAdapter:
             itemId:   int = item['id']
 
             itemMap[itemName] = itemId
-            AbstractTodoistAdapter.clsLogger.warning(f'TaskName: {item["content"]}')
+            AbstractTodoistAdapter.clsLogger.debug(f'TaskName: {item["content"]}')
 
         return itemMap
 
@@ -197,32 +196,3 @@ class AbstractTodoistAdapter:
         project: Project = self._todoist.projects.add(name)
 
         return project
-
-    def _synchronize(self, progressCb):
-        """
-        Call todoist API to synchronize local results.  Does error handling
-
-        Args:
-            progressCb: The callback to which we report progress
-        """
-
-        progressCb('Start Sync')
-        response: Dict[str, str] = self._todoist.sync()
-        if "error_tag" in response:
-            raise AdapterAuthenticationError(response)
-        else:
-            progressCb('Committing')
-            try:
-                self._todoist.commit()
-            except SyncError as e:
-                eDict = e.args[1]
-                eMsg: str = eDict['error']
-                eCode: int = eDict['error_code']
-
-                taskCreationError: TaskCreationError = TaskCreationError()
-                taskCreationError.message = eMsg
-                taskCreationError.errorCode = eCode
-
-                raise taskCreationError
-
-        progressCb('Done')

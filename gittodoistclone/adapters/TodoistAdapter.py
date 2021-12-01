@@ -22,6 +22,7 @@ from todoist.models import Item
 from todoist.models import Note
 from todoist.models import Project
 
+from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectName
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
@@ -30,7 +31,6 @@ from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
 from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
-from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
@@ -44,7 +44,6 @@ class ProjectTasks:
 
 
 Items            = NewType('Items', Dict[str, str])
-# Project          = NewType('Project', Dict[str, str])
 ProjectNotes     = NewType('ProjectNotes', List[str])
 Sections         = NewType('Sections', List[str])
 
@@ -53,15 +52,18 @@ ProjectDataTypes = NewType('ProjectDataTypes', Union[Items, Project, ProjectNote
 ProjectData = NewType('ProjectData', Dict[str, ProjectDataTypes])
 
 
-class TodoistAdapter:
+class TodoistAdapter(AbstractTodoistAdapter):
 
     def __init__(self, apiToken: str):
 
+        super().__init__(apiToken=apiToken)
+
         self.logger:             Logger            = getLogger(__name__)
-        self._todoist:           TodoistAPI        = TodoistAPI(apiToken)
-        self._preferences:       Preferences       = Preferences()
+        # self._todoist:           TodoistAPI        = TodoistAPI(apiToken)
+        # self._preferences:       Preferences       = Preferences()
+        # self._devTasks:          Tasks             = Tasks([])
+
         self._projectDictionary: ProjectDictionary = ProjectDictionary({})
-        self._devTasks:          Tasks             = Tasks([])
 
     def createTasks(self, info: CloneInformation, progressCb: Callable):
         """
@@ -246,28 +248,6 @@ class TodoistAdapter:
         project: Project = self._todoist.projects.add(name)
 
         return project
-
-    def _getCurrentProjects(self) -> ProjectDictionary:
-
-        todoist: TodoistAPI = self._todoist
-        todoist.sync()
-
-        projects: List[Project] = todoist.state['projects']
-
-        projectDictionary: ProjectDictionary = ProjectDictionary({})
-
-        for aProject in projects:
-
-            project: Project = cast(Project, aProject)
-
-            projectName: ProjectName = project["name"]
-            projectId:   int = project['id']
-
-            self.logger.debug(f'{projectName:12} - {projectId=}')
-
-            projectDictionary[projectName] = project
-
-        return projectDictionary
 
     def _getProjectTaskItems(self, projectId: int) -> ProjectTasks:
         """
