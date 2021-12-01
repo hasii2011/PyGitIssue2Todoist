@@ -75,15 +75,12 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         progressCb('Starting')
 
-        projectId: int = self._determineProjectIdFromRepoName(info, progressCb)
-        if self._preferences.tasksInParentProject is True:
-            self._createTasksInParentProject(info, progressCb, projectId)
-        else:
-            milestoneTaskItem = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
+        projectId:         int  = self._determineProjectIdFromRepoName(info, progressCb)
+        milestoneTaskItem: Item = self._getMilestoneTaskItem(projectId=projectId, milestoneNameTask=info.milestoneNameTask, progressCb=progressCb)
 
-            tasks: List[TaskInfo] = info.tasksToClone
-            for taskInfo in tasks:
-                self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
+        tasks: List[TaskInfo] = info.tasksToClone
+        for taskInfo in tasks:
+            self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         self._synchronize(progressCb)
 
