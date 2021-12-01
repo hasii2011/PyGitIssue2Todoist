@@ -22,29 +22,17 @@ from todoist.models import Item
 from todoist.models import Note
 from todoist.models import Project
 
+from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectDictionary
+from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectName
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
+from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
+from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
+
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
-
-
-@dataclass
-class TaskInfo:
-    gitIssueName: str = ''
-    gitIssueURL:  str = ''
-
-
-@dataclass
-class CloneInformation:
-    repositoryTask:    str = ''
-    milestoneNameTask: str = ''
-    tasksToClone:      List[TaskInfo] = field(default_factory=list)
-
-
-ProjectName       = NewType('ProjectName', str)
-ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
-Tasks             = NewType('Tasks', List[Item])
 
 
 @dataclass
@@ -96,6 +84,10 @@ class TodoistAdapter:
             for taskInfo in tasks:
                 self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
+        self._synchronize(progressCb)
+
+    def _synchronize(self, progressCb):
+
         progressCb('Start Sync')
         response: Dict[str, str] = self._todoist.sync()
         if "error_tag" in response:
@@ -106,16 +98,16 @@ class TodoistAdapter:
                 self._todoist.commit()
             except SyncError as e:
                 eDict = e.args[1]
-                eMsg: str  = eDict['error']
+                eMsg: str = eDict['error']
                 eCode: int = eDict['error_code']
 
                 taskCreationError: TaskCreationError = TaskCreationError()
-                taskCreationError.message  = eMsg
+                taskCreationError.message = eMsg
                 taskCreationError.errorCode = eCode
 
                 raise taskCreationError
 
-            progressCb('Done')
+        progressCb('Done')
 
     def _createTasksInParentProject(self, info, progressCb, projectId):
         """

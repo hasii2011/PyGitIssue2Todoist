@@ -34,11 +34,13 @@ from wx import MilliSleep as wxMilliSleep
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
 from gittodoistclone.ErrorHandler import ErrorHandler
+from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 from gittodoistclone.adapters.TodoistAdapter import TaskInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
+from gittodoistclone.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 
 from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
@@ -66,8 +68,12 @@ class TodoistPanel(BasePanel):
 
         self._cloneInformation: CloneInformation = cast(CloneInformation, None)
 
-        self._apiToken:        str            = Preferences().todoistApiToken
-        self._todoistAdapter:  TodoistAdapter = TodoistAdapter(self._apiToken)
+        self._preferences: Preferences = Preferences()
+        self._apiToken:        str            = self._preferences.todoistApiToken
+        if self._preferences.tasksInParentProject is True:
+            self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
+        else:
+            self._todoistAdapter = TodoistAdapter(self._apiToken)
 
     @property
     def tasksToClone(self) -> CloneInformation:
@@ -133,7 +139,7 @@ class TodoistPanel(BasePanel):
 
         ci: CloneInformation = self._cloneInformation
 
-        adapter: TodoistAdapter = self._todoistAdapter
+        adapter: AbstractTodoistAdapter = self._todoistAdapter
 
         try:
             adapter.createTasks(info=ci, progressCb=self.__adapterCallback)
