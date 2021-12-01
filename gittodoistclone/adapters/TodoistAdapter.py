@@ -32,7 +32,6 @@ from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
-from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
 
 
 @dataclass
@@ -87,29 +86,6 @@ class TodoistAdapter(AbstractTodoistAdapter):
                 self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         self._synchronize(progressCb)
-
-    def _synchronize(self, progressCb):
-
-        progressCb('Start Sync')
-        response: Dict[str, str] = self._todoist.sync()
-        if "error_tag" in response:
-            raise AdapterAuthenticationError(response)
-        else:
-            progressCb('Committing')
-            try:
-                self._todoist.commit()
-            except SyncError as e:
-                eDict = e.args[1]
-                eMsg: str = eDict['error']
-                eCode: int = eDict['error_code']
-
-                taskCreationError: TaskCreationError = TaskCreationError()
-                taskCreationError.message = eMsg
-                taskCreationError.errorCode = eCode
-
-                raise taskCreationError
-
-        progressCb('Done')
 
     def _createTasksInParentProject(self, info, progressCb, projectId):
         """
