@@ -30,7 +30,7 @@ from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
 from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
 
-from gittodoistclone.general.GitHubURLOption import GitHubURLOption
+# from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 
 
@@ -238,47 +238,47 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         return projectTasks
 
-    def _createTaskItem(self, taskInfo: TaskInfo, projectId: int, parentMileStoneTaskItem: Item):
-        """
-        Create a new task if it does not already exist in Todoist
-        Assumes self._devTasks has all the project's tasks
-
-        Args:
-            taskInfo:       The task (with information) to potentially create
-            projectId:      Project id of potential task
-            parentMileStoneTaskItem: parent item if task needs to be created
-        """
-        assert self._devTasks is not None, 'Internal error should at least be empty'
-
-        todoist: TodoistAPI = self._todoist
-
-        foundTaskItem: Item = cast(Item, None)
-        devTasks:      Tasks = self._devTasks
-        for devTask in devTasks:
-            taskItem: Item = cast(Item, devTask)
-            # Might have name embedded as URL
-            if taskInfo.gitIssueName in taskItem['content']:
-                foundTaskItem = taskItem
-                break
-        #
-        # To create subtasks first create in project then move them to the milestone task
-        #
-        if foundTaskItem is None:
-            option: GitHubURLOption = self._preferences.githubURLOption
-            if option == GitHubURLOption.DoNotAdd:
-                subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
-            elif option == GitHubURLOption.AddAsDescription:
-                subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
-            elif option == GitHubURLOption.AddAsComment:
-                subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
-                taskId: int = subTask["id"]
-                note: Note = self.addNoteToTask(itemId=taskId, noteContent=taskInfo.gitIssueURL)
-                self.logger.info(f'Note added: {note}')
-            else:   # Add as hyper link
-                linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
-                subTask = todoist.items.add(linkedTaskName, project_id=projectId)
-
-            subTask.move(parent_id=parentMileStoneTaskItem['id'])
+    # def _createTaskItem(self, taskInfo: TaskInfo, projectId: int, parentMileStoneTaskItem: Item):
+    #     """
+    #     Create a new task if it does not already exist in Todoist
+    #     Assumes self._devTasks has all the project's tasks
+    #
+    #     Args:
+    #         taskInfo:       The task (with information) to potentially create
+    #         projectId:      Project id of potential task
+    #         parentMileStoneTaskItem: parent item if task needs to be created
+    #     """
+    #     assert self._devTasks is not None, 'Internal error should at least be empty'
+    #
+    #     todoist: TodoistAPI = self._todoist
+    #
+    #     foundTaskItem: Item = cast(Item, None)
+    #     devTasks:      Tasks = self._devTasks
+    #     for devTask in devTasks:
+    #         taskItem: Item = cast(Item, devTask)
+    #         # Might have name embedded as URL
+    #         if taskInfo.gitIssueName in taskItem['content']:
+    #             foundTaskItem = taskItem
+    #             break
+    #     #
+    #     # To create subtasks first create in project then move them to the milestone task
+    #     #
+    #     if foundTaskItem is None:
+    #         option: GitHubURLOption = self._preferences.githubURLOption
+    #         if option == GitHubURLOption.DoNotAdd:
+    #             subTask: Item = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
+    #         elif option == GitHubURLOption.AddAsDescription:
+    #             subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId, description=taskInfo.gitIssueURL)
+    #         elif option == GitHubURLOption.AddAsComment:
+    #             subTask = todoist.items.add(taskInfo.gitIssueName, project_id=projectId)
+    #             taskId: int = subTask["id"]
+    #             note: Note = self.addNoteToTask(itemId=taskId, noteContent=taskInfo.gitIssueURL)
+    #             self.logger.info(f'Note added: {note}')
+    #         else:   # Add as hyper link
+    #             linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
+    #             subTask = todoist.items.add(linkedTaskName, project_id=projectId)
+    #
+    #         subTask.move(parent_id=parentMileStoneTaskItem['id'])
 
     def _getIdForRepoName(self, parentId: int, repoName: str) -> int:
 
@@ -297,15 +297,3 @@ class TodoistAdapter(AbstractTodoistAdapter):
             repoId = repoTask['id']
 
         return repoId
-
-    def _createItemNameMap(self, items) -> Dict[str, int]:
-
-        itemMap: Dict[str, int] = {}
-        for item in items:
-            itemName: str = item['content']
-            itemId:   int = item['id']
-
-            itemMap[itemName] = itemId
-            self.logger.warning(f'TaskName: {item["content"]}')
-
-        return itemMap
