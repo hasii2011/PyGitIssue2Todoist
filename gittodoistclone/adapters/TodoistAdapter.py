@@ -12,26 +12,21 @@ from dataclasses import field
 from logging import Logger
 from logging import getLogger
 
-from todoist.api import SyncError
-
 from todoist import TodoistAPI
 
 from todoist.managers.projects import ProjectsManager
 
 from todoist.models import Item
-from todoist.models import Note
 from todoist.models import Project
 
 from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectName
-from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
+
+
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
 from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
-
-# from gittodoistclone.general.GitHubURLOption import GitHubURLOption
-from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
 
 
 @dataclass
@@ -83,39 +78,6 @@ class TodoistAdapter(AbstractTodoistAdapter):
             self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         self._synchronize(progressCb)
-
-    def addNoteToTask(self, itemId: int, noteContent: str) -> Note:
-        """
-        Currently only support creating text notes
-
-        Args:
-            itemId:         The id of the task to add this note to
-            noteContent:    The content of the note
-
-        Returns:  The created Note time
-        """
-
-        todoist: TodoistAPI = self._todoist
-        try:
-            note: Note = todoist.notes.add(itemId, noteContent)
-            # note: Note = todoist.notes.add(9999, noteContent)
-
-            response: Dict[str, str] = todoist.commit()
-
-            if "error_tag" in response:
-                raise AdapterAuthenticationError(response)
-        except SyncError as e:
-            eDict = e.args[1]
-            eMsg: str = eDict['error']
-            eCode: int = eDict['error_code']
-
-            noteCreationError: NoteCreationError = NoteCreationError()
-            noteCreationError.message   = eMsg
-            noteCreationError.errorCode = eCode
-
-            raise noteCreationError
-
-        return note
 
     def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable) -> int:
         """
