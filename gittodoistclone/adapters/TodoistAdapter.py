@@ -81,7 +81,8 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
     def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable) -> int:
         """
-        Either gets a project ID from the repo name or one for the user specified project
+        Implement empty method from parent;
+        Gets a project ID from the repo name
 
         Args:
             info:  The cloned information
@@ -91,15 +92,10 @@ class TodoistAdapter(AbstractTodoistAdapter):
         """
         self._projectDictionary = self._getCurrentProjects()
 
-        if self._preferences.tasksInParentProject is True:
-            projectName: ProjectName = ProjectName(self._preferences.parentProjectName)
-            projectId:   int         = self._getProjectId(projectName=projectName, projectDictionary=self._projectDictionary)
-            progressCb(f'Using parent project: {self._preferences.parentProjectName}')
-        else:
-            justRepoName: str = info.repositoryTask.split('/')[1]
-            projectId = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
+        justRepoName: str = info.repositoryTask.split('/')[1]
+        projectId:    int = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
 
-            progressCb(f'Added {justRepoName}')
+        progressCb(f'Added {justRepoName}')
 
         return projectId
 
