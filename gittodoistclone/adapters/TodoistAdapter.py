@@ -169,21 +169,3 @@ class TodoistAdapter(AbstractTodoistAdapter):
         projectTasks: ProjectTasks = ProjectTasks(mileStoneTasks=mileStoneTasks, devTasks=devTasks)
 
         return projectTasks
-
-    def _getIdForRepoName(self, parentId: int, repoName: str) -> int:
-
-        projectData: Dict = self._todoist.projects.get_data(parentId)
-        items:       List = projectData['items']
-
-        itemNames: Dict[str, int] = self._createItemNameMap(items=items)
-
-        # Either use the id of the one found or create it
-        if repoName in itemNames:
-            repoId: int = itemNames[repoName]
-        else:
-            todoist: TodoistAPI = self._todoist
-            repoTask: Item = todoist.items.add(repoName, project_id=parentId)
-            repoTask.move(project_id=parentId)
-            repoId = repoTask['id']
-
-        return repoId
