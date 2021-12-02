@@ -175,6 +175,7 @@ class GitHubPanel(BasePanel):
         milestoneTitle: str = event.GetString()
         self.logger.info(f'{repoName=} - {milestoneTitle=}')
 
+        self.clearIssues()
         self.__populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
 
     # noinspection PyUnusedLocal
