@@ -103,26 +103,6 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         return projectId
 
-    def _getProjectId(self, projectName: ProjectName, projectDictionary: ProjectDictionary) -> int:
-        """
-        Either returns an existing project ID or creates a project and
-        Args:
-            projectName:        The project name we are searching for
-            projectDictionary:  A pre-built dictionary
-
-        Returns:
-            A todoist project id
-        """
-
-        if projectName in projectDictionary:
-            project: Project = projectDictionary[projectName]
-        else:
-            project = self._createProject(projectName)
-
-        projectId: int = project['id']
-
-        return projectId
-
     def _getMilestoneTaskItem(self, projectId: int, milestoneNameTask: str, progressCb: Callable) -> Item:
         """
         Has the side effect that it sets self._devTasks
