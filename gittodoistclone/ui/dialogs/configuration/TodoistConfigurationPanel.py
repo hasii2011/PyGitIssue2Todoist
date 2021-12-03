@@ -39,18 +39,18 @@ class TodoistConfigurationPanel(AbstractConfigurationPanel):
         self._textId = wxNewIdRef()
 
         self._cacheOptionControl         = CheckBox(parent=self, label="Allow Todoist Cache Cleanup", id=ID_ANY)
-        self._tasksInParentOption        = CheckBox(parent=self, label="Tasks in Parent Project",     id=ID_ANY)
-        self._parentProjectNameContainer = TextContainer(parent=self, labelText='Parent Project Name:',
+        self._tasksInParentOption        = CheckBox(parent=self, label="Single Todoist Project",     id=ID_ANY)
+        self._parentProjectNameContainer = TextContainer(parent=self, labelText='Todoist Project Name:',
                                                          valueChangedCallback=self.__onParentProjectNameChange)
 
     def _setControlValues(self):
         """
         Set the current configuration values on the controls.
         """
-        chkBoxValue: bool = self._preferences.tasksInParentProject
+        chkBoxValue: bool = self._preferences.singleTodoistProject
         self._tasksInParentOption.SetValue(chkBoxValue)
 
-        self._parentProjectNameContainer.textValue = self._preferences.parentProjectName
+        self._parentProjectNameContainer.textValue = self._preferences.todoistProjectName
 
         if chkBoxValue is False:
             self._parentProjectNameContainer.textControlEnabled(False)
@@ -61,15 +61,15 @@ class TodoistConfigurationPanel(AbstractConfigurationPanel):
             self._cacheOptionControl.SetValue(False)
 
     def __onParentProjectNameChange(self, newValue: str):
-        self._preferences.parentProjectName = newValue
+        self._preferences.todoistProjectName = newValue
 
     def __onTasksInParentProject(self, event: CommandEvent):
 
         if event.IsChecked() is True:
-            self._preferences.tasksInParentProject = True
+            self._preferences.singleTodoistProject = True
             self._parentProjectNameContainer.textControlEnabled(True)
         else:
-            self._preferences.tasksInParentProject = False
+            self._preferences.singleTodoistProject = False
             self._parentProjectNameContainer.textControlEnabled(False)
 
     def __onCacheOption(self, event: CommandEvent):

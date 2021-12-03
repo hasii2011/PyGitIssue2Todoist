@@ -51,9 +51,9 @@ class Preferences(Singleton):
 
     GITHUB_URL_OPTION:   str = 'github_url_option'
 
-    CLEAN_TODOIST_CACHE:            str = 'clean_todoist_cache'
-    TASKS_IN_PARENT_PROJECT:        str = 'tasks_in_parent_project'
-    PARENT_PROJECT_NAME:            str = 'parent_project_name'
+    CLEAN_TODOIST_CACHE:    str = 'clean_todoist_cache'
+    SINGLE_TODOIST_PROJECT: str = 'single_todoist_project'
+    TODOIST_PROJECT_NAME:   str = 'todoist_project_name'
 
     MAIN_PREFERENCES: PREFERENCES_NAME_VALUES = {
         STARTUP_WIDTH:             str(DEFAULT_APP_WIDTH),
@@ -69,10 +69,10 @@ class Preferences(Singleton):
     }
 
     TODOIST_PREFERENCES: PREFERENCES_NAME_VALUES = {
-        TODOIST_API_TOKEN_KEY:   'PutYourTodoistKeyHere',
-        CLEAN_TODOIST_CACHE:     'False',
-        TASKS_IN_PARENT_PROJECT: 'True',
-        PARENT_PROJECT_NAME:     'Development'
+        TODOIST_API_TOKEN_KEY:  'PutYourTodoistKeyHere',
+        CLEAN_TODOIST_CACHE:    'True',
+        SINGLE_TODOIST_PROJECT: 'True',
+        TODOIST_PROJECT_NAME:   'Development'
     }
 
     preferencesFileLocationAndName: str = cast(str, None)
@@ -193,26 +193,26 @@ class Preferences(Singleton):
         self.__saveConfig()
 
     @property
-    def tasksInParentProject(self) -> bool:
-        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.TASKS_IN_PARENT_PROJECT)
+    def singleTodoistProject(self) -> bool:
+        return self._config.getboolean(Preferences.TODOIST_SECTION, Preferences.SINGLE_TODOIST_PROJECT)
 
-    @tasksInParentProject.setter
-    def tasksInParentProject(self, newValue: bool):
-        self._config.set(Preferences.TODOIST_SECTION, Preferences.TASKS_IN_PARENT_PROJECT, str(newValue))
+    @singleTodoistProject.setter
+    def singleTodoistProject(self, newValue: bool):
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.SINGLE_TODOIST_PROJECT, str(newValue))
         self.__saveConfig()
 
     @property
-    def parentProjectName(self) -> str:
-        return self._config.get(Preferences.TODOIST_SECTION, Preferences.PARENT_PROJECT_NAME)
+    def todoistProjectName(self) -> str:
+        return self._config.get(Preferences.TODOIST_SECTION, Preferences.TODOIST_PROJECT_NAME)
 
-    @parentProjectName.setter
-    def parentProjectName(self, newValue: str):
+    @todoistProjectName.setter
+    def todoistProjectName(self, newValue: str):
         if newValue is None or newValue == '':
             invalidPreference: InvalidPreference = InvalidPreference()
             invalidPreference.preferenceName = 'parentProjectName'
             raise invalidPreference
 
-        self._config.set(Preferences.TODOIST_SECTION, Preferences.PARENT_PROJECT_NAME, newValue)
+        self._config.set(Preferences.TODOIST_SECTION, Preferences.TODOIST_PROJECT_NAME, newValue)
         self.__saveConfig()
 
     def _loadConfiguration(self):

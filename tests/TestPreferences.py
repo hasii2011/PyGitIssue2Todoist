@@ -53,24 +53,21 @@ class TestPreferences(TestBase):
 
         self.assertEqual('77777', preferences.todoistApiToken, 'Uh oh, token did not change')
 
-    def testCreateTasksInParentProjectFalse(self):
+    def testSingleTodoistProjectFalse(self):
         preferences: Preferences = Preferences()
-        preferences.tasksInParentProject = False
-        self.assertFalse(preferences.tasksInParentProject, "Did not change to 'False'")
+        preferences.singleTodoistProject = False
+        self.assertFalse(preferences.singleTodoistProject, "Did not change to 'False'")
 
-    def testCreateTasksInParentProjectTrue(self):
+    def testSingleTodoistProjectTrue(self):
         preferences: Preferences = Preferences()
-        preferences.tasksInParentProject = True
-        self.assertTrue(preferences.tasksInParentProject, "Did not change to 'True'")
+        preferences.singleTodoistProject = True
+        self.assertTrue(preferences.singleTodoistProject, "Did not change to 'True'")
 
-    def testParentProjectName(self):
-        pass
+    def testTodoistProjectNameEmpty(self):
+        self.assertRaises(InvalidPreference, lambda: self.__setTodoistProjectNameToEmpty())
 
-    def testParentProjectNameEmpty(self):
-        self.assertRaises(InvalidPreference, lambda: self.__setParentProjectNameToEmpty())
-
-    def testParentProjectNameNone(self):
-        self.assertRaises(InvalidPreference, lambda: self.__setParentProjectNameToNone())
+    def testTodoistProjectNameNone(self):
+        self.assertRaises(InvalidPreference, lambda: self.__setTodoistProjectNameToNone())
 
     def _backupPreferences(self):
 
@@ -98,13 +95,13 @@ class TestPreferences(TestBase):
         else:
             osRemove(target)
 
-    def __setParentProjectNameToNone(self):
+    def __setTodoistProjectNameToNone(self):
         preferences: Preferences = Preferences()
-        preferences.parentProjectName = None
+        preferences.todoistProjectName = None
 
-    def __setParentProjectNameToEmpty(self):
+    def __setTodoistProjectNameToEmpty(self):
         preferences: Preferences = Preferences()
-        preferences.parentProjectName = None
+        preferences.todoistProjectName = None
 
 
 def suite() -> TestSuite:

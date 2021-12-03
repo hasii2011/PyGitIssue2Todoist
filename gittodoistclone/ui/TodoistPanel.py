@@ -70,7 +70,7 @@ class TodoistPanel(BasePanel):
 
         self._preferences: Preferences = Preferences()
         self._apiToken:        str            = self._preferences.todoistApiToken
-        if self._preferences.tasksInParentProject is True:
+        if self._preferences.singleTodoistProject is True:
             self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
         else:
             self._todoistAdapter = TodoistAdapter(self._apiToken)

@@ -62,10 +62,10 @@ class TodoistAdapterSingleProject(AbstractTodoistAdapter):
         """
         self._projectDictionary = self._getCurrentProjects()
 
-        projectName: ProjectName = ProjectName(self._preferences.parentProjectName)
+        projectName: ProjectName = ProjectName(self._preferences.todoistProjectName)
         projectId:   int         = self._getProjectId(projectName=projectName, projectDictionary=self._projectDictionary)
 
-        progressCb(f'Using parent project: {self._preferences.parentProjectName}')
+        progressCb(f'Using parent project: {self._preferences.todoistProjectName}')
 
         return projectId
 
