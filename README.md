@@ -1,5 +1,7 @@
 <img width="34" height="17" src="./gittodoistclone/resources/gplv3-with-text-136x68.png"/> 
-
+<a href="https://gitmoji.dev">
+  <img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji">
+</a>
 [![Build Status](https://travis-ci.com/hasii2011/gittodoistclone.svg?branch=master)](https://travis-ci.com/hasii2011/gittodoistclone)
 
 # Introduction
