@@ -2,7 +2,8 @@
 
 function changeToProjectRoot {
 
-    export areHere=`basename ${PWD}`
+    areHere=$(basename "${PWD}")
+    export areHere
     if [[ ${areHere} = "scripts" ]]; then
         cd ..
     fi
@@ -12,14 +13,13 @@ changeToProjectRoot
 
 
 
-python3 -m tests.TestAll $*
+python3 -m tests.TestAll
 status=$?
 
 ./scripts/cleanup.sh
 
-cd -  > /dev/null 2>&1
+cd -  > /dev/null 2>&1 || ! echo "No such directory"
 
 
 echo "Exit with status: ${status}"
 exit ${status}
-
