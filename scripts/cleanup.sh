@@ -12,5 +12,5 @@ changeToProjectRoot
 
 rm -rf dist build
 
-rm -rf UNKNOWN.egg-info
+rm -rf PyGitIssueClone.egg-info
 rm -rf .eggs
