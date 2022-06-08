@@ -17,6 +17,8 @@ DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingC
 OPTIONS = {}
 
 setup(
+    name='PyGitIssueClone',
+    version='0.98.1',
     app=APP,
     data_files=DATA_FILES,
     packages=['gittodoistclone',
