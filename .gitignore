@@ -4,9 +4,9 @@ __pycache__/
 /html/
 /build/
 /dist/
-/pyenv-venv-3.9.0/
+/pyenv-3.10.6/
 /pyenv-venv-3.9.1/
-/pyenv-venv-pyut-copy-3.9.0/
 PyGitIssueClone.egg-info
 /.eggs/
 .envrc
+.python-version

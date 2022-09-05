@@ -24,6 +24,7 @@ setup(
     packages=['gittodoistclone',
               'gittodoistclone.general',
               'gittodoistclone.general.exceptions',
+              'gittodoistclone.resources',
               'gittodoistclone.ui',
               'gittodoistclone.ui.dialogs'
               ],

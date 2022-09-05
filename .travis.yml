@@ -1,7 +1,8 @@
 
-# os: osx
+os: osx
 
-# osx_image: xcode11.2
+osx_image: xcode13.4
+
 notifications:
   email:
     recipients:
@@ -9,24 +10,17 @@ notifications:
     on_success: change # default: change
     on_failure: always # default: always
 
-language: python
-
 cache: pip
 
-services:
-  - xvfb
-
-python:
-  - "3.9.1"
+before_install:
+  - brew list
+  - brew upgrade python
+  - curl https://bootstrap.pypa.io/get-pip.py | python3
 
 # command to install dependencies
 install:
-  # pip install -r requirements.txt
-  - pip3 install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 wxPython
-  # - pip install wxPython
-  - pip3 install PyGithub
-  - pip3 install todoist-python
-  - pip3 install html-testRunner
+  - python3 --version
+  - pip install -r requirements.txt
 
 
 # command to run tests
