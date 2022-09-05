@@ -18,7 +18,7 @@ OPTIONS = {}
 
 setup(
     name='PyGitIssueClone',
-    version='0.98.1',
+    version='0.99.0',
     app=APP,
     data_files=DATA_FILES,
     packages=['gittodoistclone',
