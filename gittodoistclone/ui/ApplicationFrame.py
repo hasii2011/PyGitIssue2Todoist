@@ -145,7 +145,7 @@ class ApplicationFrame(Frame):
         cloneInformation.milestoneNameTask = event.milestoneName
         cloneInformation.tasksToClone      = adapterTaskInfo
 
-        self.logger.warning(f'{event.selectedSimpleGitIssues=}')
+        self.logger.debug(f'{event.selectedSimpleGitIssues=}')
 
         self._todoistPanel.tasksToClone = cloneInformation
 

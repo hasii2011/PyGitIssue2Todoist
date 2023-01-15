@@ -15,9 +15,9 @@ from gittodoistclone.general.Version import Version
 from gittodoistclone.ui.ClonerApplication import ClonerApplication
 
 
-class PyGitIssueClone:
+class PyGitIssue2Todoist:
 
-    MADE_UP_PRETTY_MAIN_NAME:     str = "Python Github Issue Clone"
+    MADE_UP_PRETTY_MAIN_NAME:     str = "Python Github Issue 2 Todoist"
 
     JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
 
@@ -45,7 +45,7 @@ class PyGitIssueClone:
         import platform
 
         print("Versions: ")
-        print(f"PyGitIssueClone:  {Version().applicationVersion}")
+        print(f"PyGitIssue2Todoist:  {Version().applicationVersion}")
         print(f'Platform: {platform.platform()}')
         print(f'    System:       {platform.system()}')
         print(f'    Version:      {platform.version()}')
@@ -54,9 +54,15 @@ class PyGitIssueClone:
         print(f'WxPython: {wx.__version__}')
         print(f'Python:   {sys.version.split(" ")[0]}')
 
+        # noinspection PyUnreachableCode
+        if __debug__:
+            print('Assertions are turned on')
+        else:
+            print('Assertions are turned off')
+
     def _setupSystemLogging(self):
 
-        configFilePath: str = Resources.retrieveResourcePath(PyGitIssueClone.JSON_LOGGING_CONFIG_FILENAME)
+        configFilePath: str = Resources.retrieveResourcePath(PyGitIssue2Todoist.JSON_LOGGING_CONFIG_FILENAME)
 
         with open(configFilePath, 'r') as loggingConfigurationFile:
             configurationDictionary = jsonLoad(loggingConfigurationFile)
@@ -68,8 +74,8 @@ class PyGitIssueClone:
 
 if __name__ == "__main__":
 
-    print(f"Starting {PyGitIssueClone.MADE_UP_PRETTY_MAIN_NAME}")
+    print(f"Starting {PyGitIssue2Todoist.MADE_UP_PRETTY_MAIN_NAME}")
 
-    issueCloner: PyGitIssueClone = PyGitIssueClone()
+    issueCloner: PyGitIssue2Todoist = PyGitIssue2Todoist()
     issueCloner.displayVersionInformation()
     issueCloner.startApp()

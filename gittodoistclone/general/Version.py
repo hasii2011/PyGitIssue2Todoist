@@ -31,7 +31,7 @@ class Version(Singleton):
     # noinspection SpellCheckingInspection
     PACKAGE_VERSIONS_FILENAME: str = 'packageversions.txt'
 
-    __appName__: str = 'PyGitIssueClone'
+    __appName__: str = 'PyGitIssue2Todoist'
     __version__: str = '0.98.0'
 
     __longVersion__: str = "Humberto's Beta Version"

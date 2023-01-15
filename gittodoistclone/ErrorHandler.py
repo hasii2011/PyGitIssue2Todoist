@@ -115,7 +115,7 @@ class ErrorHandler:
         rmtree(directoryToDelete)
 
         msgDlg: MessageDialog = MessageDialog(parent=None,
-                                              message='Now quit and restart PyGitIssueClone',
+                                              message='Now quit and restart PyGitIssue2Todoist',
                                               caption='Restart',
                                               style=OK | ICON_INFORMATION)
 

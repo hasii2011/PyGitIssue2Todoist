@@ -8,7 +8,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['PyGitIssueClone.py']
+APP = ['PyGitIssue2Todoist.py']
 DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingConfiguration.json']),
               ('gittodoistclone/resources', ['gittodoistclone/resources/play.png']),
               ('gittodoistclone/resources', ['gittodoistclone/resources/version.txt']),
@@ -18,7 +18,7 @@ DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingC
 OPTIONS = {}
 
 setup(
-    name='PyGitIssueClone',
+    name='PyGitIssue2Todoist',
     version='1.0.0',
     app=APP,
     data_files=DATA_FILES,
@@ -35,7 +35,7 @@ setup(
     url='https://github.com/hasii2011/gittodoistclone',
     author='Humberto A. Sanchez II',
     author_email='Humberto.A.Sanchez.II@gmail.com',
-    description='Clone Github issues in Todoist',
+    description='Convert Github issues to Todoist Tasks',
     options={},
     setup_requires=['py2app'],
     install_requires=['wxPython', 'PyGithub', 'todoist-api-python']

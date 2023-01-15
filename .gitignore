@@ -6,7 +6,7 @@ __pycache__/
 /dist/
 /pyenv-3.10.6/
 /pyenv-venv-3.9.1/
-PyGitIssueClone.egg-info
+PyGitIssue2Todoist.egg-info
 /.eggs/
 .envrc
 .python-version

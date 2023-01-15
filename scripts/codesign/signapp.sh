@@ -25,7 +25,7 @@ cd dist
 export APP="PyGitIssueClone.app"
 export LOGFILE="CodeSigning.log"
 
-# PyGitIssueClone.app/Contents/Frameworks/liblzma.5.dylib: main executable failed strict validation
+# PyGitIssue2Todoist.app/Contents/Frameworks/liblzma.5.dylib: main executable failed strict validation
 # manually copy from: /usr/local/Cellar/xz/5.2.5/lib/liblzma.5.dylib
 #echo "Work around bug in copying of libraries"
 # https://stackoverflow.com/questions/62095338/py2app-fails-macos-signing-on-liblzma-5-dylib
@@ -37,8 +37,8 @@ cp -p ${GOOD_LIB} ${DIR_TO_OVER_WRITE}
 #
 #  Ugh code signing will be the death of me
 #
-rm -v PyGitIssueClone.app/Contents/Resources/lib/python3.9/todoist/.DS_Store
-rm -v PyGitIssueClone.app/Contents/Resources/lib/python3.9/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap
+rm -v PyGitIssue2Todoist.app/Contents/Resources/lib/python3.9/todoist/.DS_Store
+rm -v PyGitIssue2Todoist.app/Contents/Resources/lib/python3.9/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap
 
 #
 # This is a real certificate - expires 21 September 2026
