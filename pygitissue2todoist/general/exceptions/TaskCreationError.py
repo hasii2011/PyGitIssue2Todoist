@@ -1,5 +1,5 @@
 
-from gittodoistclone.general.exceptions.BaseCreationError import BaseCreationError
+from pygitissue2todoist.general.exceptions.BaseCreationError import BaseCreationError
 
 
 class TaskCreationError(BaseCreationError):

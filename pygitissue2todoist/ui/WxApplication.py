@@ -9,9 +9,9 @@ from wx import ID_ANY
 from wx import Window
 from wx import App as wxApp
 
-from gittodoistclone.general.Resources import Resources
+from pygitissue2todoist.general.Resources import Resources
 
-from gittodoistclone.ui.ApplicationFrame import ApplicationFrame
+from pygitissue2todoist.ui.ApplicationFrame import ApplicationFrame
 
 
 class WxApplication(wxApp):

@@ -7,7 +7,7 @@ from todoist.api import TodoistAPI
 from todoist.models import Item
 from todoist.models import Project
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
 Preferences.determinePreferencesLocation()
 

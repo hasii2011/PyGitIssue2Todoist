@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 #
-#  The generated .icns file should be copied to gittodoistclone/resources/
+#  The generated .icns file should be copied to pygitissue2todoist/resources/
 #
 #  The file BaseLogo.iconset/icon_512x512@2x.png is reduced to 33% of the original size
 #

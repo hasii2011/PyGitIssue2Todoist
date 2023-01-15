@@ -13,13 +13,13 @@ from os import sep as osSep
 
 from configparser import ConfigParser
 
-from gittodoistclone.general.GitHubURLOption import GitHubURLOption
-from gittodoistclone.general.Singleton import Singleton
+from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
+from pygitissue2todoist.general.Singleton import Singleton
 
-from gittodoistclone.general.exceptions.InvalidPreference import InvalidPreference
-from gittodoistclone.general.exceptions.PreferencesLocationNotSet import PreferencesLocationNotSet
+from pygitissue2todoist.general.exceptions.InvalidPreference import InvalidPreference
+from pygitissue2todoist.general.exceptions.PreferencesLocationNotSet import PreferencesLocationNotSet
 
-from gittodoistclone.general.Resources import Resources
+from pygitissue2todoist.general.Resources import Resources
 
 PREFERENCES_NAME_VALUES = Dict[str, str]
 

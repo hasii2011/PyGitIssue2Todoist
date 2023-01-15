@@ -10,12 +10,12 @@ from logging import getLogger
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
 
-from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
-from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectName
-from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
+from pygitissue2todoist.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
+from pygitissue2todoist.adapters.AbstractTodoistAdapter import ProjectName
+from pygitissue2todoist.adapters.AbstractTodoistAdapter import Tasks
 
-from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
-from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
+from pygitissue2todoist.adapters.TodoistAdapterTypes import CloneInformation
+from pygitissue2todoist.adapters.TodoistAdapterTypes import GitIssueInfo
 
 
 class TodoistAdapterSingleProject(AbstractTodoistAdapter):

@@ -3,8 +3,8 @@ from typing import cast
 
 from wx import Notebook
 
-from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
-from gittodoistclone.ui.dialogs.configuration.TextContainer import TextContainer
+from pygitissue2todoist.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
+from pygitissue2todoist.ui.dialogs.configuration.TextContainer import TextContainer
 
 
 class TokensConfigurationPanel(AbstractConfigurationPanel):

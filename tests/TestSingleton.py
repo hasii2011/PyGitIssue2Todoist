@@ -4,7 +4,7 @@ from unittest import TestSuite
 from unittest import TestCase
 from unittest import main as unitTestMain
 
-from gittodoistclone.general.Singleton import Singleton
+from pygitissue2todoist.general.Singleton import Singleton
 
 
 class Child(Singleton):

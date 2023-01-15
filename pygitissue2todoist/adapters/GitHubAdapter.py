@@ -16,9 +16,9 @@ from github.Milestone import Milestone
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 
-from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
-from gittodoistclone.adapters.GitHubConnectionError import GitHubConnectionError
-from gittodoistclone.adapters.GitHubGeneralError import GitHubGeneralError
+from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
+from pygitissue2todoist.adapters.GitHubGeneralError import GitHubGeneralError
 
 RepositoryNames = List[str]
 MilestoneTitles = List[str]

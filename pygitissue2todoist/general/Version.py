@@ -13,9 +13,9 @@ from sys import version as pythonVersion
 
 from wx import __version__ as wxVersion
 
-from gittodoistclone.general.Resources import Resources
-from gittodoistclone.general.ResourceTextType import ResourceTextType
-from gittodoistclone.general.Singleton import Singleton
+from pygitissue2todoist.general.Resources import Resources
+from pygitissue2todoist.general.ResourceTextType import ResourceTextType
+from pygitissue2todoist.general.Singleton import Singleton
 
 PackageName    = NewType('PackageName', str)
 PackageVersion = NewType('PackageVersion', str)

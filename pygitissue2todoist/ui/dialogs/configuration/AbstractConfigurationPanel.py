@@ -1,7 +1,7 @@
 
 from wx.lib.sized_controls import SizedPanel
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
 
 class AbstractConfigurationPanel(SizedPanel):

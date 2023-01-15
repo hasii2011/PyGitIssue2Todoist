@@ -20,7 +20,7 @@ from wx import YES
 
 from wx import MessageDialog
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
 INVALID_TEMP_ID: int = 16
 MAX_PROJECTS:    int = 50

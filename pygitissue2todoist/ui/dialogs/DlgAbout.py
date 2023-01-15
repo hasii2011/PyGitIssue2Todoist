@@ -29,8 +29,8 @@ from wx import Size
 
 from wx import NewIdRef as wxNewIdRef
 
-from gittodoistclone.general.Version import Version
-from gittodoistclone.resources import AboutDialogBaseLogo
+from pygitissue2todoist.general.Version import Version
+from pygitissue2todoist.resources import AboutDialogBaseLogo
 
 
 class DlgAbout(Dialog):

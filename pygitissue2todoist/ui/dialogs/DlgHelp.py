@@ -20,8 +20,8 @@ from wx.html import HtmlWindow
 from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
 
-from gittodoistclone.general.ResourceTextType import ResourceTextType
-from gittodoistclone.general.Resources import Resources
+from pygitissue2todoist.general.ResourceTextType import ResourceTextType
+from pygitissue2todoist.general.Resources import Resources
 
 
 class DlgHelp(SizedDialog):

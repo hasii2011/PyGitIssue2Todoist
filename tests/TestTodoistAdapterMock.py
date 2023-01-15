@@ -13,9 +13,9 @@ from unittest.mock import PropertyMock
 
 from todoist_api_python.models import Project
 
-from gittodoistclone.adapters.TodoistAdapter import ProjectData
-from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
-from gittodoistclone.adapters.TodoistAdapter import CloneInformation
+from pygitissue2todoist.adapters.TodoistAdapter import ProjectData
+from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
+from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
 

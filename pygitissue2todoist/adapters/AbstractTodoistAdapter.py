@@ -19,13 +19,13 @@ from todoist_api_python.models import Project
 from todoist_api_python.models import Task
 from todoist_api_python.models import Comment
 
-from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
-from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
+from pygitissue2todoist.adapters.TodoistAdapterTypes import CloneInformation
+from pygitissue2todoist.adapters.TodoistAdapterTypes import GitIssueInfo
 
-from gittodoistclone.general.GitHubURLOption import GitHubURLOption
+from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
-from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
+from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
 Tasks             = NewType('Tasks', List[Task])
 ProjectName       = NewType('ProjectName', str)

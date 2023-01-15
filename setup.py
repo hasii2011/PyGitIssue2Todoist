@@ -9,11 +9,11 @@ Usage:
 from setuptools import setup
 
 APP = ['PyGitIssue2Todoist.py']
-DATA_FILES = [('gittodoistclone/resources', ['gittodoistclone/resources/loggingConfiguration.json']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/play.png']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/version.txt']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/packageversions.txt']),
-              ('gittodoistclone/resources', ['gittodoistclone/resources/SimpleHelp.html'])
+DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/loggingConfiguration.json']),
+              ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/play.png']),
+              ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/version.txt']),
+              ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/packageversions.txt']),
+              ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/SimpleHelp.html'])
               ]
 OPTIONS = {}
 
@@ -22,12 +22,12 @@ setup(
     version='1.0.0',
     app=APP,
     data_files=DATA_FILES,
-    packages=['gittodoistclone',
-              'gittodoistclone.general',
-              'gittodoistclone.general.exceptions',
-              'gittodoistclone.resources',
-              'gittodoistclone.ui',
-              'gittodoistclone.ui.dialogs'
+    packages=['pygitissue2todoist',
+              'pygitissue2todoist.general',
+              'pygitissue2todoist.general.exceptions',
+              'pygitissue2todoist.resources',
+              'pygitissue2todoist.ui',
+              'pygitissue2todoist.ui.dialogs'
               ],
     include_package_data=True,
     zip_safe=False,

@@ -14,7 +14,7 @@ changeToProjectRoot
 echo "current: $(pwd)"
 
 OPTS="--pretty --no-color-output  --show-error-context --check-untyped-defs --show-error-codes"
-mypy --config-file gittodoistclone/.mypi.ini ${OPTS} gittodoistclone tests
+mypy --config-file pygitissue2todoist/.mypi.ini ${OPTS} pygitissue2todoist tests
 status=$?
 
 echo "Exit with status: ${status}"

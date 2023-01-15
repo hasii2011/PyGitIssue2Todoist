@@ -36,20 +36,20 @@ from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
-from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssue
-from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
-from gittodoistclone.adapters.GitHubAdapter import GithubAdapter
-from gittodoistclone.adapters.GitHubAdapter import RepositoryNames
-from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
-from gittodoistclone.adapters.GitHubConnectionError import GitHubConnectionError
+from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
+from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
+from pygitissue2todoist.adapters.GitHubAdapter import GithubAdapter
+from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
+from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
-from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
-from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
+from pygitissue2todoist.ui.CustomEvents import IssuesSelectedEvent
+from pygitissue2todoist.ui.CustomEvents import RepositorySelectedEvent
 
-from gittodoistclone.ui.BasePanel import BasePanel
-from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+from pygitissue2todoist.ui.BasePanel import BasePanel
+from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 
 class GitHubPanel(BasePanel):

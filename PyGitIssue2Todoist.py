@@ -8,11 +8,11 @@ from json import load as jsonLoad
 
 from pathlib import Path
 
-from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.general.Resources import Resources
-from gittodoistclone.general.Version import Version
+from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.Resources import Resources
+from pygitissue2todoist.general.Version import Version
 
-from gittodoistclone.ui.WxApplication import WxApplication
+from pygitissue2todoist.ui.WxApplication import WxApplication
 
 
 class PyGitIssue2Todoist:

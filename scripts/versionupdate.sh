@@ -14,12 +14,12 @@ function changeToProjectRoot {
 
 changeToProjectRoot
 
-REPO_SLUG='hasii2011/gittodoistclone'
-VERSION_FILE='gittodoistclone/resources/version.txt'
+REPO_SLUG='hasii2011/pygitissue2todoist'
+VERSION_FILE='pygitissue2todoist/resources/version.txt'
 
 traviscli  --repo-slug ${REPO_SLUG} --file ${VERSION_FILE}
 
-PACKAGE_LIST='./gittodoistclone/resources/packages.txt'
-PACKAGE_VERSIONS='./gittodoistclone/resources/packageversions.txt'
+PACKAGE_LIST='./pygitissue2todoist/resources/packages.txt'
+PACKAGE_VERSIONS='./pygitissue2todoist/resources/packageversions.txt'
 
 pkgversions -p ${PACKAGE_LIST} -o ${PACKAGE_VERSIONS}

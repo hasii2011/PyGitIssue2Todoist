@@ -5,7 +5,7 @@ from typing import cast
 from logging import Logger
 from logging import getLogger
 
-from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
+from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
 from tests.TestBase import TestBase
 

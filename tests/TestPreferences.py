@@ -12,9 +12,9 @@ from shutil import copyfile
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
-from gittodoistclone.general.exceptions.InvalidPreference import InvalidPreference
+from pygitissue2todoist.general.exceptions.InvalidPreference import InvalidPreference
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
 from tests.TestBase import TestBase
 

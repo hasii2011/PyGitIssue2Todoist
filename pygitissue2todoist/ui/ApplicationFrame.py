@@ -26,23 +26,23 @@ from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
 
-from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
-from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
+from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
+from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 
-from gittodoistclone.ui.CustomEvents import EVT_ISSUES_SELECTED
-from gittodoistclone.ui.CustomEvents import EVT_REPOSITORY_SELECTED
-from gittodoistclone.ui.CustomEvents import IssuesSelectedEvent
-from gittodoistclone.ui.CustomEvents import RepositorySelectedEvent
+from pygitissue2todoist.ui.CustomEvents import EVT_ISSUES_SELECTED
+from pygitissue2todoist.ui.CustomEvents import EVT_REPOSITORY_SELECTED
+from pygitissue2todoist.ui.CustomEvents import IssuesSelectedEvent
+from pygitissue2todoist.ui.CustomEvents import RepositorySelectedEvent
 
-from gittodoistclone.ui.GitHubPanel import GitHubPanel
-from gittodoistclone.ui.TodoistPanel import CloneInformation
-from gittodoistclone.ui.TodoistPanel import TodoistPanel
-from gittodoistclone.ui.dialogs.DlgAbout import DlgAbout
+from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
+from pygitissue2todoist.ui.TodoistPanel import CloneInformation
+from pygitissue2todoist.ui.TodoistPanel import TodoistPanel
+from pygitissue2todoist.ui.dialogs.DlgAbout import DlgAbout
 
-from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
-from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
+from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+from pygitissue2todoist.ui.dialogs.DlgHelp import DlgHelp
 
 
 class ApplicationFrame(Frame):

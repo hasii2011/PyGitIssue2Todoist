@@ -11,16 +11,16 @@ from todoist_api_python.models import Comment
 from todoist_api_python.models import Project
 from todoist_api_python.models import Task
 
-from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
-from gittodoistclone.adapters.TodoistAdapter import ProjectName
-from gittodoistclone.adapters.TodoistAdapter import ProjectTasks
-from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
-from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
-from gittodoistclone.adapters.TodoistAdapter import CloneInformation
-from gittodoistclone.general.GitHubURLOption import GitHubURLOption
+from pygitissue2todoist.adapters.TodoistAdapter import ProjectDictionary
+from pygitissue2todoist.adapters.TodoistAdapter import ProjectName
+from pygitissue2todoist.adapters.TodoistAdapter import ProjectTasks
+from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
+from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
+from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
+from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
-from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
+from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
 

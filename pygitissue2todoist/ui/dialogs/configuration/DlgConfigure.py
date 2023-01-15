@@ -23,9 +23,9 @@ from wx import NewIdRef as wxNewIdRef
 from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
 
-from gittodoistclone.ui.dialogs.configuration.GitHubConfigurationPanel import GitHubConfigurationPanel
-from gittodoistclone.ui.dialogs.configuration.TodoistConfigurationPanel import TodoistConfigurationPanel
-from gittodoistclone.ui.dialogs.configuration.TokensConfigurationPanel import TokensConfigurationPanel
+from pygitissue2todoist.ui.dialogs.configuration.GitHubConfigurationPanel import GitHubConfigurationPanel
+from pygitissue2todoist.ui.dialogs.configuration.TodoistConfigurationPanel import TodoistConfigurationPanel
+from pygitissue2todoist.ui.dialogs.configuration.TokensConfigurationPanel import TokensConfigurationPanel
 
 
 class DlgConfigure(SizedDialog):

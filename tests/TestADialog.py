@@ -10,9 +10,9 @@ from wx import OK
 from wx import App
 from wx import Frame
 
-from gittodoistclone.general.Preferences import Preferences
+from pygitissue2todoist.general.Preferences import Preferences
 # noinspection SpellCheckingInspection
-from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 from tests.TestBase import TestBase
 

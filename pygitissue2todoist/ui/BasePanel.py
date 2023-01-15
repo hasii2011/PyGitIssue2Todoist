@@ -16,8 +16,8 @@ class BasePanel(Panel):
     PROPORTION_NOT_CHANGEABLE: int = 0
     PROPORTION_CHANGEABLE:     int = 1
 
-    RESOURCES_PACKAGE_NAME: str = 'gittodoistclone.resources'
-    RESOURCES_PATH:         str = f'gittodoistclone{osSep}resources'
+    RESOURCES_PACKAGE_NAME: str = 'pygitissue2todoist.resources'
+    RESOURCES_PATH:         str = f'pygitissue2todoist{osSep}resources'
 
     RESOURCE_ENV_VAR:       str = 'RESOURCEPATH'
 

@@ -33,21 +33,21 @@ from wx import MilliSleep as wxMilliSleep
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
-from gittodoistclone.ErrorHandler import ErrorHandler
-from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
+from pygitissue2todoist.ErrorHandler import ErrorHandler
+from pygitissue2todoist.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 
-from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
-from gittodoistclone.adapters.TodoistAdapter import CloneInformation
-from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
-from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
-from gittodoistclone.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
+from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
+from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
+from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
+from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
+from pygitissue2todoist.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 
-from gittodoistclone.general.Preferences import Preferences
-from gittodoistclone.general.exceptions.NoteCreationError import NoteCreationError
-from gittodoistclone.general.exceptions.TaskCreationError import TaskCreationError
+from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
+from pygitissue2todoist.general.exceptions.TaskCreationError import TaskCreationError
 
-from gittodoistclone.ui.BasePanel import BasePanel
-from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+from pygitissue2todoist.ui.BasePanel import BasePanel
+from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 
 class TodoistPanel(BasePanel):

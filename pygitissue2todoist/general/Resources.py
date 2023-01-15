@@ -8,7 +8,7 @@ from os import sep as osSep
 
 from pkg_resources import resource_filename
 
-from gittodoistclone.general.ResourceTextType import ResourceTextType
+from pygitissue2todoist.general.ResourceTextType import ResourceTextType
 
 
 class Resources:
@@ -16,8 +16,8 @@ class Resources:
     Static class
     """
     CANONICAL_APPLICATION_NAME: str = 'PyGitIssue2Todoist'
-    RESOURCES_PACKAGE_NAME:     str = 'gittodoistclone.resources'
-    RESOURCES_PATH:             str = f'gittodoistclone{osSep}resources'
+    RESOURCES_PACKAGE_NAME:     str = 'pygitissue2todoist.resources'
+    RESOURCES_PATH:             str = f'pygitissue2todoist{osSep}resources'
 
     # noinspection SpellCheckingInspection
     RESOURCE_ENV_VAR:       str = 'RESOURCEPATH'

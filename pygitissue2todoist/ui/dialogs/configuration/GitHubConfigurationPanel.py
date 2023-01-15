@@ -10,8 +10,8 @@ from wx import NOT_FOUND
 from wx import RA_SPECIFY_COLS
 from wx import RadioBox
 
-from gittodoistclone.general.GitHubURLOption import GitHubURLOption
-from gittodoistclone.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
+from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
+from pygitissue2todoist.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
 
 URL_OPTIONS: List[str] = [GitHubURLOption.DoNotAdd.value,
                           GitHubURLOption.AddAsDescription.value,
