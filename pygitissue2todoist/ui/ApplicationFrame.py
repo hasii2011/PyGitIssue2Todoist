@@ -22,6 +22,7 @@ from wx import CommandEvent
 from wx import Frame
 from wx import Menu
 from wx import MenuBar
+from wx import StatusBar
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
@@ -31,11 +32,6 @@ from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
 from pygitissue2todoist.general.Preferences import Preferences
 
-from pygitissue2todoist.ui.CustomEvents import EVT_ISSUES_SELECTED
-from pygitissue2todoist.ui.CustomEvents import EVT_REPOSITORY_SELECTED
-from pygitissue2todoist.ui.CustomEvents import IssuesSelectedEvent
-from pygitissue2todoist.ui.CustomEvents import RepositorySelectedEvent
-
 from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
 from pygitissue2todoist.ui.TodoistPanel import CloneInformation
 from pygitissue2todoist.ui.TodoistPanel import TodoistPanel
@@ -44,6 +40,13 @@ from pygitissue2todoist.ui.dialogs.DlgAbout import DlgAbout
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 from pygitissue2todoist.ui.dialogs.DlgHelp import DlgHelp
 
+from pygitissue2todoist.ui.eventengine.Events import EVT_ISSUES_SELECTED
+from pygitissue2todoist.ui.eventengine.Events import EVT_REPOSITORY_SELECTED
+from pygitissue2todoist.ui.eventengine.Events import IssuesSelectedEvent
+from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
+
+from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
+from pygitissue2todoist.ui.eventengine.EventEngine import EventEngine
 
 class ApplicationFrame(Frame):
 
@@ -58,7 +61,9 @@ class ApplicationFrame(Frame):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._status = self.CreateStatusBar()
+        self._eventEngine: IEventEngine = EventEngine(listeningWindow=self)
+
+        self._status: StatusBar = self.CreateStatusBar()
         self._status.SetStatusText('Ready!')
 
         self._createApplicationMenuBar()
@@ -74,8 +79,9 @@ class ApplicationFrame(Frame):
             self.SetPosition(pt=appPosition)
 
         self.Bind(EVT_CLOSE, self.Close)
-        self.Bind(EVT_REPOSITORY_SELECTED, self._onRepositorySelected)
-        self.Bind(EVT_ISSUES_SELECTED,     self._onIssuesSelected)
+
+        self._eventEngine.registerListener(event=EVT_REPOSITORY_SELECTED, callback=self._onRepositorySelected)
+        self._eventEngine.registerListener(event=EVT_ISSUES_SELECTED,     callback=self._onIssuesSelected)
 
     # noinspection PyUnusedLocal
     def Close(self, force=False):
@@ -115,8 +121,8 @@ class ApplicationFrame(Frame):
 
     def _createApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
 
-        leftPanel:  GitHubPanel  = GitHubPanel(self)
-        rightPanel: TodoistPanel = TodoistPanel(self)
+        leftPanel:  GitHubPanel  = GitHubPanel(self,  eventEngine=self._eventEngine)
+        rightPanel: TodoistPanel = TodoistPanel(self, eventEngine=self._eventEngine)
 
         mainSizer: BoxSizer = BoxSizer(orient=HORIZONTAL)
         mainSizer.Add(leftPanel,  1, EXPAND)

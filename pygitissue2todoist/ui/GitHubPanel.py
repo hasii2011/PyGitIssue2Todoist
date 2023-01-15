@@ -30,7 +30,6 @@ from wx import ListBox
 from wx import BoxSizer
 from wx import ComboBox
 from wx import Window
-from wx import PostEvent
 
 from wx import NewIdRef as wxNewIdRef
 
@@ -45,11 +44,11 @@ from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionEr
 
 from pygitissue2todoist.general.Preferences import Preferences
 
-from pygitissue2todoist.ui.CustomEvents import IssuesSelectedEvent
-from pygitissue2todoist.ui.CustomEvents import RepositorySelectedEvent
-
 from pygitissue2todoist.ui.BasePanel import BasePanel
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+
+from pygitissue2todoist.ui.eventengine.Events import EventType
+from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 
 
 class GitHubPanel(BasePanel):
@@ -58,19 +57,19 @@ class GitHubPanel(BasePanel):
     OPEN_MILESTONE_INDICATOR: str = 'Open'
     OPEN_ISSUE_INDICATOR:     str = 'open'
 
-    def __init__(self, parent: Window):
+    def __init__(self, parent: Window, eventEngine: IEventEngine):
 
         super().__init__(parent)
 
         self.SetBackgroundColour(self.backgroundColor)
 
-        self.logger:      Logger       = getLogger(__name__)
+        self.logger: Logger = getLogger(__name__)
 
-        preferences: Preferences = Preferences()
-        self._preferences:             Preferences           = preferences
-        self._selectedSimpleGitIssues: AbbreviatedGitIssues  = []
+        self._eventEngine:             IEventEngine          = eventEngine
+        self._preferences:             Preferences           = Preferences()
+        self._selectedSimpleGitIssues: AbbreviatedGitIssues  = AbbreviatedGitIssues([])
 
-        self._githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.githubUserName, authenticationToken=preferences.githubApiToken)
+        self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.githubUserName, authenticationToken=self._preferences.githubApiToken)
 
         contentSizer: BoxSizer = self._layoutContent()
 
@@ -80,7 +79,7 @@ class GitHubPanel(BasePanel):
 
     def clearIssues(self):
         self._issueList.Clear()
-        self._selectedSimpleGitIssues = []
+        self._selectedSimpleGitIssues = AbbreviatedGitIssues([])
 
     def _layoutContent(self) -> BoxSizer:
 
@@ -164,10 +163,7 @@ class GitHubPanel(BasePanel):
 
         self.__populateMilestones(repoName)
 
-        evt: RepositorySelectedEvent = RepositorySelectedEvent()
-
-        parent = self.GetParent()
-        PostEvent(parent, evt)
+        self._eventEngine.sendEvent(eventType=EventType.RepositorySelected)
 
     def _onMilestoneSelected(self, event: CommandEvent):
 
@@ -177,6 +173,7 @@ class GitHubPanel(BasePanel):
 
         self.clearIssues()
         self.__populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
+        self._eventEngine.sendEvent(eventType=EventType.MilestoneSelected)
 
     # noinspection PyUnusedLocal
     def _onCloneClicked(self, event: CommandEvent):
@@ -192,11 +189,11 @@ class GitHubPanel(BasePanel):
 
         repositoryName: str = self._repositorySelection.GetStringSelection()
         milestoneName:  str = self._milestoneList.GetStringSelection()
-        evt: IssuesSelectedEvent = IssuesSelectedEvent(repositoryName=repositoryName,
-                                                       milestoneName=milestoneName,
-                                                       selectedSimpleGitIssues=self._selectedSimpleGitIssues)
-        parent = self.GetParent()
-        PostEvent(parent, evt)
+
+        self._eventEngine.sendEvent(eventType=EventType.IssuesSelected,
+                                    repositoryName=repositoryName,
+                                    milestoneName=milestoneName,
+                                    selectedSimpleGitIssues=self._selectedSimpleGitIssues)
 
     def __populateRepositories(self):
 

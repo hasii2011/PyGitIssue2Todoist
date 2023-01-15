@@ -48,17 +48,22 @@ from pygitissue2todoist.general.exceptions.TaskCreationError import TaskCreation
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
+from pygitissue2todoist.ui.eventengine.Events import EVT_MILESTONE_SELECTED
+from pygitissue2todoist.ui.eventengine.Events import MilestoneSelectedEvent
+from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 
 
 class TodoistPanel(BasePanel):
 
-    def __init__(self, parent: Window):
+    def __init__(self, parent: Window, eventEngine: IEventEngine):
 
         super().__init__(parent)
 
         self.SetBackgroundColour(self.backgroundColor)
 
         self.logger: Logger = getLogger(__name__)
+
+        self._eventEngine: IEventEngine = eventEngine
 
         contentSizer: BoxSizer = self._layoutContent()
 
@@ -75,6 +80,8 @@ class TodoistPanel(BasePanel):
         else:
             self._todoistAdapter = TodoistAdapter(self._apiToken)
 
+        self._eventEngine.registerListener(event=EVT_MILESTONE_SELECTED, callback=self._onMileStoneSelected)
+
     @property
     def tasksToClone(self) -> CloneInformation:
         return self._cloneInformation
@@ -90,6 +97,14 @@ class TodoistPanel(BasePanel):
         # noinspection PyUnresolvedReferences
         self._createTaskButton.Enable(True)
 
+    def clearTasks(self):
+        self._taskList.Clear()
+
+    # noinspection PyUnusedLocal
+    def _onMileStoneSelected(self, event: MilestoneSelectedEvent):
+        self.clearTasks()
+        self._createTaskButton.Disable()
+
     def _layoutContent(self) -> BoxSizer:
 
         sizer: BoxSizer       = BoxSizer(VERTICAL)
@@ -100,9 +115,6 @@ class TodoistPanel(BasePanel):
         sizer.Add(bz, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL | ALIGN_RIGHT, 2)
 
         return sizer
-
-    def clearTasks(self):
-        self._taskList.Clear()
 
     def _createTodoTaskList(self) -> StaticBoxSizer:
 
@@ -144,6 +156,7 @@ class TodoistPanel(BasePanel):
         try:
             adapter.createTasks(info=ci, progressCb=self.__adapterCallback)
             self._progressDlg.Destroy()
+            self.clearTasks()
         except AdapterAuthenticationError as e:
             self._progressDlg.Destroy()
             self.__handleAuthenticationError(event)

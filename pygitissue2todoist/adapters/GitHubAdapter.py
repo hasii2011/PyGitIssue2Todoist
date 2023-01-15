@@ -1,5 +1,6 @@
 
 from typing import List
+from typing import NewType
 from typing import Optional
 from typing import cast
 
@@ -20,8 +21,8 @@ from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthen
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 from pygitissue2todoist.adapters.GitHubGeneralError import GitHubGeneralError
 
-RepositoryNames = List[str]
-MilestoneTitles = List[str]
+RepositoryNames = NewType('RepositoryNames', List[str])
+MilestoneTitles = NewType('MilestoneTitles', List[str])
 
 
 @dataclass
@@ -31,7 +32,7 @@ class AbbreviatedGitIssue:
     issueHTMLURL: str = ''
 
 
-AbbreviatedGitIssues = List[AbbreviatedGitIssue]
+AbbreviatedGitIssues = NewType('AbbreviatedGitIssues', List[AbbreviatedGitIssue])
 
 
 class GithubAdapter:
@@ -59,7 +60,7 @@ class GithubAdapter:
         import urllib3.exceptions
 
         try:
-            repoNames: RepositoryNames = []
+            repoNames: RepositoryNames = RepositoryNames([])
             for repository in repos:
                 repoNames.append(repository.full_name)
 
@@ -92,7 +93,7 @@ class GithubAdapter:
         repo:            Repository    = self._github.get_repo(repoName)
         mileStones:      PaginatedList = repo.get_milestones(state=GithubAdapter.OPEN_MILESTONE_INDICATOR)
 
-        mileStoneTitles: MilestoneTitles = [GithubAdapter.ALL_ISSUES_INDICATOR]
+        mileStoneTitles: MilestoneTitles = MilestoneTitles([GithubAdapter.ALL_ISSUES_INDICATOR])
 
         for mileStone in mileStones:
             mileStoneTitles.append(mileStone.title)
@@ -114,7 +115,7 @@ class GithubAdapter:
         repo:        Repository      = self._github.get_repo(repoName)
         openGitIssues: PaginatedList = repo.get_issues(state=GithubAdapter.OPEN_ISSUE_INDICATOR)
 
-        simpleGitIssues: AbbreviatedGitIssues = []
+        simpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
 
         if milestoneTitle == GithubAdapter.ALL_ISSUES_INDICATOR:
             for openIssue in openGitIssues:
