@@ -121,28 +121,29 @@ class AbstractTodoistAdapter(ABC):
         #
         if foundTaskItem is None:
             option: GitHubURLOption = self._preferences.githubURLOption
-            if option == GitHubURLOption.DoNotAdd:
-                todoist.add_task(projectId=projectId,
-                                 parent_id=parentMileStoneTaskItem.id,
-                                 content=taskInfo.gitIssueName)
-            elif option == GitHubURLOption.AddAsDescription:
-                todoist.add_task(projectId=projectId,
-                                 parent_id=parentMileStoneTaskItem.id,
-                                 content=taskInfo.gitIssueName,
-                                 description=taskInfo.gitIssueURL)
-            elif option == GitHubURLOption.AddAsComment:
-                task: Task = todoist.add_task(projectId=projectId,
-                                              parent_id=parentMileStoneTaskItem.id,
-                                              content=taskInfo.gitIssueName)
-                comment: Comment = todoist.add_comment(task_id=task.id, content=taskInfo.gitIssueURL)
-                AbstractTodoistAdapter.clsLogger.info(f'Comment added: {comment}')
-            else:   # Add as hyper link
-                linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
-                todoist.add_task(project_id=projectId,
-                                 parent_id=parentMileStoneTaskItem.id,
-                                 content=linkedTaskName)
-
-            # subTask.move(parent_id=parentMileStoneTaskItem['id'])
+            match option:
+                case GitHubURLOption.DoNotAdd:
+                    todoist.add_task(projectId=projectId,
+                                     parent_id=parentMileStoneTaskItem.id,
+                                     content=taskInfo.gitIssueName)
+                case GitHubURLOption.AddAsDescription:
+                    todoist.add_task(projectId=projectId,
+                                     parent_id=parentMileStoneTaskItem.id,
+                                     content=taskInfo.gitIssueName,
+                                     description=taskInfo.gitIssueURL)
+                case GitHubURLOption.AddAsComment:
+                    task: Task = todoist.add_task(projectId=projectId,
+                                                  parent_id=parentMileStoneTaskItem.id,
+                                                  content=taskInfo.gitIssueName)
+                    comment: Comment = todoist.add_comment(task_id=task.id, content=taskInfo.gitIssueURL)
+                    AbstractTodoistAdapter.clsLogger.info(f'Comment added: {comment}')
+                case GitHubURLOption.HyperLinkedTaskName:
+                    linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
+                    todoist.add_task(project_id=projectId,
+                                     parent_id=parentMileStoneTaskItem.id,
+                                     content=linkedTaskName)
+                case _:
+                    self.clsLogger.error(f'Unknown URL option: {option}')
 
     def _addNoteToTask(self, itemId: str, noteContent: str) -> Comment:
         """
