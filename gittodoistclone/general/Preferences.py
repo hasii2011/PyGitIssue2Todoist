@@ -28,7 +28,7 @@ class Preferences(Singleton):
     If the Preferences singleton detects that the configuration file does not exist it will create a default one
     """
     THE_GREAT_MAC_PLATFORM: str = 'darwin'
-    PREFERENCES_FILE_NAME:  str = '.gitIssueClone.ini'
+    PREFERENCES_FILE_NAME:  str = '.pyGitIssue2Todoist.ini'
 
     DEFAULT_APP_WIDTH:  int = 1024
     DEFAULT_APP_HEIGHT: int = 768

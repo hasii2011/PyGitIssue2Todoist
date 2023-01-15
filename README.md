@@ -17,7 +17,11 @@ The translation is as follows:
 * GitHub's milestones   --> todoist top level tasks
 * GitHub's issues       --> todoist subtasks under a top level task
 
-If you don't use milestones and associate tasks with them the top-level task is called _All_
+If you don't use milestones and associate tasks with them the top-level task is called _All_.  There 
+is an option to create creates repository sub-tasks inside a single top level project.  This allows 
+users who are using the "community" version of Todoist to create sub-tasks for all their repositories inside 
+a single task.  'Community' users are limited to 5 Todoist projects
+
 
 # Requirements
 
@@ -30,9 +34,9 @@ The application gathers the following:
 The instructions on how to acquire/generate these tokens are [here](https://github.com/hasii2011/gittodoistclone/wiki).
 
 
-# Format of configuration file
+# Format of the configuration file
 
-**Name:**   `.gitIssueClone.ini`
+**Name:**   `.pyGitIssue2Todoist.ini`
 
 **Location:**  `${HOME}`
 
@@ -44,14 +48,19 @@ github_url_option = Hyper Linked Task Name
 
 [Todoist]
 todoist_api_token = PutYourTodoistKeyHere
+single_todoist_project = True
+todoist_project_name = Development
+clean_todoist_cache = True
 
 [Main]
 startup_width = 1024
 startup_height = 768
 startup_x = 0
 startup_y = 0
-clean_todoist_cache = True
 ```
+PyGitIssue2Todoist provides access to the above options via a
+configuration dialog.
+
 # License
 
 See[LICENSE](LICENSE)

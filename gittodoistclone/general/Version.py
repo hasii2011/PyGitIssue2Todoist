@@ -32,7 +32,7 @@ class Version(Singleton):
     PACKAGE_VERSIONS_FILENAME: str = 'packageversions.txt'
 
     __appName__: str = 'PyGitIssue2Todoist'
-    __version__: str = '0.98.0'
+    __version__: str = '1.0.0'
 
     __longVersion__: str = "Humberto's Beta Version"
     __website__:     str = 'https://github.com/hasii2011/gittodoistclone/wiki'
