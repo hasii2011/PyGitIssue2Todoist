@@ -15,8 +15,9 @@ class Resources:
     """
     Static class
     """
-    RESOURCES_PACKAGE_NAME: str = 'gittodoistclone.resources'
-    RESOURCES_PATH:         str = f'gittodoistclone{osSep}resources'
+    CANONICAL_APPLICATION_NAME: str = 'PyGitIssue2Todoist'
+    RESOURCES_PACKAGE_NAME:     str = 'gittodoistclone.resources'
+    RESOURCES_PATH:             str = f'gittodoistclone{osSep}resources'
 
     # noinspection SpellCheckingInspection
     RESOURCE_ENV_VAR:       str = 'RESOURCEPATH'

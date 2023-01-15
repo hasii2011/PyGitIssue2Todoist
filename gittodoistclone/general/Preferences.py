@@ -19,6 +19,7 @@ from gittodoistclone.general.Singleton import Singleton
 from gittodoistclone.general.exceptions.InvalidPreference import InvalidPreference
 from gittodoistclone.general.exceptions.PreferencesLocationNotSet import PreferencesLocationNotSet
 
+from gittodoistclone.general.Resources import Resources
 
 PREFERENCES_NAME_VALUES = Dict[str, str]
 
@@ -28,7 +29,12 @@ class Preferences(Singleton):
     If the Preferences singleton detects that the configuration file does not exist it will create a default one
     """
     THE_GREAT_MAC_PLATFORM: str = 'darwin'
-    PREFERENCES_FILE_NAME:  str = '.pyGitIssue2Todoist.ini'
+    # Take canonical name and lowercase the first later to make the dot file
+    PREFERENCES_FILE_NAME:  str = (
+        f'.{Resources.CANONICAL_APPLICATION_NAME[0].lower()}'
+        f'{Resources.CANONICAL_APPLICATION_NAME[1:]}'
+        f'.ini'
+    )
 
     DEFAULT_APP_WIDTH:  int = 1024
     DEFAULT_APP_HEIGHT: int = 768
@@ -63,8 +69,8 @@ class Preferences(Singleton):
     }
 
     GITHUB_PREFERENCES: PREFERENCES_NAME_VALUES = {
-        GITHUB_API_TOKEN_KEY: 'PutYourGithubKeyHere',
-        GITHUB_USER_NAME_KEY: 'PutYourGithubUserNameHere',
+        GITHUB_API_TOKEN_KEY: 'PutYourGitHubKeyHere',
+        GITHUB_USER_NAME_KEY: 'PutYourGitHubUserNameHere',
         GITHUB_URL_OPTION:    GitHubURLOption.HyperLinkedTaskName.value,
     }
 
@@ -271,16 +277,15 @@ class Preferences(Singleton):
     def __ensureConfigurationFileExists(self):
 
         # Make sure that the configuration file exists
-        # noinspection PyUnusedLocal
         try:
-            f = open(Preferences.getPreferencesLocation(), "r")
-            f.close()
-        except (ValueError, Exception) as e:
+            # noinspection PyUnusedLocal
+            with open(Preferences.getPreferencesLocation(), "r") as f:
+                pass
+        except (ValueError, Exception):
             try:
-                f = open(Preferences.getPreferencesLocation(), "w")
-                f.write("")
-                f.close()
-                self.logger.warning(f'Preferences file re-created')
+                with open(Preferences.getPreferencesLocation(), "w") as newFile:
+                    newFile.write("")
+                    self.logger.warning(f'Preferences file re-created')
             except (ValueError, Exception) as e:
                 self.logger.error(f"Error: {e}")
                 return

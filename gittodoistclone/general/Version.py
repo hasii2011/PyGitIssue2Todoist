@@ -96,4 +96,5 @@ class Version(Singleton):
 
             packageNameVersion = readDescriptor.readline()
 
+        readDescriptor.close()
         return packageVersionMap

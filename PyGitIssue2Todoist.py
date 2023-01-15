@@ -12,12 +12,11 @@ from gittodoistclone.general.Preferences import Preferences
 from gittodoistclone.general.Resources import Resources
 from gittodoistclone.general.Version import Version
 
-from gittodoistclone.ui.ClonerApplication import ClonerApplication
+from gittodoistclone.ui.WxApplication import WxApplication
 
 
 class PyGitIssue2Todoist:
 
-    MADE_UP_PRETTY_MAIN_NAME:     str = "Python Github Issue 2 Todoist"
 
     JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
 
@@ -36,7 +35,7 @@ class PyGitIssue2Todoist:
 
     def startApp(self):
 
-        app: ClonerApplication = ClonerApplication(redirect=False)
+        app: WxApplication = WxApplication(redirect=False)
         app.MainLoop()
 
     def displayVersionInformation(self):
@@ -45,7 +44,7 @@ class PyGitIssue2Todoist:
         import platform
 
         print("Versions: ")
-        print(f"PyGitIssue2Todoist:  {Version().applicationVersion}")
+        print(f"{Resources.CANONICAL_APPLICATION_NAME}:  {Version().applicationVersion}")
         print(f'Platform: {platform.platform()}')
         print(f'    System:       {platform.system()}')
         print(f'    Version:      {platform.version()}')
@@ -74,7 +73,7 @@ class PyGitIssue2Todoist:
 
 if __name__ == "__main__":
 
-    print(f"Starting {PyGitIssue2Todoist.MADE_UP_PRETTY_MAIN_NAME}")
+    print(f"Starting {Resources.CANONICAL_APPLICATION_NAME}")
 
     issueCloner: PyGitIssue2Todoist = PyGitIssue2Todoist()
     issueCloner.displayVersionInformation()
