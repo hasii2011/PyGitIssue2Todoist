@@ -63,4 +63,4 @@ configuration dialog.
 
 # License
 
-See[LICENSE](LICENSE)
+See [LICENSE](LICENSE)
