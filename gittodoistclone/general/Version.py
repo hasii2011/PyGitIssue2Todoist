@@ -25,7 +25,7 @@ PackageVersionsMap = NewType('PackageVersionsMap', Dict[PackageName, PackageVers
 
 class Version(Singleton):
 
-    TODOIST_PACKAGE_NAME: PackageName = PackageName('todoist-python')
+    TODOIST_PACKAGE_NAME: PackageName = PackageName('todoist-api-python')
     GITHUB_PACKAGE_NAME:  PackageName = PackageName('PyGithub')
 
     # noinspection SpellCheckingInspection
@@ -39,6 +39,7 @@ class Version(Singleton):
 
     clsLogger: Logger = getLogger(__name__)
 
+    # noinspection PyAttributeOutsideInit
     def init(self):
 
         self.logger:       Logger             = Version.clsLogger

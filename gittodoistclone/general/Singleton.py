@@ -30,7 +30,7 @@ class Singleton(object):
             def __init__(self, val):
                 self.val = val
     """
-    def __new__(cls, *args, **kwds):
+    def __new__(cls, *args, **kwargs):
         """
         New operator for this base singleton class.
         Will return the singleton instance or create it if needed.
@@ -40,13 +40,13 @@ class Singleton(object):
             instance = object.__new__(cls)
             assert type(instance.__init__) != MethodType, f"Error, your singleton class {cls} cannot contain an '__init__' method."  # type: ignore
             try:
-                instance.init(*args, **kwds)
+                instance.init(*args, **kwargs)
             except Exception as e:
                 raise e
             cls.__instance__ = instance
         return instance
 
-    def init(self, *args, **kwds):
+    def init(self, *args, **kwargs):
         """
         Constructor for a singleton class
         """

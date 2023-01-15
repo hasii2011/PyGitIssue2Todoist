@@ -45,6 +45,10 @@ ProjectData = NewType('ProjectData', Dict[str, ProjectDataTypes])
 
 
 class TodoistAdapter(AbstractTodoistAdapter):
+    """
+    This version of the adapter creates projects for each GitHub repository.  This is
+    ideal for users who have purchased a Todoist license which allows unlimited projects
+    """
 
     def __init__(self, apiToken: str):
 

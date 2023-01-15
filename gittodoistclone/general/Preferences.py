@@ -80,6 +80,7 @@ class Preferences(Singleton):
     Class variable where we store our name
     """
 
+    # noinspection PyAttributeOutsideInit
     def init(self):
         """
         """

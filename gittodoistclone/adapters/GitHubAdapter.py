@@ -55,6 +55,7 @@ class GithubAdapter:
 
         repos: PaginatedList = self._github.search_repositories(query=query)
 
+        # noinspection PyPackageRequirements
         import urllib3.exceptions
 
         try:
@@ -103,7 +104,7 @@ class GithubAdapter:
         Given a repo name and a milestone title return a simplified list of Git issues
 
         Args:
-            repoName:       The Github repository name
+            repoName:       The GitHub repository name
             milestoneTitle: The milestone title that we filter on
 
         Returns:

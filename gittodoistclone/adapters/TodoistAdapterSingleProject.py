@@ -1,28 +1,29 @@
+
+from typing import cast
 from typing import Dict
 from typing import List
 from typing import Callable
 
 from logging import Logger
 from logging import getLogger
-from typing import cast
 
-# from todoist import TodoistAPI
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
-
-# from todoist.managers.projects import ProjectsManager
-# from todoist.models import Item
 
 from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 from gittodoistclone.adapters.AbstractTodoistAdapter import ProjectName
 from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
 
-# from gittodoistclone.adapters.TodoistAdapter import ProjectData
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
 from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
 
 
 class TodoistAdapterSingleProject(AbstractTodoistAdapter):
+    """
+    This version of the adapter creates repository sub-tasks inside a single top level project.  This allows
+    users who are using the "community" version of Todoist to create sub-tasks for all their repositories inside
+    a single task.  'Community' users are limited to 5 Todoist projects
+    """
 
     def __init__(self, apiToken: str):
         """
