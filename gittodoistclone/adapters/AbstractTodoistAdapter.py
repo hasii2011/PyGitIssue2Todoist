@@ -20,7 +20,7 @@ from todoist_api_python.models import Task
 from todoist_api_python.models import Comment
 
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
-from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
+from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
 
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
 
@@ -92,7 +92,7 @@ class AbstractTodoistAdapter(ABC):
 
         return taskMap
 
-    def _createTaskItem(self, taskInfo: TaskInfo, projectId: str, parentMileStoneTaskItem: Task):
+    def _createTaskItem(self, taskInfo: GitIssueInfo, projectId: str, parentMileStoneTaskItem: Task):
         """
         Create a new task if it does not already exist in Todoist
         Assumes self._devTasks has all the project's tasks
@@ -144,7 +144,7 @@ class AbstractTodoistAdapter(ABC):
 
             # subTask.move(parent_id=parentMileStoneTaskItem['id'])
 
-    def _addNoteToTask(self, itemId: int, noteContent: str) -> Comment:
+    def _addNoteToTask(self, itemId: str, noteContent: str) -> Comment:
         """
         Currently only support creating text notes
 
@@ -154,20 +154,9 @@ class AbstractTodoistAdapter(ABC):
 
         Returns:  The created Note time
         """
-
         todoist: TodoistAPI = self._todoist
         try:
-            # note:     Note           = todoist.notes.add(itemId, noteContent)
-            # response: Dict[str, str] = todoist.commit()
-
-            # if "error_tag" in response:
-            #     raise AdapterAuthenticationError(response)
-            newComment: Comment = todoist.add_comment(
-                content=noteContent,
-                project_id=itemId,
-                # attachment=attachment_data,
-                # request_id=DEFAULT_REQUEST_ID,
-            )
+            newComment = todoist.add_comment(task_id=itemId, content=noteContent)
         except Exception as e:
             eDict = e.args[1]
             eMsg: str = eDict['error']

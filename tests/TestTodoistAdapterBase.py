@@ -5,7 +5,7 @@ from typing import cast
 from logging import Logger
 from logging import getLogger
 
-from gittodoistclone.adapters.TodoistAdapter import TaskInfo
+from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
 
 from tests.TestBase import TestBase
 
@@ -35,13 +35,13 @@ class TestTodoistAdapterBase(TestBase):
         self._cbInvoked     = True
         self._cbInvokeCount += 1
 
-    def _createTasksToClone(self) -> List[TaskInfo]:
-        taskList: List[TaskInfo] = []
+    def _createTasksToClone(self) -> List[GitIssueInfo]:
+        taskList: List[GitIssueInfo] = []
 
         taskNames: List[str] = ['TaskOpie', 'TaskGabby10Meows', 'TaskFranny']
 
         for taskName in taskNames:
-            taskInfo: TaskInfo = TaskInfo()
+            taskInfo: GitIssueInfo = GitIssueInfo()
 
             taskInfo.gitIssueName = taskName
             taskInfo.gitIssueURL  = f'https://{taskName}.org'

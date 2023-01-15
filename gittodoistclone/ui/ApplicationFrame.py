@@ -27,7 +27,7 @@ from wx import Window
 from wx import NewIdRef as wxNewIdRef
 
 from gittodoistclone.adapters.GitHubAdapter import AbbreviatedGitIssues
-from gittodoistclone.adapters.TodoistAdapter import TaskInfo
+from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
 
 from gittodoistclone.general.Preferences import Preferences
 
@@ -138,7 +138,7 @@ class ApplicationFrame(Frame):
 
     def _onIssuesSelected(self, event: IssuesSelectedEvent):
 
-        adapterTaskInfo: List[TaskInfo] = self.__convertToTasksToClone(event.selectedSimpleGitIssues)
+        adapterTaskInfo: List[GitIssueInfo] = self.__convertToTasksToClone(event.selectedSimpleGitIssues)
         cloneInformation: CloneInformation = CloneInformation()
 
         cloneInformation.repositoryTask    = event.repositoryName
@@ -172,11 +172,11 @@ class ApplicationFrame(Frame):
         dlg: DlgAbout = DlgAbout(parent=self)
         dlg.ShowModal()
 
-    def __convertToTasksToClone(self, abbreviatedGitIssues: AbbreviatedGitIssues) -> List[TaskInfo]:
-        adapterTaskInfo: List[TaskInfo] = []
+    def __convertToTasksToClone(self, abbreviatedGitIssues: AbbreviatedGitIssues) -> List[GitIssueInfo]:
+        adapterTaskInfo: List[GitIssueInfo] = []
 
         for simpleGitIssue in abbreviatedGitIssues:
-            taskInfo: TaskInfo = TaskInfo()
+            taskInfo: GitIssueInfo = GitIssueInfo()
             taskInfo.gitIssueName = simpleGitIssue.issueTitle
             taskInfo.gitIssueURL  = simpleGitIssue.issueHTMLURL
             adapterTaskInfo.append(taskInfo)

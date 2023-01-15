@@ -1,6 +1,4 @@
 
-from typing import cast
-
 from logging import Logger
 from logging import getLogger
 
@@ -15,7 +13,6 @@ from wx import Frame
 from gittodoistclone.general.Preferences import Preferences
 # noinspection SpellCheckingInspection
 from gittodoistclone.ui.dialogs.configuration.DlgConfigure import DlgConfigure
-# from gittodoistclone.ui.dialogs.DlgHelp import DlgHelp
 
 from tests.TestBase import TestBase
 
@@ -24,6 +21,7 @@ class TestADialog(App):
 
     FRAME_ID: int = 0xDeadBeef
 
+    # noinspection PyAttributeOutsideInit
     def OnInit(self):
 
         TestBase.setUpLogging()
@@ -42,22 +40,15 @@ class TestADialog(App):
     # noinspection SpellCheckingInspection
     def initTest(self):
         with DlgConfigure(self._frameTop) as dlg:
-            dlg: DlgConfigure = cast(DlgConfigure, dlg)
+
             if dlg.ShowModal() == OK:
                 preferences: Preferences = Preferences()
-                # self._frameTop.Close(force=True)
+
                 self.logger.info(f'{preferences.todoistApiToken=}')
                 self.logger.info(f'{preferences.githubUserName=}')
                 self.logger.info(f'{preferences.githubApiToken=}')
             else:
                 self.logger.warning(f'Cancelled')
-                # self._frameTop.Close(force=True)
-        # with DlgHelp(self._frameTop) as dlg:
-        #     dlg: DlgHelp = cast(DlgHelp, dlg)
-        #     if dlg.ShowModal() == OK:
-        #         self.logger.warning('Clicked Ok')
-        #     else:
-        #         self.logger.warning(f'Cancelled')
 
         self.logger.info(f"After dialog show")
         sysExit()   # brutal !!

@@ -38,7 +38,7 @@ from gittodoistclone.adapters.AbstractTodoistAdapter import AbstractTodoistAdapt
 
 from gittodoistclone.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
-from gittodoistclone.adapters.TodoistAdapter import TaskInfo
+from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 
@@ -83,7 +83,7 @@ class TodoistPanel(BasePanel):
     def tasksToClone(self, newInfo: CloneInformation):
 
         self._cloneInformation = newInfo
-        tasksToClone: List[TaskInfo] = newInfo.tasksToClone
+        tasksToClone: List[GitIssueInfo] = newInfo.tasksToClone
         for taskToClone in tasksToClone:
             self._taskList.Append(taskToClone.gitIssueName, taskToClone)
 

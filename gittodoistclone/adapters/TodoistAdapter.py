@@ -24,7 +24,7 @@ from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
 
 
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
-from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
+from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
 
 
 @dataclass
@@ -71,7 +71,7 @@ class TodoistAdapter(AbstractTodoistAdapter):
         projectId:         str  = self._determineProjectIdFromRepoName(info, progressCb)
         milestoneTaskItem: Task = self._getMilestoneTaskItem(projectId=projectId, milestoneName=info.milestoneNameTask, progressCb=progressCb)
 
-        tasks: List[TaskInfo] = info.tasksToClone
+        tasks: List[GitIssueInfo] = info.tasksToClone
         for taskInfo in tasks:
             self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 

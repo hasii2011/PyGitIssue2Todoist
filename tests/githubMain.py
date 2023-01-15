@@ -11,6 +11,7 @@ USERNAME:          str = 'hasii2011'
 
 # Used for prototyping
 
+
 def getIssuesInRepos():
 
     g = Github(INTEGRATION_TOKEN)
@@ -23,8 +24,8 @@ def getIssuesInRepos():
 
     open_issues = repo.get_issues(state='open')
     print(f'**** list of milestone -- Release 7.0 issues')
-    for issue in open_issues:
-        mileStone: Milestone = issue.milestone
+    for issue in open_issues:       # type: ignore
+        mileStone: Milestone = issue.milestone  # type: ignore
         if mileStone is not None and mileStone.title == 'Release 7.0':
             print(f'{issue=}')
 

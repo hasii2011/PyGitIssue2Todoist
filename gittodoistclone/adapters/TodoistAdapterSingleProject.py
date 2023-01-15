@@ -19,7 +19,7 @@ from gittodoistclone.adapters.AbstractTodoistAdapter import Tasks
 
 # from gittodoistclone.adapters.TodoistAdapter import ProjectData
 from gittodoistclone.adapters.TodoistAdapterTypes import CloneInformation
-from gittodoistclone.adapters.TodoistAdapterTypes import TaskInfo
+from gittodoistclone.adapters.TodoistAdapterTypes import GitIssueInfo
 
 
 class TodoistAdapterSingleProject(AbstractTodoistAdapter):
@@ -78,7 +78,7 @@ class TodoistAdapterSingleProject(AbstractTodoistAdapter):
             progressCb:
             projectId:
         """
-        tasks:     List[TaskInfo] = info.tasksToClone
+        tasks:     List[GitIssueInfo] = info.tasksToClone
 
         justRepoName:      str  = info.repositoryTask.split('/')[1]
         repoTaskId:        str  = self._getIdForRepoName(projectId=projectId, repoName=justRepoName)

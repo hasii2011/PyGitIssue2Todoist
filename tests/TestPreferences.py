@@ -97,11 +97,11 @@ class TestPreferences(TestBase):
 
     def __setTodoistProjectNameToNone(self):
         preferences: Preferences = Preferences()
-        preferences.todoistProjectName = None
+        preferences.todoistProjectName = cast(str, None)
 
     def __setTodoistProjectNameToEmpty(self):
         preferences: Preferences = Preferences()
-        preferences.todoistProjectName = None
+        preferences.todoistProjectName = cast(str, None)
 
 
 def suite() -> TestSuite:

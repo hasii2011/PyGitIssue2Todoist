@@ -7,14 +7,14 @@ from logging import getLogger
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
-from todoist.models import Item
-from todoist.models import Note
-from todoist.models import Project
+from todoist_api_python.models import Comment
+from todoist_api_python.models import Project
+from todoist_api_python.models import Task
 
 from gittodoistclone.adapters.TodoistAdapter import ProjectDictionary
 from gittodoistclone.adapters.TodoistAdapter import ProjectName
 from gittodoistclone.adapters.TodoistAdapter import ProjectTasks
-from gittodoistclone.adapters.TodoistAdapter import TaskInfo
+from gittodoistclone.adapters.TodoistAdapter import GitIssueInfo
 from gittodoistclone.adapters.TodoistAdapter import TodoistAdapter
 from gittodoistclone.adapters.TodoistAdapter import CloneInformation
 from gittodoistclone.general.GitHubURLOption import GitHubURLOption
@@ -91,7 +91,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: int = adapter._getProjectId(projectName=ProjectName('Bogus'), projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=ProjectName('Bogus'), projectDictionary=projectDictionary)
 
         self.assertNotEqual(0, projectId,  'I expected some id')
 
@@ -101,10 +101,10 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        actualId: int = adapter._getProjectId(projectName=ProjectName('Personal'), projectDictionary=projectDictionary)
+        actualId: str = adapter._getProjectId(projectName=ProjectName('Personal'), projectDictionary=projectDictionary)
 
-        project: Project = projectDictionary['Personal']
-        expectedId: int = project['id']
+        project: Project = projectDictionary[ProjectName('Personal')]
+        expectedId: str = project.id
 
         self.assertEqual(expectedId, actualId, 'I was supposed to get an actual ID')
 
@@ -114,7 +114,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: int = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
 
         projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 
@@ -128,10 +128,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         adapter: TodoistAdapter = self._adapter
 
-        # projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
-
-        # projectId: int = adapter._getProjectId(projectName=ProjectName('NewProject'), projectDictionary=projectDictionary)
-        projectId: int = self._getAProjectId(projectName=ProjectName('NewProject'))
+        projectId: str = self._getAProjectId(projectName=ProjectName('NewProject'))
         projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 
         self.assertIsNotNone(projectTasks, 'I a basic data class return')
@@ -145,38 +142,38 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         adapter: TodoistAdapter = self._adapter
 
-        projectId: int = self._getAProjectId(projectName=ProjectName('MockProject'))
+        projectId: str = self._getAProjectId(projectName=ProjectName('MockProject'))
 
         info: CloneInformation = CloneInformation()
         info.repositoryTask    = 'MockProject'
         info.milestoneNameTask = 'MockMilestone2'
-        info.tasksToClone      = ['MockTask3', 'MockTask4']
+        info.tasksToClone      = [GitIssueInfo(gitIssueName='MockTask3'), GitIssueInfo(gitIssueName='MockTask4')]
 
-        milestoneTaskItem: Item = adapter._getMilestoneTaskItem(projectId=projectId, milestoneNameTask='MockMilestone2', progressCb=self._sampleCallback)
+        milestoneTask: Task = adapter._getMilestoneTaskItem(projectId=projectId, milestoneName='MockMilestone2', progressCb=self._sampleCallback)
 
-        itemName: str = milestoneTaskItem['content']
-        self.assertEqual('MockMilestone2', itemName, 'Should get existing item')
+        taskName: str = milestoneTask.content
+        self.assertEqual('MockMilestone2', taskName, 'Should get existing item')
 
     def testAddNoteToSubTask(self):
         adapter: TodoistAdapter = self._adapter
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: int = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
 
         projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 
         devTasks = projectTasks.devTasks
         for devTask in devTasks:
-            taskName: str = devTask["content"]
-            taskId:   int = devTask["id"]
+            taskName: str = devTask.content
+            taskId:   str = devTask.id
             self.logger.info(f'{taskName} - {taskId=}')
 
             try:
                 noteToAdd: str = f'https://{taskName}-{taskId}.com'
 
-                note: Note = adapter.addNoteToTask(itemId=taskId, noteContent=noteToAdd)
-                self.logger.info(f'Note added: {note}')
+                comment: Comment = adapter._addNoteToTask(itemId=taskId, noteContent=noteToAdd)
+                self.logger.info(f'Comment added: {comment}')
             except NoteCreationError as nce:
                 self.logger.error(f'{nce.errorCode=} {nce.message=}')
 
@@ -184,7 +181,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         # markdown Link format
         # [here](https://github.com/hasii2011/gittodoistclone/wiki/How-to-use-gittodoistclone)
 
-        hyperLinkedTask: TaskInfo = TaskInfo()
+        hyperLinkedTask: GitIssueInfo = GitIssueInfo()
         hyperLinkedTask.gitIssueName = f'I am linked'
         hyperLinkedTask.gitIssueURL  = 'https://hsanchezii.wordpress.com'
 
@@ -203,13 +200,13 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         preferences.githubURLOption = savedOption
 
-    def _getAProjectId(self, projectName: ProjectName) -> int:
+    def _getAProjectId(self, projectName: ProjectName) -> str:
 
         adapter: TodoistAdapter = self._adapter
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: int = adapter._getProjectId(projectName=projectName, projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=projectName, projectDictionary=projectDictionary)
 
         return projectId
 
