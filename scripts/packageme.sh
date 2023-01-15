@@ -25,7 +25,7 @@ else
             echo "create deployable binary"
             rm -rf build dist
             # python -O setup.py py2app --packages=wx,github,todoist-api-python --iconfile pygitissue2todoist/resources/BaseLogo.icns
-            python -O setup.py py2app --packages=charset_normalizer --iconfile gittodoistclone/resources/BaseLogo.icns
+            python -O setup.py py2app --packages=charset_normalizer --iconfile pygitissue2todoist/resources/BaseLogo.icns
     else
         echo "Unknown command line arguments"
     fi
