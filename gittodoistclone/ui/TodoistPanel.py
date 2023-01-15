@@ -156,6 +156,9 @@ class TodoistPanel(BasePanel):
             else:
                 booBoo: MessageDialog = MessageDialog(parent=None, message=tce.message, caption='Task Creation Error!', style=OK | ICON_ERROR)
                 booBoo.ShowModal()
+        except Exception as ue:
+            uhOh: MessageDialog = MessageDialog(parent=None, message=ue, caption='Task Creation Error!', style=OK | ICON_ERROR)
+            uhOh.ShowModal()
 
     def __setupProgressDialog(self) -> ProgressDialog:
 

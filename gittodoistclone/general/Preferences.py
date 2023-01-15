@@ -95,7 +95,7 @@ class Preferences(Singleton):
         attempting to instantiate the preferences Singleton
         """
         if platform == "linux2" or platform == "linux" or platform == Preferences.THE_GREAT_MAC_PLATFORM:
-            Preferences.preferencesFileLocationAndName = getenv("HOME") + osSep + Preferences.PREFERENCES_FILE_NAME
+            Preferences.preferencesFileLocationAndName = getenv("HOME") + osSep + Preferences.PREFERENCES_FILE_NAME  # type: ignore
         else:
             Preferences.preferencesFileLocationAndName = Preferences.PREFERENCES_FILE_NAME
 

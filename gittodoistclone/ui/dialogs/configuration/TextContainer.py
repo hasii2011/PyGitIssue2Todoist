@@ -46,11 +46,11 @@ class TextContainer(SizedPanel):
         # noinspection PyUnusedLocal
         textLabel:   StaticText = StaticText(self, ID_ANY, labelText)
         textControl: TextCtrl   = TextCtrl(self, self._textId, "", size=self._textControlSize)
-        # noinspection PyUnresolvedReferences
+
         textControl.SetSizerProps(expand=True, halign='right')
 
         self._textControl:  TextCtrl = textControl
-        self._textValue:    str      = ''
+        self._valueOfText:    str      = ''
 
         # noinspection PyUnresolvedReferences
         self.SetSizerProps(expand=True)
@@ -65,21 +65,21 @@ class TextContainer(SizedPanel):
         """
         self._textControl.Enable(newValue)
 
-    def textValue(self, newValue: str):
+    def _textValue(self, newValue: str):
         """
-        The write only property for value of the contained text control;  Presumably, only the user can change the
-        it by typing it in.  This invokes a callback to the constructed UI to update the value
+        This is a write-only property for value of the contained text control;  Presumably, only the user can change the
+        value by typing it in.  This invokes a callback to the constructed UI to update the value
         Args:
             newValue:  The value to set
         """
-        self._textValue = newValue
+        self._valueOfText = newValue
         self._textControl.SetValue(newValue)
 
-    # Write only property   TODO fix mypy error
-    textValue = property(None, textValue)   # type: ignore
+    textValue = property(None, _textValue)
 
     def _onTextValueChanged(self, event: CommandEvent):
 
         newValue: str = event.GetString()
 
+        self._valueOfText = newValue
         self._callback(newValue)

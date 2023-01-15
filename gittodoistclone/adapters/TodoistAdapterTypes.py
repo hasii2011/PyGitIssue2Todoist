@@ -3,9 +3,9 @@ from typing import List
 
 from dataclasses import dataclass
 from dataclasses import field
-from typing import NewType
+# from typing import NewType
 
-from todoist.models import Item
+# from todoist.models import Item
 
 
 @dataclass

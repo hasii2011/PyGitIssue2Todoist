@@ -251,7 +251,6 @@ class GitHubPanel(BasePanel):
         eDlg.Destroy()
 
         with DlgConfigure(self) as dlg:
-            dlg: DlgConfigure = cast(DlgConfigure, dlg)
             if dlg.ShowModal() == OK:
                 githubToken: str = self._preferences.githubApiToken
                 userName:    str = self._preferences.githubUserName

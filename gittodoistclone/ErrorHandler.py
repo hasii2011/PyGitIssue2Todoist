@@ -108,7 +108,7 @@ class ErrorHandler:
 
     def __removeTodoistCache(self):
 
-        homeDir: str = getenv('HOME')
+        homeDir: str = getenv('HOME')   # type: ignore
 
         directoryToDelete: str = osPath.join(homeDir, ErrorHandler.TODOIST_CACHE_DIRECTORY_NAME)
 

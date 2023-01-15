@@ -38,7 +38,7 @@ class Singleton(object):
         instance = cls.__dict__.get("__instance__")
         if instance is None:
             instance = object.__new__(cls)
-            assert type(instance.__init__) != MethodType, f"Error, your singleton class {cls} cannot contain an '__init__' method."
+            assert type(instance.__init__) != MethodType, f"Error, your singleton class {cls} cannot contain an '__init__' method."  # type: ignore
             try:
                 instance.init(*args, **kwds)
             except Exception as e:

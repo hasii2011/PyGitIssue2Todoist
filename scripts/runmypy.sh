@@ -2,7 +2,8 @@
 
 function changeToProjectRoot {
 
-    export areHere=`basename ${PWD}`
+    areHere=$(basename "${PWD}")
+    export areHere
     if [[ ${areHere} = "scripts" ]]; then
         cd ..
     fi
@@ -10,9 +11,10 @@ function changeToProjectRoot {
 
 changeToProjectRoot
 
-echo "current: `pwd`"
+echo "current: $(pwd)"
 
-mypy --config-file gittodoistclone/.mypi.ini --show-error-codes --no-color-output gittodoistclone tests
+OPTS="--pretty --no-color-output  --show-error-context --check-untyped-defs --show-error-codes"
+mypy --config-file gittodoistclone/.mypi.ini ${OPTS} gittodoistclone tests
 status=$?
 
 echo "Exit with status: ${status}"
