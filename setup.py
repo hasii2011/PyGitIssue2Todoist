@@ -19,7 +19,7 @@ OPTIONS = {}
 
 setup(
     name='PyGitIssue2Todoist',
-    version='1.0.0',
+    version='1.0.0+.17',
     app=APP,
     data_files=DATA_FILES,
     packages=['pygitissue2todoist',
