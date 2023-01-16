@@ -1,4 +1,4 @@
-
+from dataclasses import field
 from typing import List
 from typing import NewType
 from typing import Optional
@@ -14,6 +14,7 @@ from github import BadCredentialsException
 
 from github.Issue import Issue
 from github.Milestone import Milestone
+from github.Label import Label
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 
@@ -25,11 +26,17 @@ RepositoryNames = NewType('RepositoryNames', List[str])
 MilestoneTitles = NewType('MilestoneTitles', List[str])
 
 
+def createLabelsFactory() -> List[str]:
+    return []
+
+
 @dataclass
 class AbbreviatedGitIssue:
 
     issueTitle:   str = ''
     issueHTMLURL: str = ''
+    body:         str = ''
+    labels:       List[str] = field(default_factory=createLabelsFactory)
 
 
 AbbreviatedGitIssues = NewType('AbbreviatedGitIssues', List[AbbreviatedGitIssue])
@@ -135,5 +142,9 @@ class GithubAdapter:
 
         simpleIssue.issueTitle   = fullGitIssue.title
         simpleIssue.issueHTMLURL = fullGitIssue.html_url
+        simpleIssue.body         = fullGitIssue.body
+        for label in fullGitIssue.labels:
+            gitLabel: Label = cast(Label, label)
+            simpleIssue.labels.append(gitLabel.name)
 
         return simpleIssue

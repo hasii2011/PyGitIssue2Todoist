@@ -5,35 +5,26 @@ from typing import cast
 from logging import Logger
 from logging import getLogger
 
-from wx import ALIGN_RIGHT
-from wx import ALIGN_TOP
-from wx import ALL
-from wx import BU_LEFT
 from wx import CB_DROPDOWN
 from wx import CB_READONLY
 from wx import EVT_BUTTON
 from wx import EVT_COMBOBOX
 from wx import EVT_LISTBOX
-from wx import EXPAND
-from wx import HORIZONTAL
 from wx import ICON_ERROR
+from wx import ID_ANY
 from wx import LB_MULTIPLE
 from wx import LB_OWNERDRAW
 from wx import LB_SINGLE
 from wx import OK
-from wx import VERTICAL
 
 from wx import Button
 from wx import CommandEvent
-from wx import StaticBoxSizer
 from wx import ListBox
-from wx import BoxSizer
 from wx import ComboBox
-from wx import Window
-
-from wx import NewIdRef as wxNewIdRef
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
+from wx.lib.sized_controls import SizedPanel
+from wx.lib.sized_controls import SizedStaticBox
 
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
@@ -57,9 +48,12 @@ class GitHubPanel(BasePanel):
     OPEN_MILESTONE_INDICATOR: str = 'Open'
     OPEN_ISSUE_INDICATOR:     str = 'open'
 
-    def __init__(self, parent: Window, eventEngine: IEventEngine):
+    def __init__(self, parent: SizedPanel, eventEngine: IEventEngine):
 
         super().__init__(parent)
+        self.SetSizerType('vertical')
+        # noinspection PyUnresolvedReferences
+        self.SetSizerProps(expand=True, proportion=1)
 
         self.SetBackgroundColour(self.backgroundColor)
 
@@ -71,97 +65,72 @@ class GitHubPanel(BasePanel):
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.githubUserName, authenticationToken=self._preferences.githubApiToken)
 
-        contentSizer: BoxSizer = self._layoutContent()
+        self._repositorySelection: ComboBox = cast(ComboBox, None)
+        self._milestoneList:       ListBox  = cast(ListBox, None)
+        self._issueList:           ListBox  = cast(ListBox, None)
+        self._layoutContent(parent=self)
 
-        # noinspection PyUnresolvedReferences
-        self.SetSizer(contentSizer)
-        self.Fit()
+        self._populateRepositories()
+
+        self.Bind(EVT_COMBOBOX, self._onRepositorySelected, self._repositorySelection)
+        self.Bind(EVT_LISTBOX,  self._onMilestoneSelected,  self._milestoneList)
+        self.Bind(EVT_BUTTON, self._onCloneClicked, self._cloneButton)
 
     def clearIssues(self):
         self._issueList.Clear()
         self._selectedSimpleGitIssues = AbbreviatedGitIssues([])
 
-    def _layoutContent(self) -> BoxSizer:
+    def _layoutContent(self, parent: BasePanel) :
 
-        sizer: BoxSizer = BoxSizer(VERTICAL)
+        self._layoutRepositorySelection(parent=parent)
+        self._layoutMilestoneSelection(parent=parent)
+        self._layoutIssueSelection(parent=parent)
+        self._layoutCloneButton(parent=parent)
 
-        rz: StaticBoxSizer = self._createRepositorySelection()
-        mz: StaticBoxSizer = self._createMilestoneSelection()
-        iz: StaticBoxSizer = self._createIssueSelection()
-        bz: BoxSizer       = self._createCloneButton()
+    def _layoutRepositorySelection(self, parent: SizedPanel):
 
-        sizer.Add(rz, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL | EXPAND, 1)
-        sizer.Add(mz, BasePanel.PROPORTION_CHANGEABLE, ALL | EXPAND, 2)
-        sizer.Add(iz, BasePanel.PROPORTION_CHANGEABLE, ALL | EXPAND | ALIGN_TOP, 1)
-        sizer.Add(bz, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL | ALIGN_RIGHT, 2)
+        box: SizedStaticBox = SizedStaticBox(parent, ID_ANY, "Repositories")
+        box.SetSizerProps(expand=True, proportion=1)
 
-        sizer.Fit(self)
+        self._repositorySelection = ComboBox(box, style=CB_DROPDOWN | CB_READONLY)
+        self._repositorySelection.SetSizerProps(expand=True)
 
-        return sizer
+    def _layoutMilestoneSelection(self, parent: SizedPanel):
 
-    def _createRepositorySelection(self) -> StaticBoxSizer:
+        box: SizedStaticBox = SizedStaticBox(parent, ID_ANY, "Repository Milestone Titles")
+        box.SetSizerProps(expand=True, proportion=4)
 
-        repoSelectionWxId: int = wxNewIdRef()
+        self._milestoneList = ListBox(box, style=LB_SINGLE | LB_OWNERDRAW)
+        self._milestoneList.SetSizerProps(expand=True, proportion=1)
 
-        self._repositorySelection: ComboBox = ComboBox(self, repoSelectionWxId, style=CB_DROPDOWN | CB_READONLY)
-
-        sz = StaticBoxSizer(VERTICAL, self, "Repository List")
-        sz.Add(self._repositorySelection, BasePanel.PROPORTION_NOT_CHANGEABLE, EXPAND)
-
-        self.__populateRepositories()
-
-        self.Bind(EVT_COMBOBOX, self._onRepositorySelected, id=repoSelectionWxId)
-
-        return sz
-
-    def _createMilestoneSelection(self) -> StaticBoxSizer:
-
-        milestoneSelectionWxId: int = wxNewIdRef()
-
-        self._milestoneList: ListBox = ListBox(self,  milestoneSelectionWxId, style=LB_SINGLE | LB_OWNERDRAW)
-
-        # noinspection PyUnresolvedReferences
         self._milestoneList.Enable(False)
-        sz = StaticBoxSizer(VERTICAL, self, "Repository Milestone Titles")
-        sz.Add(self._milestoneList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
 
-        self.Bind(EVT_LISTBOX, self._onMilestoneSelected, milestoneSelectionWxId)
+    def _layoutIssueSelection(self, parent: SizedPanel):
 
-        return sz
+        box: SizedStaticBox = SizedStaticBox(parent, ID_ANY, "Repository Issues")
+        box.SetSizerProps(expand=True, proportion=4)
 
-    def _createIssueSelection(self) -> StaticBoxSizer:
+        self._issueList = ListBox(box, style=LB_MULTIPLE | LB_OWNERDRAW)
+        self._issueList.SetSizerProps(expand=True, proportion=1)
 
-        issueWxID: int = wxNewIdRef()
-
-        self._issueList: ListBox = ListBox(self,  issueWxID, style=LB_MULTIPLE | LB_OWNERDRAW)
-
-        # noinspection PyUnresolvedReferences
         self._issueList.Enable(False)
-        sz = StaticBoxSizer(VERTICAL, self, "Repository Issues")
-        sz.Add(self._issueList, BasePanel.PROPORTION_CHANGEABLE, EXPAND)
 
-        return sz
+    def _layoutCloneButton(self, parent: SizedPanel):
 
-    def _createCloneButton(self) -> BoxSizer:
+        sizedPanel: SizedPanel = SizedPanel(parent)
+        sizedPanel.SetSizerType('horizontal')
+        sizedPanel.SetSizerProps(expand=False,halign='right')  # expand False allows aligning right
 
-        bSizer:    BoxSizer = BoxSizer(HORIZONTAL)
-        cloneWxID: int      = wxNewIdRef()
+        self._cloneButton: Button = Button(sizedPanel, label='Clone')
 
-        self._cloneButton: Button = Button(self, id=cloneWxID, style=BU_LEFT, label='Clone')
-
-        # noinspection PyUnresolvedReferences
         self._cloneButton.Enable(False)
-        bSizer.Add(self._cloneButton, BasePanel.PROPORTION_NOT_CHANGEABLE, ALL, 1)
-
-        self.Bind(EVT_BUTTON, self._onCloneClicked, id=cloneWxID)
-        return bSizer
 
     def _onRepositorySelected(self, event: CommandEvent):
 
         repoName: str = event.GetString()
         self.logger.info(f'{repoName=}')
 
-        self.__populateMilestones(repoName)
+        self._populateMilestones(repoName)
 
         self._eventEngine.sendEvent(eventType=EventType.RepositorySelected)
 
@@ -172,7 +141,7 @@ class GitHubPanel(BasePanel):
         self.logger.info(f'{repoName=} - {milestoneTitle=}')
 
         self.clearIssues()
-        self.__populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
+        self._populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
         self._eventEngine.sendEvent(eventType=EventType.MilestoneSelected)
 
     # noinspection PyUnusedLocal
@@ -195,26 +164,25 @@ class GitHubPanel(BasePanel):
                                     milestoneName=milestoneName,
                                     selectedSimpleGitIssues=self._selectedSimpleGitIssues)
 
-    def __populateRepositories(self):
+    def _populateRepositories(self):
 
         try:
             repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
 
             self._repositorySelection.SetItems(repoNames)
         except AdapterAuthenticationError:
-            self.__handleAuthenticationError()
+            self._handleAuthenticationError()
         except GitHubConnectionError:
-            self.__handleGitHubConnectionError()
+            self._handleGitHubConnectionError()
 
-    def __populateMilestones(self, repoName: str):
+    def _populateMilestones(self, repoName: str):
 
         mileStoneTitles: List[str] = self._githubAdapter.getMileStoneTitles(repoName)
 
         self._milestoneList.SetItems(mileStoneTitles)
-        # noinspection PyUnresolvedReferences
         self._milestoneList.Enable(True)
 
-    def __populateIssues(self, repoName: str, milestoneTitle: str):
+    def _populateIssues(self, repoName: str, milestoneTitle: str):
         """
         The UI control can only display strings
         Args:
@@ -228,12 +196,10 @@ class GitHubPanel(BasePanel):
             # Insert string in list box;  Attach client data to it
             self._issueList.Append(simpleGitIssue.issueTitle, simpleGitIssue)
 
-        # noinspection PyUnresolvedReferences
         self._issueList.Enable(True)
-        # noinspection PyUnresolvedReferences
         self._cloneButton.Enable(True)
 
-    def __extractTitles(self, abbreviatedGitIssues: AbbreviatedGitIssues) -> List[str]:
+    def _extractTitles(self, abbreviatedGitIssues: AbbreviatedGitIssues) -> List[str]:
 
         issueTitles: List[str] = []
         for simpleGitIssues in abbreviatedGitIssues:
@@ -241,7 +207,7 @@ class GitHubPanel(BasePanel):
 
         return issueTitles
 
-    def __handleAuthenticationError(self):
+    def _handleAuthenticationError(self):
 
         eDlg = GenericMessageDialog(None, 'GitHub authentication error', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()
@@ -253,9 +219,9 @@ class GitHubPanel(BasePanel):
                 userName:    str = self._preferences.githubUserName
                 self._githubAdapter = GithubAdapter(userName=userName, authenticationToken=githubToken)
 
-                self.__populateRepositories()  # I hate recursion
+                self._populateRepositories()  # I hate recursion
 
-    def __handleGitHubConnectionError(self):
+    def _handleGitHubConnectionError(self):
 
         eDlg = GenericMessageDialog(None, 'GitHub connection error.  Try again later', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()

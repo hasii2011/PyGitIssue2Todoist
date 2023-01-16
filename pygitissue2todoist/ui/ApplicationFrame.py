@@ -1,3 +1,4 @@
+
 from typing import List
 from typing import Tuple
 
@@ -8,24 +9,22 @@ from wx import BOTH
 from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_CLOSE
 from wx import EVT_MENU
-from wx import EXPAND
 from wx import FRAME_EX_METAL
-from wx import HORIZONTAL
 from wx import ID_PREFERENCES
 from wx import OK
 from wx import ID_ABOUT
 from wx import ID_EXIT
 
-from wx import BoxSizer
 from wx import Size
 from wx import CommandEvent
-from wx import Frame
 from wx import Menu
 from wx import MenuBar
 from wx import StatusBar
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
+from wx.lib.sized_controls import SizedFrame
+from wx.lib.sized_controls import SizedPanel
 
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
@@ -48,7 +47,7 @@ from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 from pygitissue2todoist.ui.eventengine.EventEngine import EventEngine
 
-class ApplicationFrame(Frame):
+class ApplicationFrame(SizedFrame):
 
     HELP_MENU_ID: int = wxNewIdRef()
 
@@ -58,7 +57,8 @@ class ApplicationFrame(Frame):
         appSize: Size = Size(self._preferences.startupWidth, self._preferences.startupHeight)
 
         super().__init__(parent=parent, id=wxID, title=title, size=appSize, style=DEFAULT_FRAME_STYLE | FRAME_EX_METAL)
-
+        self.GetContentsPane().SetSizerType('horizontal')
+        self.GetContentsPane().SetSizerProps(expand=True, proportion=1)
         self.logger: Logger = getLogger(__name__)
 
         self._eventEngine: IEventEngine = EventEngine(listeningWindow=self)
@@ -67,7 +67,8 @@ class ApplicationFrame(Frame):
         self._status.SetStatusText('Ready!')
 
         self._createApplicationMenuBar()
-        self._githubPanel, self._todoistPanel = self._createApplicationContentArea()
+        self._githubPanel, self._todoistPanel = self._layoutApplicationContentArea()
+
         # self.SetThemeEnabled(True)
 
         x, y = self._preferences.appStartupPosition
@@ -82,6 +83,11 @@ class ApplicationFrame(Frame):
 
         self._eventEngine.registerListener(event=EVT_REPOSITORY_SELECTED, callback=self._onRepositorySelected)
         self._eventEngine.registerListener(event=EVT_ISSUES_SELECTED,     callback=self._onIssuesSelected)
+
+        # a little trick to make sure that you can't resize the dialog to
+        # less screen space than the controls need
+        # self.Fit()
+        # self.SetMinSize(self.GetSize())
 
     # noinspection PyUnusedLocal
     def Close(self, force=False):
@@ -119,17 +125,15 @@ class ApplicationFrame(Frame):
         self.Bind(EVT_MENU, self._onAbout,     id=ID_ABOUT)
         self.Bind(EVT_MENU, self.Close,        id=ID_EXIT)
 
-    def _createApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
+    def _layoutApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
 
-        leftPanel:  GitHubPanel  = GitHubPanel(self,  eventEngine=self._eventEngine)
-        rightPanel: TodoistPanel = TodoistPanel(self, eventEngine=self._eventEngine)
+        sizedPanel: SizedPanel = self.GetContentsPane()
+        leftPanel:  GitHubPanel  = GitHubPanel(sizedPanel,  eventEngine=self._eventEngine)
+        rightPanel: TodoistPanel = TodoistPanel(sizedPanel, eventEngine=self._eventEngine)
 
-        mainSizer: BoxSizer = BoxSizer(orient=HORIZONTAL)
-        mainSizer.Add(leftPanel,  1, EXPAND)
-        mainSizer.Add(rightPanel, 1, EXPAND)
 
         # noinspection PyUnresolvedReferences
-        self.SetSizer(mainSizer)
+        # self.SetSizer(mainSizer)
         # mainSizer.Fit(self)       # Don't do this or setting of frame size won't work
 
         return leftPanel, rightPanel
