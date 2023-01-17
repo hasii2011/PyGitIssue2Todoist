@@ -30,7 +30,8 @@ from wx import Size
 from wx import NewIdRef as wxNewIdRef
 
 from pygitissue2todoist.general.Version import Version
-from pygitissue2todoist.resources import AboutDialogBaseLogo
+# from pygitissue2todoist.resources import AboutDialogBaseLogo
+from pygitissue2todoist.resources import AboutDialogBaseLogoV2
 
 
 class DlgAbout(Dialog):
@@ -73,7 +74,7 @@ class DlgAbout(Dialog):
 
     def _createUpperDialog(self) -> BoxSizer:
 
-        picture: StaticBitmap = StaticBitmap(self, ID_ANY, AboutDialogBaseLogo.embeddedImage.GetBitmap())
+        picture: StaticBitmap = StaticBitmap(self, ID_ANY, AboutDialogBaseLogoV2.embeddedImage.GetBitmap())
 
         dialogSizer:  BoxSizer = BoxSizer(HORIZONTAL)
         versionSizer: BoxSizer = self._createVersionsContainer()

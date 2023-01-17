@@ -22,10 +22,9 @@ if [[ $# -eq 0 ]] ; then
         python setup.py py2app -A
 else
     if [[ ${1} = 'deploy' ]] ; then
-            echo "create deployable binary"
+            echo "Create deployable binary"
             rm -rf build dist
-            # python -O setup.py py2app --packages=wx,github,todoist-api-python --iconfile pygitissue2todoist/resources/BaseLogo.icns
-            python -O setup.py py2app --packages=charset_normalizer --iconfile pygitissue2todoist/resources/BaseLogo.icns
+            python -O setup.py py2app --packages=charset_normalizer --iconfile pygitissue2todoist/resources/BaseLogoV2.icns
     else
         echo "Unknown command line arguments"
     fi
