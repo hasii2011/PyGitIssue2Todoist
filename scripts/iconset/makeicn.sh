@@ -7,8 +7,12 @@
 #
 #
 ICON_SET_DIR='BaseLogo.iconset'
-ICON_IMAGE='BaseLogo-512-Rounded.png'
+ICON_IMAGE=${1}
 
+if [ -z $ICON_IMAGE ]; then
+            echo "Provide the icon image name"
+            exit 66
+    fi
 mkdir ${ICON_SET_DIR}
 
 sips -z 16 16     ${ICON_IMAGE} --out ${ICON_SET_DIR}/icon_16x16.png
