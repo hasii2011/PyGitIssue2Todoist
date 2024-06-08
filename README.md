@@ -1,9 +1,9 @@
 ![](https://github.com/hasii2011/code-ally-basic/blob/master/developer/agpl-license-web-badge-version-2-256x48.png "AGPL")
+
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 <a href="https://gitmoji.dev">
   <img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji">
 </a>
-
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/hasii2011/PyGitIssue2Todoist/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/hasii2011/PyGitIssue2Todoist/tree/master)
 
 # Introduction
