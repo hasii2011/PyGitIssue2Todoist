@@ -1,7 +1,13 @@
 
-You must first create the OS X app by running the `packagme.sh` script with the **_deployment_** option
+```
+pip install buildlackey
+```
 
-`./scripts/packageme deploy`
+You must first create the OS X app by running the `package` python script
+
+```
+packageme
+```
 
 
-Then follow the instructions at the [Code Signing Scripts Repository](https://github.com/hasii2011/CodeSigningScripts)
+Then follow the instructions at the [Py2App Code Signing Repository](https://github.com/hasii2011/py2appsigner)
