@@ -17,10 +17,10 @@ from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.GitHubAdapter import MilestoneTitles
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 
-from tests.TestBase import TestBase
+from tests.ProjectTestBase import ProjectTestBase
 
 
-class TestGithubAdapter(TestBase):
+class TestGithubAdapter(ProjectTestBase):
 
     TEST_REPOSITORY_NAME: str = 'hasii2011/StarTrekPy'
     TEST_MILESTONE_TITLE: str = '0.7 Release'
@@ -30,7 +30,7 @@ class TestGithubAdapter(TestBase):
 
     @classmethod
     def setUpClass(cls):
-        TestBase.setUpLogging()
+        ProjectTestBase.setUpLogging()
         TestGithubAdapter.clsLogger = getLogger(__name__)
 
     def setUp(self):

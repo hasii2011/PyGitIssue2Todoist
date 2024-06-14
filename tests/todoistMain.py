@@ -1,27 +1,35 @@
-from typing import Dict
+
 from typing import List
 from typing import cast
 
-from todoist.api import SyncError
-from todoist.api import TodoistAPI
-from todoist.models import Item
-from todoist.models import Project
+from github.Project import Project
+
+from todoist_api_python.api import TodoistAPI
+from todoist_api_python.models import Task
 
 from pygitissue2todoist.general.Preferences import Preferences
 
 Preferences.determinePreferencesLocation()
 
+MOCK_PROJECT_NAME: str = 'MockProject'
 # Used for prototyping
+
 
 def addSimpleTask():
     api_token: str = Preferences().todoistApiToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
 
-    todoist.add_item("Item1")
-
-    todoist.sync()
-    todoist.commit()
+    try:
+        task: Task = todoist.add_task(
+            content="Buy Milk",
+            due_string="tomorrow at 12:00",
+            due_lang="en",
+            priority=4,
+        )
+        print(task)
+    except Exception as error:
+        print(error)
 
 
 def addTaskToProject():
@@ -29,25 +37,21 @@ def addTaskToProject():
     api_token: str = Preferences().todoistApiToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
-    todoist.sync()
+    projects: List[Project] = todoist.get_projects()     # type: ignore
 
-    projects = todoist.state['projects']
-
-    projectId = -1
-    for project in projects:
-
-        projectName: str = project["name"]
-        if projectName == 'Development':
-            projectId = project['id']
-            print(f'{projectName=} - {projectId=}')
+    mockProject: Project = cast(Project, None)
+    for p in projects:
+        project: Project = cast(Project, p)
+        if project.name == MOCK_PROJECT_NAME:
+            mockProject = project
             break
+    assert mockProject is not None, "I need a ring to hang my hat on"
 
-    taskItem = todoist.items.add('I am an external Task', project_id=projectId)
-    taskItem.update(priority=1)
-
-    todoist.sync()
-
-    todoist.commit()
+    try:
+        task: Task = todoist.add_task(project_id=mockProject.id, content='MockTaskOnProject')
+        print(task)
+    except Exception as error:
+        print(error)
 
 
 def getProjects():
@@ -55,54 +59,42 @@ def getProjects():
     api_token: str = Preferences().todoistApiToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
-    todoist.sync()
 
-    projects = todoist.state['projects']
+    projects: List[Project] = todoist.get_projects()     # type: ignore
 
-    for project in projects:
-        projectName: str = project["name"]
-        projectId:   int = project['id']
-        print(f'{projectName:12} - {projectId=}')
+    for p in projects:
+        project: Project = cast(Project, p)
 
-        try:
-            if projectName == 'PyUt':
-                todoist.projects.delete(projectId)
-                todoist.sync()
-                todoist.commit()
-        except SyncError as se:
-            print(f'{se=}')
+        print(f'{project.name:15} - {project.id=}')
 
 
 def getProjectTasks():
 
     api_token: str = Preferences().todoistApiToken
 
-    todoist: TodoistAPI = TodoistAPI(api_token)
-    todoist.sync()
-    projects: List[Project] = todoist.state['projects']
+    todoist:  TodoistAPI    = TodoistAPI(api_token)
+    projects: List[Project] = todoist.get_projects()     # type: ignore
 
     mockProject: Project = cast(Project, None)
-    for project in projects:
+    for p in projects:
 
-        project = cast(Project, project)
-        projectName: str = project["name"]
-        if projectName == 'MockProject':
+        project: Project = cast(Project, p)
+
+        if project.name == MOCK_PROJECT_NAME:
             mockProject = project
             break
 
-    mockProjectId: int = mockProject['id']
-    print(f'{mockProjectId=}')
+    print(f'{mockProject.id=}')
 
-    dataItems: Dict[str, Item] = todoist.projects.get_data(project_id=mockProjectId)
+    tasks: List[Task] = todoist.get_tasks(project_id=mockProject.id)
 
-    # noinspection PyTypeChecker
-    items: List[Item] = dataItems['items']
-    for item in items:
-        print(f'{item["content"]=}  {item["id"]=} {item["parent_id"]=}')
+    for t in tasks:
+        task: Task = cast(Task, t)
+        print(f'{task.content:15}  {task.id=} {task.parent_id=}')
 
 
 if __name__ == '__main__':
     # addSimpleTask()
-    # addTaskToProject()
+    addTaskToProject()
     # getProjects()
-    getProjectTasks()
+    # getProjectTasks()

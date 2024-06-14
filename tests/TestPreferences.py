@@ -1,9 +1,6 @@
 
 from typing import cast
 
-from logging import Logger
-from logging import getLogger
-
 from os import path as osPath
 from os import remove as osRemove
 
@@ -16,28 +13,30 @@ from pygitissue2todoist.general.exceptions.InvalidPreference import InvalidPrefe
 
 from pygitissue2todoist.general.Preferences import Preferences
 
-from tests.TestBase import TestBase
+from tests.ProjectTestBase import ProjectTestBase
 
 
-class TestPreferences(TestBase):
+BOGUS_TODOIST_API_TOKEN: str = '88888'
+
+
+class TestPreferences(ProjectTestBase):
     """
     """
     BACKUP_SUFFIX: str = '.backup'
 
-    clsLogger: Logger = cast(Logger, None)
-
     @classmethod
     def setUpClass(cls):
-        TestBase.setUpLogging()
-        TestPreferences.clsLogger = getLogger(__name__)
-        Preferences.determinePreferencesLocation()          # Must do this once
+        super().setUpClass()
+        Preferences.determinePreferencesLocation()
 
     def setUp(self):
+        super().setUp()
 
-        self.logger: Logger = TestPreferences.clsLogger
         self._backupPreferences()
 
     def tearDown(self):
+        super().tearDown()
+
         self._restoreBackup()
 
     def testNoPreferencesExist(self):
@@ -49,9 +48,12 @@ class TestPreferences(TestBase):
 
         preferences: Preferences = Preferences()
 
-        preferences.todoistApiToken = '77777'
+        saveTodoistApiToken = preferences.todoistApiToken
+        preferences.todoistApiToken = BOGUS_TODOIST_API_TOKEN
 
-        self.assertEqual('77777', preferences.todoistApiToken, 'Uh oh, token did not change')
+        self.assertEqual(BOGUS_TODOIST_API_TOKEN, preferences.todoistApiToken, 'Uh oh, token did not change')
+
+        preferences.todoistApiToken = saveTodoistApiToken
 
     def testSingleTodoistProjectFalse(self):
         preferences: Preferences = Preferences()

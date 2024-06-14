@@ -196,9 +196,7 @@ class AbstractTodoistAdapter(ABC):
     def _getCurrentProjects(self) -> ProjectDictionary:
 
         todoist: TodoistAPI = self._todoist
-        # todoist.sync()
 
-        # projects: List[Project] = todoist.state['projects']
         projects: List[Project] = todoist.get_projects()
         projectDictionary: ProjectDictionary = ProjectDictionary({})
 
@@ -217,7 +215,6 @@ class AbstractTodoistAdapter(ABC):
 
     def _createProject(self, name: ProjectName) -> Project:
 
-        # project: Project = self._todoist.projects.add(name)
         project: Project = self._todoist.add_project(name=name)
         self.clsLogger.info(f'New project: {project.id}')
         return project

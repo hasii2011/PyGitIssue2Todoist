@@ -24,19 +24,15 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
     """
     This unit test uses mocks to test the todoist adapter.
     """
-    clsLogger: Logger = cast(Logger, None)
-
     @classmethod
     def setUpClass(cls):
-        TestTodoistAdapterBase.setUpClass()
-        TestTodoistAdapterMock.clsLogger = getLogger(__name__)
+        super().setUpClass()
 
     def setUp(self):
-        self.logger: Logger = TestTodoistAdapterMock.clsLogger
         super().setUp()
 
     def tearDown(self):
-        pass
+        super().tearDown()
 
     def testMockedApi(self):
         pass
@@ -81,6 +77,7 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
         # self.assertTrue(self._cbInvoked, 'Looks like callback was never invoked')
         # self.assertEqual(TestTodoistAdapterBase.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
         #
+
 
 def suite() -> TestSuite:
     import unittest

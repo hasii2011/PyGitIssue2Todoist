@@ -38,5 +38,5 @@ setup(
     description='Convert Github issues to Todoist Tasks',
     options={},
     setup_requires=['py2app'],
-    install_requires=['wxPython', 'PyGithub', 'todoist-api-python']
+    install_requires=['wxPython==4.2.1', 'PyGithub==2.2.0', 'todoist-api-python==2.1.3']
 )

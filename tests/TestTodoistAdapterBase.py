@@ -1,36 +1,30 @@
 
 from typing import List
-from typing import cast
-
-from logging import Logger
-from logging import getLogger
 
 from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
-from tests.TestBase import TestBase
+from tests.ProjectTestBase import ProjectTestBase
 
 
-class TestTodoistAdapterBase(TestBase):
+class TestTodoistAdapterBase(ProjectTestBase):
     """
     Base class for the todoist adapter unit tests.  Capture common code here
     """
 
     EXPECTED_NUMBER_OF_CALLBACKS: int = 6
 
-    baseClsLogger: Logger = cast(Logger, None)
-
     @classmethod
     def setUpClass(cls):
-        TestBase.setUpLogging()
-        TestTodoistAdapterBase.baseClsLogger = getLogger(__name__)
+        super().setUpClass()
 
     def setUp(self):
+        super().setUp()
         self._cbInvoked:     bool = False
         self._cbInvokeCount: int = 0
 
     def _sampleCallback(self, statusMsg: str):
 
-        TestTodoistAdapterBase.baseClsLogger.info(f'{statusMsg=}')
+        self.logger.info(f'{statusMsg=}')
 
         self._cbInvoked     = True
         self._cbInvokeCount += 1

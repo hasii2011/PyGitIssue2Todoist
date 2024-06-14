@@ -32,10 +32,11 @@ jobs:
             pip install six==1.16.0
             pip install attrdict3
             pip install -v -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04  wxPython
-            pip install PyGithub~=1.57
-            pip install todoist-api-python~=2.0.2
+            pip install codeallybasic==1.1.0
+            pip install PyGithub~=2.2.0
+            pip install todoist-api-python==2.1.3
             pip install html-testRunner~=1.2.1
       - run:
             name: run tests
             command: | 
-              scripts/runtests.sh
+              unittests

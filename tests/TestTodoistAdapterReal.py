@@ -1,8 +1,4 @@
 
-from typing import cast
-
-from logging import Logger
-from logging import getLogger
 
 from unittest import TestSuite
 from unittest import main as unitTestMain
@@ -45,24 +41,20 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
                 MockTask4
     ```
     """
-    clsLogger: Logger = cast(Logger, None)
 
     @classmethod
     def setUpClass(cls):
-        TestTodoistAdapterBase.setUpClass()
-        TestTodoistAdapterReal.clsLogger = getLogger(__name__)
-
+        super().setUpClass()
         Preferences.determinePreferencesLocation()
 
     def setUp(self):
 
-        self.logger: Logger = TestTodoistAdapterReal.clsLogger
         super().setUp()
         preferences: Preferences = Preferences()
         self._adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistApiToken)
 
     def tearDown(self):
-        pass
+        super().tearDown()
 
     def testRealAPI(self):
 
@@ -194,7 +186,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         savedOption: GitHubURLOption = preferences.githubURLOption
         preferences.githubURLOption  = GitHubURLOption.HyperLinkedTaskName
-        
+
         adapter: TodoistAdapter = self._adapter
         adapter.createTasks(ci, self._sampleCallback)
 

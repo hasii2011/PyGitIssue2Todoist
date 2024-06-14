@@ -1,5 +1,6 @@
 
 from github import Github
+from github.AuthenticatedUser import AuthenticatedUser
 from github.Milestone import Milestone
 from github.NamedUser import NamedUser
 
@@ -16,7 +17,7 @@ def getIssuesInRepos():
 
     g = Github(INTEGRATION_TOKEN)
 
-    user:  NamedUser = g.get_user(USERNAME)
+    user:  NamedUser | AuthenticatedUser = g.get_user(USERNAME)
     print(f'{user=}')
 
     repo = g.get_repo('hasii2011/PyUt')
@@ -44,7 +45,7 @@ def getRepos():
 
     g = Github(INTEGRATION_TOKEN)
 
-    user:  NamedUser = g.get_user(USERNAME)
+    user:  NamedUser | AuthenticatedUser = g.get_user(USERNAME)
     print(f'{user=}')
 
     repos = g.search_repositories(query='user:hasii2011')

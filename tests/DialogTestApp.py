@@ -14,19 +14,19 @@ from pygitissue2todoist.general.Preferences import Preferences
 # noinspection SpellCheckingInspection
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
-from tests.TestBase import TestBase
+from tests.ProjectTestBase import ProjectTestBase
 
 
-class TestADialog(App):
+class DialogTestApp(App):
 
     FRAME_ID: int = 0xDeadBeef
 
     # noinspection PyAttributeOutsideInit
     def OnInit(self):
 
-        TestBase.setUpLogging()
+        ProjectTestBase.setUpLogging()
         self.logger: Logger = getLogger('TestADialog')
-        frameTop: Frame = Frame(parent=None, id=TestADialog.FRAME_ID, title="Test A Dialog", size=(600, 400), style=DEFAULT_FRAME_STYLE)
+        frameTop: Frame = Frame(parent=None, id=DialogTestApp.FRAME_ID, title="Test A Dialog", size=(600, 400), style=DEFAULT_FRAME_STYLE)
         # frameTop.Show(False)
 
         Preferences.determinePreferencesLocation()
@@ -54,6 +54,6 @@ class TestADialog(App):
         sysExit()   # brutal !!
 
 
-testApp: App = TestADialog(redirect=False)
+testApp: App = DialogTestApp(redirect=False)
 
 testApp.MainLoop()

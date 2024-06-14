@@ -147,15 +147,12 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         todoist:   TodoistAPI  = self._todoist
 
-        # projectsManager: ProjectsManager = todoist.projects
-        # dataItems: ProjectData = projectsManager.get_data(project_id=projectId)
         # TODO:  Get tasks associated with the project
         tasks: List[Task] = todoist.get_tasks(project_id=projectId)
         mileStoneTasks: Tasks = Tasks([])
         devTasks:       Tasks = Tasks([])
 
         try:
-            # items: List[Item] = dataItems['items']
             for item in tasks:
                 task: Task = cast(Task, item)
                 parentId: str = task.parent_id  # type: ignore

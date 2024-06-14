@@ -47,6 +47,7 @@ from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 from pygitissue2todoist.ui.eventengine.EventEngine import EventEngine
 
+
 class ApplicationFrame(SizedFrame):
 
     HELP_MENU_ID: int = wxNewIdRef()
@@ -128,9 +129,8 @@ class ApplicationFrame(SizedFrame):
     def _layoutApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
 
         sizedPanel: SizedPanel = self.GetContentsPane()
-        leftPanel:  GitHubPanel  = GitHubPanel(sizedPanel,  eventEngine=self._eventEngine)
+        leftPanel:  GitHubPanel  = GitHubPanel(sizedPanel, eventEngine=self._eventEngine)
         rightPanel: TodoistPanel = TodoistPanel(sizedPanel, eventEngine=self._eventEngine)
-
 
         # noinspection PyUnresolvedReferences
         # self.SetSizer(mainSizer)
