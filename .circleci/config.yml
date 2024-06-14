@@ -36,6 +36,7 @@ jobs:
             pip install PyGithub~=2.2.0
             pip install todoist-api-python==2.1.3
             pip install html-testRunner~=1.2.1
+            pip install buildlackey==1.6.3
       - run:
             name: run tests
             command: | 
