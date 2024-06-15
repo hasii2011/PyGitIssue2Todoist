@@ -40,6 +40,8 @@ from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigur
 
 from pygitissue2todoist.ui.eventengine.Events import EventType
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
+from pygitissue2todoist.ui.eventengine.Events import EVT_TASK_CREATION_COMPLETE
+from pygitissue2todoist.ui.eventengine.Events import TaskCreationCompleteEvent
 
 
 class GitHubPanel(BasePanel):
@@ -74,13 +76,15 @@ class GitHubPanel(BasePanel):
 
         self.Bind(EVT_COMBOBOX, self._onRepositorySelected, self._repositorySelection)
         self.Bind(EVT_LISTBOX,  self._onMilestoneSelected,  self._milestoneList)
-        self.Bind(EVT_BUTTON, self._onCloneClicked, self._cloneButton)
+        self.Bind(EVT_BUTTON,   self._onCloneClicked,       self._cloneButton)
+
+        self._eventEngine.registerListener(event=EVT_TASK_CREATION_COMPLETE, callback=self._onTaskCreationComplete)
 
     def clearIssues(self):
         self._issueList.Clear()
         self._selectedSimpleGitIssues = AbbreviatedGitIssues([])
 
-    def _layoutContent(self, parent: BasePanel) :
+    def _layoutContent(self, parent: BasePanel):
 
         self._layoutRepositorySelection(parent=parent)
         self._layoutMilestoneSelection(parent=parent)
@@ -119,7 +123,7 @@ class GitHubPanel(BasePanel):
 
         sizedPanel: SizedPanel = SizedPanel(parent)
         sizedPanel.SetSizerType('horizontal')
-        sizedPanel.SetSizerProps(expand=False,halign='right')  # expand False allows aligning right
+        sizedPanel.SetSizerProps(expand=False, halign='right')  # expand False allows aligning right
 
         self._cloneButton: Button = Button(sizedPanel, label='Clone')
 
@@ -226,3 +230,7 @@ class GitHubPanel(BasePanel):
         eDlg = GenericMessageDialog(None, 'GitHub connection error.  Try again later', "", agwStyle=ICON_ERROR | OK)
         eDlg.ShowModal()
         eDlg.Destroy()
+
+    # noinspection PyUnusedLocal
+    def _onTaskCreationComplete(self, event: TaskCreationCompleteEvent):
+        self.clearIssues()

@@ -48,6 +48,7 @@ from pygitissue2todoist.ui.eventengine.Events import MilestoneSelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
+from pygitissue2todoist.ui.eventengine.Events import EventType
 
 
 class TodoistPanel(BasePanel):
@@ -160,10 +161,12 @@ class TodoistPanel(BasePanel):
         except Exception as ue:
             uhOh: MessageDialog = MessageDialog(parent=None, message=ue, caption='Task Creation Error!', style=OK | ICON_ERROR)
             uhOh.ShowModal()
+        finally:
+            self._eventEngine.sendEvent(eventType=EventType.TaskCreationComplete)
 
     def _setupProgressDialog(self) -> ProgressDialog:
 
-        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "", parent=self, style=PD_ELAPSED_TIME)
+        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "", style=PD_ELAPSED_TIME)
 
         return self._progressDlg
 

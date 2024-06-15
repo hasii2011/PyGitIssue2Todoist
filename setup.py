@@ -16,7 +16,7 @@ DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/lo
 OPTIONS = {}
 
 setup(
-    name='PyGitIssue2Todoist',
+    name='pygitissue2todoist/PyGitIssue2Todoist.oy',
     version=__version__,
     app=APP,
     data_files=DATA_FILES,
@@ -30,7 +30,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
 
-    url='https://github.com/hasii2011/gittodoistclone',
+    url='https://github.com/hasii2011/PyGitIssue2Todoist',
     author='Humberto A. Sanchez II',
     author_email='Humberto.A.Sanchez.II@gmail.com',
     maintainer_email='humberto.a.sanchez.ii@gmail.com',

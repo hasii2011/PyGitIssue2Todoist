@@ -13,6 +13,7 @@ from pygitissue2todoist.ui.eventengine.Events import IssuesSelectedEvent
 from pygitissue2todoist.ui.eventengine.Events import MilestoneSelectedEvent
 from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
+from pygitissue2todoist.ui.eventengine.Events import TaskCreationCompleteEvent
 
 
 class EventEngine(IEventEngine):
@@ -40,6 +41,8 @@ class EventEngine(IEventEngine):
         """
         try:
             match eventType:
+                case EventType.TaskCreationComplete:
+                    self._sendTaskCreationCompleteEvent()
                 case EventType.RepositorySelected:
                     self._sendRepositorySelectedEvent()
                 case EventType.IssuesSelected:
@@ -67,7 +70,10 @@ class EventEngine(IEventEngine):
 
         PostEvent(dest=self._listeningWindow, event=eventToPost)
 
-
     def _sendMilestoneSelectedEvent(self,):
         eventToPost: MilestoneSelectedEvent = MilestoneSelectedEvent()
+        PostEvent(dest=self._listeningWindow, event=eventToPost)
+
+    def _sendTaskCreationCompleteEvent(self):
+        eventToPost: TaskCreationCompleteEvent = TaskCreationCompleteEvent()
         PostEvent(dest=self._listeningWindow, event=eventToPost)

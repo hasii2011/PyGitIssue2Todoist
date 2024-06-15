@@ -19,11 +19,11 @@
     },
     "loggers": {
         "root": {
-            "level":     "ERROR",
+            "level":     "WARNING",
             "handlers":  ["consoleHandler"],
             "propagate": "False"
         },
-        "gittodoistclone": {
+        "pygitissue2todoist": {
             "level":     "INFO",
             "propagate": "False"
         },

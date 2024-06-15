@@ -38,7 +38,7 @@ class DlgHelp(SizedDialog):
 
         self.Fit()
         self.SetMinSize(self.GetSize())
-
+        #
         self.Bind(EVT_BUTTON, self.__onCmdOk, id=ID_OK)
         self.Bind(EVT_CLOSE,  self.__onCmdOk)
 
@@ -50,7 +50,7 @@ class DlgHelp(SizedDialog):
         # noinspection PyUnresolvedReferences
         htmlPanel.SetSizerProps(expand=True)
 
-        htmlSize:  Size = Size(width=440, height=128)
+        htmlSize:  Size = Size(width=440, height=310)
         self._html = HtmlWindow(parent=htmlPanel, id=ID_ANY, size=htmlSize, style=NO_FULL_REPAINT_ON_RESIZE)
 
         helpText: str = Resources.retrieveResourceText(ResourceTextType.SIMPLE_HELP)
