@@ -6,7 +6,7 @@ from pygitissue2todoist import __version__
 
 from setuptools import setup
 
-APP = ['PyGitIssue2Todoist.py']
+APP = ['pygitissue2todoist/PyGitIssue2Todoist.py']
 DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/loggingConfiguration.json']),
               ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/play.png']),
               ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/version.txt']),
@@ -16,16 +16,19 @@ DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/lo
 OPTIONS = {}
 
 setup(
-    name='pygitissue2todoist/PyGitIssue2Todoist.oy',
+    name='PyGitIssue2Todoist',
     version=__version__,
     app=APP,
     data_files=DATA_FILES,
     packages=['pygitissue2todoist',
+              'pygitissue2todoist.adapters',
               'pygitissue2todoist.general',
               'pygitissue2todoist.general.exceptions',
               'pygitissue2todoist.resources',
               'pygitissue2todoist.ui',
-              'pygitissue2todoist.ui.dialogs'
+              'pygitissue2todoist.ui.dialogs',
+              'pygitissue2todoist.ui.dialogs.configuration',
+              'pygitissue2todoist.ui.eventengine',
               ],
     include_package_data=True,
     zip_safe=False,

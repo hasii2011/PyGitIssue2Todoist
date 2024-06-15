@@ -31,6 +31,6 @@ class WxApplication(wxApp):
         self._frame.Show(True)
         self.SetTopWindow(self._frame)
 
-        self.logger.info(f'Exit OnInit()')
+        self.logger.info(f'Application Initialization Complete')
 
         return True

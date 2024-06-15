@@ -15,20 +15,23 @@
             "class":     "logging.StreamHandler",
             "formatter": "pyutSimple",
             "stream":     "ext://sys.stdout"
+        },
+
+        "rotatingFileHandler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "pyutSimple",
+            "filename": "/tmp/PyGitIssue2Todoist.log",
+            "mode": "a",
+            "maxBytes": 81920,
+            "backupCount": 5,
+            "encoding": "utf-8"
         }
     },
     "loggers": {
-        "root": {
-            "level":     "WARNING",
-            "handlers":  ["consoleHandler"],
-            "propagate": "False"
-        },
+
         "pygitissue2todoist": {
             "level":     "INFO",
-            "propagate": "False"
-        },
-        "tests": {
-            "level":     "INFO",
+            "handlers":  ["rotatingFileHandler"],
             "propagate": "False"
         }
     }

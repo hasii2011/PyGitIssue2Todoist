@@ -6,6 +6,7 @@ from typing import Callable
 
 from logging import Logger
 from logging import getLogger
+from logging import INFO
 
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
@@ -41,7 +42,7 @@ class TodoistAdapterSingleProject(AbstractTodoistAdapter):
             info:           The Clone information from the GitHub calls
             progressCb:     The callback to report information
         """
-        self.logger.info(f'{progressCb.__name__} - {info=}')
+        self._infoLogCloneInformation(info=info, progressCb=progressCb)
 
         progressCb('Starting')
 
@@ -186,3 +187,13 @@ class TodoistAdapterSingleProject(AbstractTodoistAdapter):
                 subTasks.append(item)
 
         return subTasks
+
+    def _infoLogCloneInformation(self, info: CloneInformation, progressCb: Callable):
+
+        if self.logger.isEnabledFor(INFO) is True:
+            self.logger.info(f'{progressCb.__name__}')
+
+            self.logger.info(f'{info.repositoryTask=} {info.milestoneNameTask=}')
+            for t in info.tasksToClone:
+                gitIssueInfo: GitIssueInfo = cast(GitIssueInfo, t)
+                self.logger.info(f'{gitIssueInfo.gitIssueName}')

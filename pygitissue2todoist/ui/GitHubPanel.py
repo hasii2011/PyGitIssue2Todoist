@@ -4,6 +4,7 @@ from typing import cast
 
 from logging import Logger
 from logging import getLogger
+from logging import INFO
 
 from wx import CB_DROPDOWN
 from wx import CB_READONLY
@@ -158,7 +159,7 @@ class GitHubPanel(BasePanel):
             simpleGitIssue: AbbreviatedGitIssue = self._issueList.GetClientData(idx)
             self._selectedSimpleGitIssues.append(simpleGitIssue)
 
-        self.logger.info(f'{self._selectedSimpleGitIssues=}')
+        self._infoLogSelectedIssues()
 
         repositoryName: str = self._repositorySelection.GetStringSelection()
         milestoneName:  str = self._milestoneList.GetStringSelection()
@@ -234,3 +235,9 @@ class GitHubPanel(BasePanel):
     # noinspection PyUnusedLocal
     def _onTaskCreationComplete(self, event: TaskCreationCompleteEvent):
         self.clearIssues()
+
+    def _infoLogSelectedIssues(self):
+        if self.logger.isEnabledFor(INFO) is True:
+            for s in self._selectedSimpleGitIssues:
+                simpleGitIssue: AbbreviatedGitIssue = cast(AbbreviatedGitIssue, s)
+                self.logger.info(f'Selected: {simpleGitIssue.issueTitle}')

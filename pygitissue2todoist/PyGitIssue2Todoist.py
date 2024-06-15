@@ -53,7 +53,7 @@ class PyGitIssue2Todoist:
         print(f'Python:   {sys.version.split(" ")[0]}')
 
         # noinspection PyUnreachableCode
-        if __debug__:
+        if __debug__ is True:
             print('Assertions are turned on')
         else:
             print('Assertions are turned off')

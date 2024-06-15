@@ -114,6 +114,7 @@ class ApplicationFrame(SizedFrame):
         pos: Tuple[int, int] = self.GetPosition()
         self._preferences.appStartupPosition = pos
 
+        self.logger.info(f'Application Closed')
         self.Destroy()
 
     def _createApplicationMenuBar(self):
