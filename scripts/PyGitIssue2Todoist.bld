@@ -1,0 +1,3 @@
+echo "Create deployable binary"
+rm -rf build dist
+python -O setup.py py2app --packages=charset_normalizer --iconfile pygitissue2todoist/resources/BaseLogoV2.icns

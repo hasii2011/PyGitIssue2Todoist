@@ -17,7 +17,6 @@ from pygitissue2todoist.ui.WxApplication import WxApplication
 
 class PyGitIssue2Todoist:
 
-
     JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
 
     def __init__(self):

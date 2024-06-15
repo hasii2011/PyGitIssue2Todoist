@@ -14,8 +14,9 @@ from sys import version as pythonVersion
 from wx import __version__ as wxVersion
 
 from pygitissue2todoist.general.Resources import Resources
-from pygitissue2todoist.general.ResourceTextType import ResourceTextType
 from pygitissue2todoist.general.Singleton import Singleton
+
+from pygitissue2todoist import __version__
 
 PackageName    = NewType('PackageName', str)
 PackageVersion = NewType('PackageVersion', str)
@@ -51,7 +52,7 @@ class Version(Singleton):
 
     @property
     def applicationVersion(self) -> str:
-        return Resources.retrieveResourceText(ResourceTextType.VERSION_TEXT)
+        return __version__
 
     @property
     def applicationLongVersion(self) -> str:

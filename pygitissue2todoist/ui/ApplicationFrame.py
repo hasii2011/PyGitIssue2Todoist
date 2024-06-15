@@ -1,15 +1,19 @@
 
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 from logging import Logger
 from logging import getLogger
 
+from os import getenv as osGetEnv
+
 from wx import BOTH
 from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_CLOSE
 from wx import EVT_MENU
-from wx import FRAME_EX_METAL
+from wx import FRAME_FLOAT_ON_PARENT
+from wx import FRAME_TOOL_WINDOW
 from wx import ID_PREFERENCES
 from wx import OK
 from wx import ID_ABOUT
@@ -47,6 +51,8 @@ from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 from pygitissue2todoist.ui.eventengine.EventEngine import EventEngine
 
+from pygitissue2todoist.ui import Constants
+
 
 class ApplicationFrame(SizedFrame):
 
@@ -57,7 +63,17 @@ class ApplicationFrame(SizedFrame):
         self._preferences: Preferences = Preferences()
         appSize: Size = Size(self._preferences.startupWidth, self._preferences.startupHeight)
 
-        super().__init__(parent=parent, id=wxID, title=title, size=appSize, style=DEFAULT_FRAME_STYLE | FRAME_EX_METAL)
+        appModeStr: Optional[str] = osGetEnv(Constants.APP_MODE)
+        if appModeStr is None:
+            appMode: bool = False
+        else:
+            appMode = bool(appModeStr)
+
+        frameStyle: int = DEFAULT_FRAME_STYLE | FRAME_FLOAT_ON_PARENT
+        if appMode is True:
+            frameStyle = frameStyle | FRAME_TOOL_WINDOW
+
+        super().__init__(parent=parent, id=wxID, title=title, size=appSize, style=frameStyle)
         self.GetContentsPane().SetSizerType('horizontal')
         self.GetContentsPane().SetSizerProps(expand=True, proportion=1)
         self.logger: Logger = getLogger(__name__)
@@ -69,8 +85,6 @@ class ApplicationFrame(SizedFrame):
 
         self._createApplicationMenuBar()
         self._githubPanel, self._todoistPanel = self._layoutApplicationContentArea()
-
-        # self.SetThemeEnabled(True)
 
         x, y = self._preferences.appStartupPosition
 

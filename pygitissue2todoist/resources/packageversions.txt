@@ -1,2 +1,2 @@
-todoist-api-python=2.0.2
-PyGithub=1.57
+todoist-api-python=2.1.5
+PyGithub=2.3.0

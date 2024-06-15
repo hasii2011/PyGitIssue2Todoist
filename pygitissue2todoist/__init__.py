@@ -1,0 +1,1 @@
+from pygitissue2todoist._version import __version__
