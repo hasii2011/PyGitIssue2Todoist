@@ -37,27 +37,26 @@ The instructions on how to acquire/generate these tokens are [here](https://gith
 
 # Format of the configuration file
 
-**Name:**   `.pyGitIssue2Todoist.ini`
+**Name:**   `pyGitIssue2Todoist.ini`
 
-**Location:**  `${HOME}`
+**Location:**  `$HOME/.config/pygitissue2todoist/`
 
 ```
-[Github]
-github_api_token = PutYourGithubKeyHere
-github_user_name = PutYourGithubUserNameHere
-github_url_option = Hyper Linked Task Name
+[GitHub]
+gitHubAPIToken = PutYourGithubKeyHere
+gitHubUserName = PutYourGithubUserNameHere
+gitHubURLOption = Hyper Linked Task Name
 
 [Todoist]
-todoist_api_token = PutYourTodoistKeyHere
-single_todoist_project = True
-todoist_project_name = Development
-clean_todoist_cache = True
+todoistAPIToken = PutYourTodoistKeyHere
+singleTodoistProject = True
+todoistProjectName = Development
+cleanTodoistCache = True
 
 [Main]
-startup_width = 1024
-startup_height = 768
-startup_x = 0
-startup_y = 0
+startupPosition = 32,32
+startupSize = 1024,768
+
 ```
 PyGitIssue2Todoist provides access to the above options via a
 configuration dialog.

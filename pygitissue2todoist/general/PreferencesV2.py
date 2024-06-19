@@ -35,7 +35,7 @@ TODOIST_SECTION_NAME: SectionName = SectionName('Todoist')
 SECTION_MAIN: Section = Section(
     [
 
-        ConfigurationNameValue(name=PropertyName('startupPosition'), defaultValue=Position(0, 0).__str__()),
+        ConfigurationNameValue(name=PropertyName('startupPosition'), defaultValue=Position(32, 32).__str__()),
         ConfigurationNameValue(name=PropertyName('startupSize'),     defaultValue=DEFAULT_STARTUP_SIZE.__str__()),
 
     ]
