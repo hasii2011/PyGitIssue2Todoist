@@ -8,7 +8,6 @@ from logging import getLogger
 
 from os import getenv as osGetEnv
 
-from wx import BOTH
 from wx import DEFAULT_FRAME_STYLE
 from wx import EVT_CLOSE
 from wx import EVT_MENU
@@ -18,6 +17,7 @@ from wx import ID_PREFERENCES
 from wx import OK
 from wx import ID_ABOUT
 from wx import ID_EXIT
+from wx import Point
 
 from wx import Size
 from wx import CommandEvent
@@ -27,13 +27,17 @@ from wx import StatusBar
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
+
 from wx.lib.sized_controls import SizedFrame
 from wx.lib.sized_controls import SizedPanel
+
+from codeallybasic.Dimensions import Dimensions
+from codeallybasic.Position import Position
 
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
 from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
 from pygitissue2todoist.ui.TodoistPanel import CloneInformation
@@ -60,8 +64,10 @@ class ApplicationFrame(SizedFrame):
 
     def __init__(self, parent: Window, wxID: int, title: str):
 
-        self._preferences: Preferences = Preferences()
-        appSize: Size = Size(self._preferences.startupWidth, self._preferences.startupHeight)
+        self._preferences: PreferencesV2 = PreferencesV2()
+
+        appDimensions: Dimensions = self._preferences.startupSize
+        appSize:       Size       = Size(width=appDimensions.width, height=appDimensions.width)
 
         appModeStr: Optional[str] = osGetEnv(Constants.APP_MODE)
         if appModeStr is None:
@@ -86,13 +92,11 @@ class ApplicationFrame(SizedFrame):
         self._createApplicationMenuBar()
         self._githubPanel, self._todoistPanel = self._layoutApplicationContentArea()
 
-        x, y = self._preferences.appStartupPosition
+        position: Position = self._preferences.startupPosition
+        x: int = position.x
+        y: int = position.y
 
-        if x == str(Preferences.NO_DEFAULT_X) or y == str(Preferences.NO_DEFAULT_Y):
-            self.Center(BOTH)  # Center on the screen
-        else:
-            appPosition: Tuple[int, int] = self._preferences.appStartupPosition
-            self.SetPosition(pt=appPosition)
+        self.SetPosition(pt=Point(x, y))
 
         self.Bind(EVT_CLOSE, self.Close)
 
@@ -107,12 +111,13 @@ class ApplicationFrame(SizedFrame):
     # noinspection PyUnusedLocal
     def Close(self, force=False):
 
-        ourSize: Tuple[int, int] = self.GetSize()
-        self._preferences.startupWidth  = ourSize[0]
-        self._preferences.startupHeight = ourSize[1]
+        ourSize:   Tuple[int, int] = self.GetSize()
+        dimension: Dimensions      = Dimensions(width=ourSize[0], height=ourSize[1])
+        self._preferences.startupSize = dimension
 
-        pos: Tuple[int, int] = self.GetPosition()
-        self._preferences.appStartupPosition = pos
+        pos:      Tuple[int, int] = self.GetPosition()
+        position: Position        = Position(x=pos[0], y=pos[1])
+        self._preferences.startupPosition = position
 
         self.logger.info(f'Application Closed')
         self.Destroy()
@@ -185,10 +190,10 @@ class ApplicationFrame(SizedFrame):
 
         dlg: DlgConfigure = DlgConfigure(self)
         if dlg.ShowModal() == OK:
-            preferences: Preferences = Preferences()
-            todoistToken:   str = preferences.todoistApiToken
-            githubToken:    str = preferences.githubApiToken
-            gitHubUserName: str = preferences.githubUserName
+            preferences: PreferencesV2 = PreferencesV2()
+            todoistToken:   str = preferences.todoistAPIToken
+            githubToken:    str = preferences.gitHubAPIToken
+            gitHubUserName: str = preferences.gitHubUserName
             self.logger.debug(f'{todoistToken=} - {githubToken=} {gitHubUserName=}')
 
     # noinspection PyUnusedLocal

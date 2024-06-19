@@ -15,7 +15,7 @@ from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
 from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
@@ -45,13 +45,12 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        Preferences.determinePreferencesLocation()
 
     def setUp(self):
 
         super().setUp()
-        preferences: Preferences = Preferences()
-        self._adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistApiToken)
+        preferences: PreferencesV2 = PreferencesV2()
+        self._adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
 
     def tearDown(self):
         super().tearDown()
@@ -63,8 +62,8 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.milestoneNameTask = 'MockMilestone'
         ci.tasksToClone      = self._createTasksToClone()
 
-        preferences: Preferences = Preferences()
-        adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistApiToken)
+        preferences: PreferencesV2  = PreferencesV2()
+        adapter:     TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
 
         adapter.createTasks(info=ci, progressCb=self._sampleCallback)
 
@@ -182,15 +181,15 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.milestoneNameTask = 'MockMilestone'
         ci.tasksToClone      = [hyperLinkedTask]
 
-        preferences: Preferences = Preferences()
+        preferences: PreferencesV2 = PreferencesV2()
 
-        savedOption: GitHubURLOption = preferences.githubURLOption
-        preferences.githubURLOption  = GitHubURLOption.HyperLinkedTaskName
+        savedOption: GitHubURLOption = preferences.gitHubURLOption
+        preferences.gitHubURLOption  = GitHubURLOption.HyperLinkedTaskName
 
         adapter: TodoistAdapter = self._adapter
         adapter.createTasks(ci, self._sampleCallback)
 
-        preferences.githubURLOption = savedOption
+        preferences.gitHubURLOption = savedOption
 
     def _getAProjectId(self, projectName: ProjectName) -> str:
 
@@ -207,8 +206,8 @@ def suite() -> TestSuite:
     import unittest
 
     testSuite: TestSuite = TestSuite()
-    # noinspection PyUnresolvedReferences
-    testSuite.addTest(unittest.makeSuite(TestTodoistAdapterReal))
+
+    testSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(testCaseClass=TestTodoistAdapterReal))
 
     return testSuite
 

@@ -37,7 +37,7 @@ from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
 from pygitissue2todoist.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 from pygitissue2todoist.general.exceptions.TaskCreationError import TaskCreationError
@@ -68,8 +68,8 @@ class TodoistPanel(BasePanel):
         self._eventEngine:      IEventEngine     = eventEngine
         self._cloneInformation: CloneInformation = cast(CloneInformation, None)
 
-        self._preferences: Preferences = Preferences()
-        self._apiToken:    str         = self._preferences.todoistApiToken
+        self._preferences: PreferencesV2 = PreferencesV2()
+        self._apiToken:    str           = self._preferences.todoistAPIToken
 
         if self._preferences.singleTodoistProject is True:
             self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
@@ -128,7 +128,7 @@ class TodoistPanel(BasePanel):
 
         sizedPanel: SizedPanel = SizedPanel(parent)
         sizedPanel.SetSizerType('horizontal')
-        sizedPanel.SetSizerProps(expand=False,halign='right')  # expand False allows aligning right
+        sizedPanel.SetSizerProps(expand=False, halign='right')  # expand False allows aligning right
 
         self._createTaskButton = Button(sizedPanel, label='Create Tasks')
         self._createTaskButton.Disable()
@@ -188,7 +188,7 @@ class TodoistPanel(BasePanel):
             cDlg: DlgConfigure = cast(DlgConfigure, aDlg)
             if cDlg.ShowModal() == OK:
                 # The following 2 already defined in init
-                self._apiToken       = Preferences().todoistApiToken
+                self._apiToken       = PreferencesV2().todoistAPIToken
                 self._todoistAdapter = TodoistAdapter(self._apiToken)
 
                 self._onCreateTaskClicked(event)    # Dang I hate recursion

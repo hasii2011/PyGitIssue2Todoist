@@ -7,16 +7,15 @@ from github.Project import Project
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
-Preferences.determinePreferencesLocation()
 
 MOCK_PROJECT_NAME: str = 'MockProject'
 # Used for prototyping
 
 
 def addSimpleTask():
-    api_token: str = Preferences().todoistApiToken
+    api_token: str = PreferencesV2().todoistAPIToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
 
@@ -34,7 +33,7 @@ def addSimpleTask():
 
 def addTaskToProject():
 
-    api_token: str = Preferences().todoistApiToken
+    api_token: str = PreferencesV2().todoistAPIToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
     projects: List[Project] = todoist.get_projects()     # type: ignore
@@ -56,7 +55,7 @@ def addTaskToProject():
 
 def getProjects():
 
-    api_token: str = Preferences().todoistApiToken
+    api_token: str = PreferencesV2().todoistAPIToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
 
@@ -70,7 +69,7 @@ def getProjects():
 
 def getProjectTasks():
 
-    api_token: str = Preferences().todoistApiToken
+    api_token: str = PreferencesV2().todoistAPIToken
 
     todoist:  TodoistAPI    = TodoistAPI(api_token)
     projects: List[Project] = todoist.get_projects()     # type: ignore
@@ -95,6 +94,6 @@ def getProjectTasks():
 
 if __name__ == '__main__':
     # addSimpleTask()
-    addTaskToProject()
-    # getProjects()
+    # addTaskToProject()
+    getProjects()
     # getProjectTasks()

@@ -24,7 +24,7 @@ from pygitissue2todoist.adapters.TodoistAdapterTypes import GitIssueInfo
 
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
 Tasks             = NewType('Tasks', List[Task])
@@ -45,8 +45,8 @@ class AbstractTodoistAdapter(ABC):
         self._todoist:      TodoistAPI      = TodoistAPI(apiToken)
         self._todoistAsync: TodoistAPIAsync = TodoistAPIAsync(apiToken)
 
-        self._preferences: Preferences = Preferences()
-        self._devTasks:    Tasks       = Tasks([])
+        self._preferences: PreferencesV2 = PreferencesV2()
+        self._devTasks:    Tasks         = Tasks([])
 
     @abstractmethod
     def createTasks(self, info: CloneInformation, progressCb: Callable):
@@ -120,7 +120,7 @@ class AbstractTodoistAdapter(ABC):
         # TODO: Make this a case statement in Python 3.10
         #
         if foundTaskItem is None:
-            option: GitHubURLOption = self._preferences.githubURLOption
+            option: GitHubURLOption = self._preferences.gitHubURLOption
             match option:
                 case GitHubURLOption.DoNotAdd:
                     todoist.add_task(projectId=projectId,

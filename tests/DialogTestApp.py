@@ -10,8 +10,7 @@ from wx import OK
 from wx import App
 from wx import Frame
 
-from pygitissue2todoist.general.Preferences import Preferences
-# noinspection SpellCheckingInspection
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 from tests.ProjectTestBase import ProjectTestBase
@@ -27,9 +26,6 @@ class DialogTestApp(App):
         ProjectTestBase.setUpLogging()
         self.logger: Logger = getLogger('TestADialog')
         frameTop: Frame = Frame(parent=None, id=DialogTestApp.FRAME_ID, title="Test A Dialog", size=(600, 400), style=DEFAULT_FRAME_STYLE)
-        # frameTop.Show(False)
-
-        Preferences.determinePreferencesLocation()
 
         self.SetTopWindow(frameTop)
         self._frameTop = frameTop
@@ -42,11 +38,11 @@ class DialogTestApp(App):
         with DlgConfigure(self._frameTop) as dlg:
 
             if dlg.ShowModal() == OK:
-                preferences: Preferences = Preferences()
+                preferences: PreferencesV2 = PreferencesV2()
 
-                self.logger.info(f'{preferences.todoistApiToken=}')
-                self.logger.info(f'{preferences.githubUserName=}')
-                self.logger.info(f'{preferences.githubApiToken=}')
+                self.logger.info(f'{preferences.todoistAPIToken=}')
+                self.logger.info(f'{preferences.gitHubUserName=}')
+                self.logger.info(f'{preferences.gitHubAPIToken=}')
             else:
                 self.logger.warning(f'Cancelled')
 

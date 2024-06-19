@@ -34,7 +34,7 @@ from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
@@ -63,10 +63,10 @@ class GitHubPanel(BasePanel):
         self.logger: Logger = getLogger(__name__)
 
         self._eventEngine:             IEventEngine          = eventEngine
-        self._preferences:             Preferences           = Preferences()
+        self._preferences:             PreferencesV2         = PreferencesV2()
         self._selectedSimpleGitIssues: AbbreviatedGitIssues  = AbbreviatedGitIssues([])
 
-        self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.githubUserName, authenticationToken=self._preferences.githubApiToken)
+        self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.gitHubUserName, authenticationToken=self._preferences.gitHubAPIToken)
 
         self._repositorySelection: ComboBox = cast(ComboBox, None)
         self._milestoneList:       ListBox  = cast(ListBox, None)
@@ -220,8 +220,8 @@ class GitHubPanel(BasePanel):
 
         with DlgConfigure(self) as dlg:
             if dlg.ShowModal() == OK:
-                githubToken: str = self._preferences.githubApiToken
-                userName:    str = self._preferences.githubUserName
+                githubToken: str = self._preferences.gitHubAPIToken
+                userName:    str = self._preferences.gitHubUserName
                 self._githubAdapter = GithubAdapter(userName=userName, authenticationToken=githubToken)
 
                 self._populateRepositories()  # I hate recursion

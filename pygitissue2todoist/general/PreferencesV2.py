@@ -44,7 +44,7 @@ SECTION_MAIN: Section = Section(
 
 SECTION_GITHUB: Section = Section(
     [
-        ConfigurationNameValue(name=PropertyName('gitHubApiToken'),  defaultValue='PutYourGitHubKeyHere'),
+        ConfigurationNameValue(name=PropertyName('gitHubAPIToken'),  defaultValue='PutYourGitHubKeyHere'),
         ConfigurationNameValue(name=PropertyName('gitHubUserName'),  defaultValue='PutYourGitHubUserNameHere'),
         ConfigurationNameValue(name=PropertyName('gitHubURLOption'), defaultValue=GitHubURLOption.HyperLinkedTaskName.value),
     ]
@@ -102,12 +102,22 @@ class PreferencesV2(ConfigurationProperties, metaclass=SingletonV3):
 
     @property
     @configurationGetter(sectionName=GITHUB_SECTION_NAME)
-    def githubApiToken(self) -> str:
+    def gitHubAPIToken(self) -> str:
         return ''
 
-    @githubApiToken.setter
+    @gitHubAPIToken.setter
     @configurationSetter(sectionName=GITHUB_SECTION_NAME)
-    def githubApiToken(self, newValue: str):
+    def gitHubAPIToken(self, newValue: str):
+        pass
+
+    @property
+    @configurationGetter(sectionName=GITHUB_SECTION_NAME)
+    def gitHubUserName(self) -> str:
+        return ''       # Value never used
+
+    @gitHubUserName.setter
+    @configurationSetter(sectionName=GITHUB_SECTION_NAME)
+    def gitHubUserName(self, newValue: str):
         pass
 
     @property
@@ -159,4 +169,3 @@ class PreferencesV2(ConfigurationProperties, metaclass=SingletonV3):
     @configurationSetter(sectionName=TODOIST_SECTION_NAME)
     def todoistAPIToken(self, newValue: str):
         pass
-

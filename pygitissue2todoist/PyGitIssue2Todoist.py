@@ -8,7 +8,6 @@ from json import load as jsonLoad
 
 from pathlib import Path
 
-from pygitissue2todoist.general.Preferences import Preferences
 from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 from pygitissue2todoist.general.Resources import Resources
 from pygitissue2todoist.general.Version import Version
@@ -24,15 +23,6 @@ class PyGitIssue2Todoist:
 
         self._setupSystemLogging()
         self.logger: Logger = getLogger(__name__)
-
-        Preferences.determinePreferencesLocation()
-        configFile: Path = Path(Preferences.getPreferencesLocation())
-        #
-        # Will create a default one if necessary
-        #
-        if configFile.exists() is False:
-            self._preferences = Preferences()
-        self._preferencesV2: PreferencesV2 = PreferencesV2()
 
     def startApp(self):
 

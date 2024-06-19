@@ -1,3 +1,4 @@
+
 from typing import List
 from typing import cast
 
@@ -50,7 +51,7 @@ class GitHubConfigurationPanel(AbstractConfigurationPanel):
         """
         Set the current configuration values on the controls.
         """
-        idx: int = self._URLOption.FindString(self._preferences.githubURLOption.value, bCase=False)
+        idx: int = self._URLOption.FindString(self._preferences.gitHubURLOption.value, bCase=False)
         assert idx != NOT_FOUND, "Developer Error; Enumeration may have changed"
         self._URLOption.SetSelection(idx)
 
@@ -62,4 +63,4 @@ class GitHubConfigurationPanel(AbstractConfigurationPanel):
         selectedOption: str             = self._URLOption.GetString(selectedIdx)
         newOption:      GitHubURLOption = GitHubURLOption(selectedOption)
 
-        self._preferences.githubURLOption = newOption
+        self._preferences.gitHubURLOption = newOption

@@ -1,7 +1,7 @@
 
 from wx.lib.sized_controls import SizedPanel
 
-from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
 
 class AbstractConfigurationPanel(SizedPanel):
@@ -27,7 +27,7 @@ class AbstractConfigurationPanel(SizedPanel):
         """
         super().__init__(parent, *args, **kwargs)
 
-        self._preferences: Preferences = Preferences()
+        self._preferences: PreferencesV2 = PreferencesV2()
 
         self._createControls()
         self._setControlValues()
