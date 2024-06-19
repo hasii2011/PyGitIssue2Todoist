@@ -9,6 +9,7 @@ from json import load as jsonLoad
 from pathlib import Path
 
 from pygitissue2todoist.general.Preferences import Preferences
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 from pygitissue2todoist.general.Resources import Resources
 from pygitissue2todoist.general.Version import Version
 
@@ -31,6 +32,7 @@ class PyGitIssue2Todoist:
         #
         if configFile.exists() is False:
             self._preferences = Preferences()
+        self._preferencesV2: PreferencesV2 = PreferencesV2()
 
     def startApp(self):
 

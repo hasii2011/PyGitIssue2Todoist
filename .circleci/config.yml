@@ -32,9 +32,9 @@ jobs:
             pip install six==1.16.0
             pip install attrdict3
             pip install -v -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04  wxPython
-            pip install codeallybasic==1.1.0
+            pip install codeallybasic==1.3.2
             pip install PyGithub~=2.3.0
-            pip install todoist-api-python==2.1.5
+            pip install todoist_api_python==2.1.5
             pip install html-testRunner~=1.2.1
             pip install buildlackey==1.6.3
       - run:

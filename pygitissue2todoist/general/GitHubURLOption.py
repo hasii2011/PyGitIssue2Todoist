@@ -11,3 +11,20 @@ class GitHubURLOption(Enum):
 
     def __str__(self):
         return str(self.name)
+
+    @classmethod
+    def deSerialize(cls, value: str) -> 'GitHubURLOption':
+
+        match value:
+            case GitHubURLOption.DoNotAdd.value:
+                gitHubUrlOption: GitHubURLOption = GitHubURLOption.DoNotAdd
+            case GitHubURLOption.AddAsDescription.value:
+                gitHubUrlOption = GitHubURLOption.AddAsDescription
+            case GitHubURLOption.AddAsComment.value:
+                gitHubUrlOption = GitHubURLOption.AddAsComment
+            case GitHubURLOption.HyperLinkedTaskName.value:
+                gitHubUrlOption = GitHubURLOption.HyperLinkedTaskName
+            case _:
+                raise Exception('Unknown GitHubURLOptions')
+
+        return gitHubUrlOption
