@@ -17,6 +17,8 @@ from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.GitHubAdapter import MilestoneTitles
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 
+from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+
 from tests.ProjectTestBase import ProjectTestBase
 
 
@@ -114,6 +116,28 @@ class TestGithubAdapter(ProjectTestBase):
 
                 for issueTitle in simpleGitIssues:
                     self.logger.info(f'{issueTitle=}')
+
+    def testGetAssignedToMeIssues(self):
+
+        # TODO: Not ideal to use a real token within a test as the results
+        # will not be consistant.
+        # However this is useful for debugging
+        # Need to find a way to mock the github query
+        preferences: PreferencesV2  = PreferencesV2()
+
+        githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.gitHubUserName, authenticationToken=preferences.gitHubAPIToken)
+
+        # Call the method in question here:
+        simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getAssignedToMeIssues()
+
+        self.assertTrue(len(simpleGitIssues) > 0, "We should have found some open issues")
+        print(f'{len(simpleGitIssues)=}')
+
+        # for debug purposes:
+        for issue in simpleGitIssues:
+            print(f'{issue.issueTitle=}')
+
+        self.fail("Test not complete")
 
 
 def suite() -> TestSuite:

@@ -148,3 +148,21 @@ class GithubAdapter:
             simpleIssue.labels.append(gitLabel.name)
 
         return simpleIssue
+
+    def getAssignedToMeIssues(self) -> AbbreviatedGitIssues:
+        """
+        Returns a list of issues assigned to the user.
+
+        Equivalent to the following GitHub search:
+        `gh search issues --assignee "@me" --include-prs`
+
+        TODO: confirm how to include the PRs in the results
+        `gh search issues --assignee "@me" --include-prs`
+        """
+        openGitIssues: PaginatedList = self._github.search_issues(query='assignee:@me')
+        simpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
+
+        for openIssue in openGitIssues:
+            simpleGitIssues.append(self._createAbbreviatedGitIssue(openIssue))
+
+        return simpleGitIssues
