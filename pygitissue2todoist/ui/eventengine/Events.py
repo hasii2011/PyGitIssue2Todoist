@@ -19,3 +19,4 @@ class EventType(Enum):
     RepositorySelected   = 'RepositorySelected'
     MilestoneSelected    = 'MilestoneSelected'
     TaskCreationComplete = 'TaskCreationComplete'
+    

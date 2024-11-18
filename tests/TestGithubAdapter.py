@@ -120,7 +120,7 @@ class TestGithubAdapter(ProjectTestBase):
     def testGetAssignedToMeIssues(self):
 
         # TODO: Not ideal to use a real token within a test as the results
-        # will not be consistant.
+        # will not be consistent.
         # However this is useful for debugging
         # Need to find a way to mock the github query
         preferences: PreferencesV2  = PreferencesV2()
