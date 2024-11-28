@@ -49,8 +49,10 @@ from pygitissue2todoist.ui.dialogs.DlgHelp import DlgHelp
 
 from pygitissue2todoist.ui.eventengine.Events import EVT_ISSUES_SELECTED
 from pygitissue2todoist.ui.eventengine.Events import EVT_REPOSITORY_SELECTED
+from pygitissue2todoist.ui.eventengine.Events import EVT_WORKFLOW_SELECTED
 from pygitissue2todoist.ui.eventengine.Events import IssuesSelectedEvent
 from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
+from pygitissue2todoist.ui.eventengine.Events import WorkflowSelectedEvent
 
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 from pygitissue2todoist.ui.eventengine.EventEngine import EventEngine
@@ -102,6 +104,7 @@ class ApplicationFrame(SizedFrame):
 
         self._eventEngine.registerListener(event=EVT_REPOSITORY_SELECTED, callback=self._onRepositorySelected)
         self._eventEngine.registerListener(event=EVT_ISSUES_SELECTED,     callback=self._onIssuesSelected)
+        self._eventEngine.registerListener(event=EVT_WORKFLOW_SELECTED,   callback=self._onWorkFlowSelected)
 
         # a little trick to make sure that you can't resize the dialog to
         # less screen space than the controls need
@@ -160,11 +163,21 @@ class ApplicationFrame(SizedFrame):
 
     # noinspection PyUnusedLocal
     def _onRepositorySelected(self, event: RepositorySelectedEvent):
+        self._clearPanels()
 
+    # noinspection PyUnusedLocal
+    def _onWorkFlowSelected(self, event: WorkflowSelectedEvent):
+        self.logger.info(f'Just clear the todoist panel selection lists, via the event')
+        print('Just clear the todoist panel selection lists, via the event')
+        self._todoistPanel.clearTasks()
+
+    def _clearPanels(self):
         self.logger.info(f'Clear the github issues list and todoist panel selection lists')
+        print('Clear the github issues list and todoist panel selection lists')
 
         self._githubPanel.clearIssues()
         self._todoistPanel.clearTasks()
+
 
     def _onIssuesSelected(self, event: IssuesSelectedEvent):
 

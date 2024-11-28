@@ -111,6 +111,10 @@ class GitHubPanel(BasePanel):
         self._workflowList = radio
 
     def _onWorkflowSelected(self, event: CommandEvent):
+
+        # First clear the existing issues and tasks lists
+        self._eventEngine.sendEvent(eventType=EventType.WorkflowSelected)
+
         print(f'{event=}')
         print(f'{event.GetString()=}')
 

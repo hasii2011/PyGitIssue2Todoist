@@ -12,6 +12,7 @@ from pygitissue2todoist.ui.eventengine.Events import EventType
 from pygitissue2todoist.ui.eventengine.Events import IssuesSelectedEvent
 from pygitissue2todoist.ui.eventengine.Events import MilestoneSelectedEvent
 from pygitissue2todoist.ui.eventengine.Events import RepositorySelectedEvent
+from pygitissue2todoist.ui.eventengine.Events import WorkflowSelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
 from pygitissue2todoist.ui.eventengine.Events import TaskCreationCompleteEvent
 
@@ -49,6 +50,8 @@ class EventEngine(IEventEngine):
                     self._sendIssuesSelectedEvent(**kwargs)
                 case EventType.MilestoneSelected:
                     self._sendMilestoneSelectedEvent()
+                case EventType.WorkflowSelected:
+                    self._sendWorkFlowSelectedEvent()
                 case _:
                     self.logger.warning(f'Unknown Event Type: {eventType}')
         except KeyError as ke:
@@ -57,7 +60,15 @@ class EventEngine(IEventEngine):
             self.logger.error(f'Invalid keyword parameter. `{ke}`')
 
     def _sendRepositorySelectedEvent(self):
+        self.logger.info('Sending RepositorySelectedEvent')
+        print('Sending RepositorySelectedEvent')
         eventToPost: RepositorySelectedEvent = RepositorySelectedEvent()
+        PostEvent(dest=self._listeningWindow, event=eventToPost)
+
+    def _sendWorkFlowSelectedEvent(self):
+        self.logger.info('Sending WorkflowSelectedEvent')
+        print('Sending WorkflowSelectedEvent')
+        eventToPost: WorkflowSelectedEvent = WorkflowSelectedEvent()
         PostEvent(dest=self._listeningWindow, event=eventToPost)
 
     def _sendIssuesSelectedEvent(self, **kwargs):
