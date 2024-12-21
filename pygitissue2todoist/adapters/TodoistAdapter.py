@@ -72,11 +72,19 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         progressCb('Starting')
 
-        projectId:         str  = self._determineProjectIdFromRepoName(info, progressCb)
-        milestoneTaskItem: Task = self._getMilestoneTaskItem(projectId=projectId, milestoneName=info.milestoneNameTask, progressCb=progressCb)
-
         tasks: List[GitIssueInfo] = info.tasksToClone
         for taskInfo in tasks:
+            # This must be derived for each, when using the TodoistAdapterAssigned, as not issues will be in the same repo or project
+            # projectId:         str  = self._determineProjectIdFromRepoName(info, progressCb)
+            self._projectDictionary = self._getCurrentProjects()
+
+            justRepoName: str = taskInfo.github_repo_name
+            projectId:    str = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
+
+            milestoneTaskItem: Task = self._getMilestoneTaskItem(projectId=projectId, milestoneName=info.milestoneNameTask, progressCb=progressCb)
+
+            print(f'{milestoneTaskItem=}') 
+
             self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
 
         self._synchronize(progressCb)
@@ -92,14 +100,23 @@ class TodoistAdapter(AbstractTodoistAdapter):
 
         Returns:  An appropriate parent ID for newly created tasks
         """
-        self._projectDictionary = self._getCurrentProjects()
 
-        justRepoName: str = info.repositoryTask.split('/')[1]
-        projectId:    str = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
+        try:
+            self._projectDictionary = self._getCurrentProjects()
 
-        progressCb(f'Added {justRepoName}')
+            justRepoName: str = info.repositoryTask.split('/')[1]
+            # justRepoName: str = info.
+            projectId:    str = self._getProjectId(projectName=ProjectName(justRepoName), projectDictionary=self._projectDictionary)
 
-        return projectId
+            progressCb(f'Added {justRepoName}')
+
+            return projectId
+        except Exception as e:
+            self.logger.error(f'Error: {e}')
+
+            print(f'Error: {e}')
+            print(f'info: {info}')
+            raise
 
     def _getMilestoneTaskItem(self, projectId: str, milestoneName: str, progressCb: Callable) -> Task:
         """

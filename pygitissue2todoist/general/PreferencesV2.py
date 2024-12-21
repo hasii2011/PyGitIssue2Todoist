@@ -56,6 +56,7 @@ SECTION_TODOIST: Section = Section(
         ConfigurationNameValue(name=PropertyName('cleanTodoistCache'),    defaultValue='True'),
         ConfigurationNameValue(name=PropertyName('singleTodoistProject'), defaultValue='True'),
         ConfigurationNameValue(name=PropertyName('todoistProjectName'),   defaultValue=DEFAULT_TODOIST_PROJECT_NAME),
+        ConfigurationNameValue(name=PropertyName('assignmentMode'), defaultValue='True'),
     ]
 )
 
@@ -159,6 +160,17 @@ class PreferencesV2(ConfigurationProperties, metaclass=SingletonV3):
     @configurationSetter(sectionName=TODOIST_SECTION_NAME)
     def todoistProjectName(self, newValue: str):
         pass
+
+    @property
+    @configurationGetter(sectionName=TODOIST_SECTION_NAME, deserializeFunction=SecureConversions.secureBoolean)
+    def assignmentMode(self) -> bool:
+        return True
+    
+    @assignmentMode.setter
+    @configurationSetter(sectionName=TODOIST_SECTION_NAME)
+    def assignmentMode(self, newValue: bool):
+        pass
+
 
     @property
     @configurationGetter(sectionName=TODOIST_SECTION_NAME)
