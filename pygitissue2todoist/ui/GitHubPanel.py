@@ -100,13 +100,23 @@ class GitHubPanel(BasePanel):
         self._layoutIssueSelection(parent=parent)
         self._layoutCloneButton(parent=parent)
 
+        # Set default value from preferences
+        # Note that the indices originate from the order of the choices in the RadioBox constructor
+        # This step must happen after the layout of all of the componenets to ensure that none of them
+        # still have the initial value of `None`
+        preferred_single_repo = not self._preferences.assignmentMode
+        self._workflowList.SetSelection(0 if preferred_single_repo else 1)
+        self._update_UI_on_workflow_type(preferred_single_repo)
+
+
     def _layoutWorkflowChooser(self, parent: SizedPanel):
 
         radio = RadioBox(parent,
-                 ID_ANY,
-                 "Select GitHub Workflow",
-                 choices=[self.WORKFLOW_SINGLE_REPOSITORY, self.WORKFLOW_ALL_ASSIGNED_ISSUES],
-                 majorDimension=1)
+                    ID_ANY,
+                    "Select GitHub Workflow",
+                    choices=[self.WORKFLOW_SINGLE_REPOSITORY, self.WORKFLOW_ALL_ASSIGNED_ISSUES],
+                    majorDimension=1
+                )
 
         self._workflowList = radio
 
@@ -120,14 +130,22 @@ class GitHubPanel(BasePanel):
 
         single_repo = event.GetString() == self.WORKFLOW_SINGLE_REPOSITORY
         
+        # Set this in the preferences so that it is remembered for subsequent restarts
+        self._preferences.assignmentMode = not single_repo
+
         print(f'{self._workflowList.GetString(self._workflowList.GetSelection())=}')
+        self._update_UI_on_workflow_type(single_repo)
 
+    def _update_UI_on_workflow_type(self, single_repo: bool):
         # Enable or disable the repository selection components
-        self._repositorySelection.Enable(single_repo)
-        self._milestoneList.Enable(single_repo)
-
-        # Resize the components to suit the selected workflow
+        # We need to use `Parent`, as each control is wrapped in a SizedStaticBox
+        # and it is the SizedStaticBox that we need to Show/Hide
+        self._repositorySelection.Parent.Show(single_repo)
+        self._milestoneList.Parent.Show(single_repo)
+        self.Layout()
+ 
         if not single_repo:
+            # Now populate the assigned issues
             self._populateAssignedIssues()
 
     def _layoutRepositorySelection(self, parent: SizedPanel):
@@ -236,7 +254,10 @@ class GitHubPanel(BasePanel):
         for abbreviatedGitIssue in abbreviatedGitIssues:
             simpleGitIssue: AbbreviatedGitIssue = cast(AbbreviatedGitIssue, abbreviatedGitIssue)
             # Insert string in list box;  Attach client data to it
-            self._issueList.Append(simpleGitIssue.issueTitle, simpleGitIssue)
+            # TODO: In would be nice to be able to add some formatting to these strings
+            # (eg have the prefix in bold or a different color)
+            full_title = f'{simpleGitIssue.prefix} {simpleGitIssue.issueTitle}'
+            self._issueList.Append(full_title, simpleGitIssue)
 
         self._issueList.Enable(True)
         self._cloneButton.Enable(True)
@@ -250,7 +271,6 @@ class GitHubPanel(BasePanel):
         """
 
         print(f'{self._workflowList.GetSelection()=}')
-        # self._workflowList.GetSelection()
 
         abbreviatedGitIssues: AbbreviatedGitIssues = self._githubAdapter.getAbbreviatedIssues(repoName, milestoneTitle)
 

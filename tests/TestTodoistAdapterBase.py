@@ -34,11 +34,11 @@ class TestTodoistAdapterBase(ProjectTestBase):
 
         taskNames: List[str] = ['TaskOpie', 'TaskGabby10Meows', 'TaskFranny']
 
-        for taskName in taskNames:
+        for idx, taskName in enumerate(taskNames):
             taskInfo: GitIssueInfo = GitIssueInfo()
 
             taskInfo.gitIssueName = taskName
-            taskInfo.gitIssueURL  = f'https://{taskName}.org'
+            taskInfo.gitIssueURL  = f'https://github.com/octocat/Hello-World/issues/{idx}'
 
             taskList.append(taskInfo)
 

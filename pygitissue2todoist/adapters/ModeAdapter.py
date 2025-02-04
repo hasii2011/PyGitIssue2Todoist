@@ -37,11 +37,13 @@ class TodoistTaskInfo:
     """
     def __init__(self, gh_issue: GitIssueInfo, task_purpose: TaskPurpose):
         self.gh_issue: GitIssueInfo = gh_issue
+
         self.task_purpose: TaskPurpose = task_purpose
         self._preferences: PreferencesV2 = PreferencesV2()
 
     @property
     def _mode(self):
+        print(f'{self._preferences.assignmentMode=}')
         if self._preferences.singleTodoistProject:
             return Mode.SingleProjectAssigneeMode if self._preferences.assignmentMode else Mode.SingleProjectMilestoneMode
         else:
@@ -94,11 +96,4 @@ class TodoistTaskInfo:
             ]
         }
 
-        # return all_modes[self._mode]
-        return all_modes[Mode.SingleProjectAssigneeMode]
-
-    # def format_params(self) -> dict:
-    #     params = {}
-    #     if self.gh_issue is not None:
-    #         params['content'] = self.gh_issue.gitIssueName
-    #     return params   
+        return all_modes[self._mode]
