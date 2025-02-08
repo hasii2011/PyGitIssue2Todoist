@@ -34,8 +34,9 @@ from pygitissue2todoist.adapters.AbstractTodoistAdapter import AbstractTodoistAd
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
+# from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
+# from pygitissue2todoist.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
-from pygitissue2todoist.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject
 
 from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
 
@@ -71,10 +72,11 @@ class TodoistPanel(BasePanel):
         self._preferences: PreferencesV2 = PreferencesV2()
         self._apiToken:    str           = self._preferences.todoistAPIToken
 
-        if self._preferences.singleTodoistProject is True:
-            self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
-        else:
-            self._todoistAdapter = TodoistAdapter(self._apiToken)
+        # if self._preferences.singleTodoistProject is True:
+        #     self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
+        # else:
+        #     self._todoistAdapter = TodoistAdapter(self._apiToken)
+        self._todoistAdapter = TodoistAdapter(self._apiToken)
 
         self._taskList:         ListBox = cast(ListBox, None)
         self._createTaskButton: Button  = cast(Button, None)
@@ -189,6 +191,7 @@ class TodoistPanel(BasePanel):
             if cDlg.ShowModal() == OK:
                 # The following 2 already defined in init
                 self._apiToken       = PreferencesV2().todoistAPIToken
+                # self._todoistAdapter = TodoistAdapter(self._apiToken)
                 self._todoistAdapter = TodoistAdapter(self._apiToken)
 
                 self._onCreateTaskClicked(event)    # Dang I hate recursion

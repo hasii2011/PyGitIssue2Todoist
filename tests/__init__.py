@@ -1,0 +1,7 @@
+from tests.TestGithubAdapter import TestGithubAdapter
+from tests.TestPreferencesV2 import TestPreferencesV2
+from tests.TestSingleton import TestSingleton
+from tests.TestTodoistAdapterAssignment import TestTodoistAdapterAssignment
+from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
+from tests.TestTodoistAdapterMock import TestTodoistAdapterMock
+from tests.TestTodoistAdapterReal import TestTodoistAdapterReal

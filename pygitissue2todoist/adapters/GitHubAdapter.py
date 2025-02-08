@@ -36,6 +36,7 @@ class AbbreviatedGitIssue:
     issueTitle:   str = ''
     issueHTMLURL: str = ''
     body:         str = ''
+    prefix:       str = ''
     labels:       List[str] = field(default_factory=createLabelsFactory)
 
 
@@ -143,8 +144,35 @@ class GithubAdapter:
         simpleIssue.issueTitle   = fullGitIssue.title
         simpleIssue.issueHTMLURL = fullGitIssue.html_url
         simpleIssue.body         = fullGitIssue.body
+
+        # Used to display the organization and repository name, in the Assigned To Me issue list
+        try:
+            simpleIssue.prefix = f"[{fullGitIssue.repository.organization.login}/{fullGitIssue.repository.name}]"
+        except AttributeError:
+            simpleIssue.prefix = f"[{fullGitIssue.repository.name}]"
+
         for label in fullGitIssue.labels:
             gitLabel: Label = cast(Label, label)
             simpleIssue.labels.append(gitLabel.name)
 
         return simpleIssue
+
+    def getAssignedToMeIssues(self) -> AbbreviatedGitIssues:
+        """
+        Returns a list of issues assigned to the user.
+
+        Equivalent to the following GitHub search:
+        `gh search issues --assignee "@me" --include-prs`
+
+        TODO: confirm how to include the PRs in the results
+        `gh search issues --assignee "@me" --include-prs --state=open`
+        """
+        openGitIssues: PaginatedList = self._github.search_issues(
+            query='assignee:@me state:open',
+        )
+        simpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
+
+        for openIssue in openGitIssues:
+            simpleGitIssues.append(self._createAbbreviatedGitIssue(openIssue))
+
+        return simpleGitIssues

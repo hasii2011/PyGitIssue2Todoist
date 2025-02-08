@@ -63,7 +63,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.tasksToClone      = self._createTasksToClone()
 
         preferences: PreferencesV2  = PreferencesV2()
-        adapter:     TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
+        adapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
 
         adapter.createTasks(info=ci, progressCb=self._sampleCallback)
 
@@ -174,7 +174,9 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         hyperLinkedTask: GitIssueInfo = GitIssueInfo()
         hyperLinkedTask.gitIssueName = f'I am linked'
-        hyperLinkedTask.gitIssueURL  = 'https://hsanchezii.wordpress.com'
+        # A real URL on GitHub's demonstration repo (required to satisfy the URL validation in 
+        # `pygitissue2todoist.adapters.TodoistAdapterTypes.GitIssueInfo._verify_github_issue_url()`
+        hyperLinkedTask.gitIssueURL  = 'https://github.com/octocat/Hello-World/pull/1'
 
         ci: CloneInformation = CloneInformation()
         ci.repositoryTask    = 'MockUser/MockRepo'

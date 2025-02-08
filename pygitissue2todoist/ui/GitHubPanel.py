@@ -11,6 +11,7 @@ from wx import CB_READONLY
 from wx import EVT_BUTTON
 from wx import EVT_COMBOBOX
 from wx import EVT_LISTBOX
+from wx import EVT_RADIOBOX
 from wx import ICON_ERROR
 from wx import ID_ANY
 from wx import LB_MULTIPLE
@@ -22,6 +23,7 @@ from wx import Button
 from wx import CommandEvent
 from wx import ListBox
 from wx import ComboBox
+from wx import RadioBox
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 from wx.lib.sized_controls import SizedPanel
@@ -51,6 +53,9 @@ class GitHubPanel(BasePanel):
     OPEN_MILESTONE_INDICATOR: str = 'Open'
     OPEN_ISSUE_INDICATOR:     str = 'open'
 
+    WORKFLOW_SINGLE_REPOSITORY: str = 'Select from single repository'
+    WORKFLOW_ALL_ASSIGNED_ISSUES:        str = 'All issues assigned to me'
+
     def __init__(self, parent: SizedPanel, eventEngine: IEventEngine):
 
         super().__init__(parent)
@@ -68,6 +73,7 @@ class GitHubPanel(BasePanel):
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.gitHubUserName, authenticationToken=self._preferences.gitHubAPIToken)
 
+        self._workflowList:        RadioBox = cast(RadioBox, None)
         self._repositorySelection: ComboBox = cast(ComboBox, None)
         self._milestoneList:       ListBox  = cast(ListBox, None)
         self._issueList:           ListBox  = cast(ListBox, None)
@@ -78,6 +84,7 @@ class GitHubPanel(BasePanel):
         self.Bind(EVT_COMBOBOX, self._onRepositorySelected, self._repositorySelection)
         self.Bind(EVT_LISTBOX,  self._onMilestoneSelected,  self._milestoneList)
         self.Bind(EVT_BUTTON,   self._onCloneClicked,       self._cloneButton)
+        self.Bind(EVT_RADIOBOX,   self._onWorkflowSelected,   self._workflowList)
 
         self._eventEngine.registerListener(event=EVT_TASK_CREATION_COMPLETE, callback=self._onTaskCreationComplete)
 
@@ -87,10 +94,59 @@ class GitHubPanel(BasePanel):
 
     def _layoutContent(self, parent: BasePanel):
 
+        self._layoutWorkflowChooser(parent=parent)
         self._layoutRepositorySelection(parent=parent)
         self._layoutMilestoneSelection(parent=parent)
         self._layoutIssueSelection(parent=parent)
         self._layoutCloneButton(parent=parent)
+
+        # Set default value from preferences
+        # Note that the indices originate from the order of the choices in the RadioBox constructor
+        # This step must happen after the layout of all of the componenets to ensure that none of them
+        # still have the initial value of `None`
+        preferred_single_repo = not self._preferences.assignmentMode
+        self._workflowList.SetSelection(0 if preferred_single_repo else 1)
+        self._update_UI_on_workflow_type(preferred_single_repo)
+
+
+    def _layoutWorkflowChooser(self, parent: SizedPanel):
+
+        radio = RadioBox(parent,
+                    ID_ANY,
+                    "Select GitHub Workflow",
+                    choices=[self.WORKFLOW_SINGLE_REPOSITORY, self.WORKFLOW_ALL_ASSIGNED_ISSUES],
+                    majorDimension=1
+                )
+
+        self._workflowList = radio
+
+    def _onWorkflowSelected(self, event: CommandEvent):
+
+        # First clear the existing issues and tasks lists
+        self._eventEngine.sendEvent(eventType=EventType.WorkflowSelected)
+
+        print(f'{event=}')
+        print(f'{event.GetString()=}')
+
+        single_repo = event.GetString() == self.WORKFLOW_SINGLE_REPOSITORY
+        
+        # Set this in the preferences so that it is remembered for subsequent restarts
+        self._preferences.assignmentMode = not single_repo
+
+        print(f'{self._workflowList.GetString(self._workflowList.GetSelection())=}')
+        self._update_UI_on_workflow_type(single_repo)
+
+    def _update_UI_on_workflow_type(self, single_repo: bool):
+        # Enable or disable the repository selection components
+        # We need to use `Parent`, as each control is wrapped in a SizedStaticBox
+        # and it is the SizedStaticBox that we need to Show/Hide
+        self._repositorySelection.Parent.Show(single_repo)
+        self._milestoneList.Parent.Show(single_repo)
+        self.Layout()
+ 
+        if not single_repo:
+            # Now populate the assigned issues
+            self._populateAssignedIssues()
 
     def _layoutRepositorySelection(self, parent: SizedPanel):
 
@@ -187,6 +243,25 @@ class GitHubPanel(BasePanel):
         self._milestoneList.SetItems(mileStoneTitles)
         self._milestoneList.Enable(True)
 
+    def _populateAssignedIssues(self):
+        try:
+            abbreviatedGitIssues: AbbreviatedGitIssues = self._githubAdapter.getAssignedToMeIssues()
+        except AdapterAuthenticationError:
+            self._handleAuthenticationError()
+        except GitHubConnectionError:
+            self._handleGitHubConnectionError()
+
+        for abbreviatedGitIssue in abbreviatedGitIssues:
+            simpleGitIssue: AbbreviatedGitIssue = cast(AbbreviatedGitIssue, abbreviatedGitIssue)
+            # Insert string in list box;  Attach client data to it
+            # TODO: In would be nice to be able to add some formatting to these strings
+            # (eg have the prefix in bold or a different color)
+            full_title = f'{simpleGitIssue.prefix} {simpleGitIssue.issueTitle}'
+            self._issueList.Append(full_title, simpleGitIssue)
+
+        self._issueList.Enable(True)
+        self._cloneButton.Enable(True)
+
     def _populateIssues(self, repoName: str, milestoneTitle: str):
         """
         The UI control can only display strings
@@ -194,6 +269,9 @@ class GitHubPanel(BasePanel):
             repoName:       The repository name
             milestoneTitle: The milestone for which we will filter
         """
+
+        print(f'{self._workflowList.GetSelection()=}')
+
         abbreviatedGitIssues: AbbreviatedGitIssues = self._githubAdapter.getAbbreviatedIssues(repoName, milestoneTitle)
 
         for abbreviatedGitIssue in abbreviatedGitIssues:
