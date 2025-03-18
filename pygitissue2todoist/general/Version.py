@@ -13,8 +13,9 @@ from sys import version as pythonVersion
 
 from wx import __version__ as wxVersion
 
+from codeallybasic.SingletonV3 import SingletonV3
+
 from pygitissue2todoist.general.Resources import Resources
-from pygitissue2todoist.general.Singleton import Singleton
 
 from pygitissue2todoist import __version__
 
@@ -24,7 +25,7 @@ PackageVersion = NewType('PackageVersion', str)
 PackageVersionsMap = NewType('PackageVersionsMap', Dict[PackageName, PackageVersion])
 
 
-class Version(Singleton):
+class Version(metaclass=SingletonV3):
 
     TODOIST_PACKAGE_NAME: PackageName = PackageName('todoist-api-python')
     GITHUB_PACKAGE_NAME:  PackageName = PackageName('PyGithub')
@@ -33,15 +34,13 @@ class Version(Singleton):
     PACKAGE_VERSIONS_FILENAME: str = 'packageversions.txt'
 
     __appName__: str = 'PyGitIssue2Todoist'
-    __version__: str = '1.0.0'
 
-    __longVersion__: str = "Humberto's Beta Version"
+    __longVersion__: str = "Humberto's Latest Version"
     __website__:     str = 'https://github.com/hasii2011/gittodoistclone/wiki'
 
     clsLogger: Logger = getLogger(__name__)
 
-    # noinspection PyAttributeOutsideInit
-    def init(self):
+    def __init__(self):
 
         self.logger:       Logger             = Version.clsLogger
         self._pkgVersions: PackageVersionsMap = self._getPackageVersions()
