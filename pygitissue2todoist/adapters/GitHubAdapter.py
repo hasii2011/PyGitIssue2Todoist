@@ -1,10 +1,11 @@
-from dataclasses import field
+
 from typing import List
 from typing import NewType
 from typing import Optional
 from typing import cast
 
 from dataclasses import dataclass
+from dataclasses import field
 
 from logging import Logger
 from logging import getLogger
@@ -17,6 +18,17 @@ from github.Milestone import Milestone
 from github.Label import Label
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
+
+#
+# Import the module because it appears that PyGithub dynamically loads it.  So
+# while the code works when executed in the IDE, it does not work when I build
+# Pyut as a standalone applications.  The noinspection comments I include because
+# I despise warnings in the PyCharm IDE.  ;-)
+#
+# noinspection PyPackageRequirements
+# noinspection PyUnresolvedReferences
+from cffi import api
+
 
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError

@@ -17,6 +17,7 @@ OPTIONS = {}
 
 setup(
     name='PyGitIssue2Todoist',
+    python_requires='>3.12.9',
     version=__version__,
     app=APP,
     data_files=DATA_FILES,
@@ -51,5 +52,5 @@ setup(
             ),
     ),
     setup_requires=['py2app'],
-    install_requires=['codeallybasic==1.10.0', 'wxPython==4.2.2', 'PyGithub==2.3.0', 'todoist_api_python==2.1.5']
+    install_requires=['codeallybasic==1.10.0', 'wxPython==4.2.2', 'PyGithub==2.6.1', 'todoist_api_python==2.1.7']
 )

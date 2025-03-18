@@ -4,12 +4,13 @@ setuptools==70.1.1
 
 html-testRunner==1.2.1
 mypy==1.10.0
+types-cffi==1.16.0.20250318
 
 py2app==0.28.8
 
 codeallybasic==1.10.0
 
-PyGithub==2.3.0
-todoist_api_python<=2.1.5
+PyGithub==2.6.1
+todoist_api_python==2.1.7
 wxPython==4.2.2
 

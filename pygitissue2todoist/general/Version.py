@@ -19,6 +19,7 @@ from pygitissue2todoist.general.Resources import Resources
 
 from pygitissue2todoist import __version__
 
+
 PackageName    = NewType('PackageName', str)
 PackageVersion = NewType('PackageVersion', str)
 

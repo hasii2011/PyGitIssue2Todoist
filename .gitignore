@@ -4,8 +4,7 @@ __pycache__/
 /html/
 /build/
 /dist/
-/pyenv-3.10.13/
-/pyenv-3.11.9/
+/pyenv-3.12.9/
 PyGitIssue2Todoist.egg-info
 /.eggs/
 .envrc
