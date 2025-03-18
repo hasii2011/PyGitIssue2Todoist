@@ -51,5 +51,5 @@ setup(
             ),
     ),
     setup_requires=['py2app'],
-    install_requires=['1.10.0', 'wxPython==4.2.1', 'PyGithub==2.3.0', 'todoist_api_python==2.1.5']
+    install_requires=['codeallybasic==1.10.0', 'wxPython==4.2.2', 'PyGithub==2.3.0', 'todoist_api_python==2.1.5']
 )

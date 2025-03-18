@@ -1,14 +1,15 @@
-wheel==0.42.0
-setuptools==69.0.3
+wheel==0.45.1
+# Don't upgrade past this version as 70.x.x does not work
+setuptools==70.1.1
 
 html-testRunner==1.2.1
 mypy==1.10.0
 
-py2app==0.28.6
+py2app==0.28.8
 
 codeallybasic==1.10.0
 
 PyGithub==2.3.0
 todoist_api_python<=2.1.5
-wxPython==4.2.1
+wxPython==4.2.2
 
