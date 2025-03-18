@@ -15,7 +15,7 @@ from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
 from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
@@ -49,7 +49,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
     def setUp(self):
 
         super().setUp()
-        preferences: PreferencesV2 = PreferencesV2()
+        preferences: Preferences = Preferences()
         self._adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
 
     def tearDown(self):
@@ -62,7 +62,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.milestoneNameTask = 'MockMilestone'
         ci.tasksToClone      = self._createTasksToClone()
 
-        preferences: PreferencesV2  = PreferencesV2()
+        preferences: Preferences    = Preferences()
         adapter:     TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
 
         adapter.createTasks(info=ci, progressCb=self._sampleCallback)
@@ -181,7 +181,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.milestoneNameTask = 'MockMilestone'
         ci.tasksToClone      = [hyperLinkedTask]
 
-        preferences: PreferencesV2 = PreferencesV2()
+        preferences: Preferences = Preferences()
 
         savedOption: GitHubURLOption = preferences.gitHubURLOption
         preferences.gitHubURLOption  = GitHubURLOption.HyperLinkedTaskName

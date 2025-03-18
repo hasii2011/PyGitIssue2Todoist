@@ -20,7 +20,7 @@ from wx import YES
 
 from wx import MessageDialog
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 
 INVALID_TEMP_ID: int = 16
 MAX_PROJECTS:    int = 50
@@ -36,7 +36,7 @@ class ErrorHandler:
 
         self.logger: Logger = getLogger(__name__)
 
-        self._preferences: PreferencesV2 = PreferencesV2()
+        self._preferences: Preferences = Preferences()
 
         self._errorsHandled: HandledErrors = HandledErrors([INVALID_TEMP_ID])
 

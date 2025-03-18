@@ -4,9 +4,9 @@ from github.AuthenticatedUser import AuthenticatedUser
 from github.Milestone import Milestone
 from github.NamedUser import NamedUser
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 
-INTEGRATION_TOKEN: str = PreferencesV2().gitHubAPIToken
+INTEGRATION_TOKEN: str = Preferences().gitHubAPIToken
 USERNAME:          str = 'hasii2011'
 
 # Used for prototyping

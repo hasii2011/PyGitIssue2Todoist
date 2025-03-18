@@ -10,7 +10,7 @@ from wx import OK
 from wx import App
 from wx import Frame
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 
 from tests.ProjectTestBase import ProjectTestBase
@@ -38,7 +38,7 @@ class DialogTestApp(App):
         with DlgConfigure(self._frameTop) as dlg:
 
             if dlg.ShowModal() == OK:
-                preferences: PreferencesV2 = PreferencesV2()
+                preferences: Preferences = Preferences()
 
                 self.logger.info(f'{preferences.todoistAPIToken=}')
                 self.logger.info(f'{preferences.gitHubUserName=}')

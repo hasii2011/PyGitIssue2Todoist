@@ -25,6 +25,6 @@ class GitHubURLOption(Enum):
             case GitHubURLOption.HyperLinkedTaskName.value:
                 gitHubUrlOption = GitHubURLOption.HyperLinkedTaskName
             case _:
-                raise Exception('Unknown GitHubURLOptions')
+                raise Exception('Unknown GitHubURLOption')
 
         return gitHubUrlOption

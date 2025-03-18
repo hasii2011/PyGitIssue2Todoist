@@ -37,7 +37,7 @@ from codeallybasic.Position import Position
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 
 from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
 from pygitissue2todoist.ui.TodoistPanel import CloneInformation
@@ -64,7 +64,7 @@ class ApplicationFrame(SizedFrame):
 
     def __init__(self, parent: Window, wxID: int, title: str):
 
-        self._preferences: PreferencesV2 = PreferencesV2()
+        self._preferences:   Preferences = Preferences()
 
         appDimensions: Dimensions = self._preferences.startupSize
         appSize:       Size       = Size(width=appDimensions.width, height=appDimensions.width)
@@ -190,7 +190,7 @@ class ApplicationFrame(SizedFrame):
 
         dlg: DlgConfigure = DlgConfigure(self)
         if dlg.ShowModal() == OK:
-            preferences: PreferencesV2 = PreferencesV2()
+            preferences: Preferences = Preferences()
             todoistToken:   str = preferences.todoistAPIToken
             githubToken:    str = preferences.gitHubAPIToken
             gitHubUserName: str = preferences.gitHubUserName

@@ -24,6 +24,7 @@ from wx import ListBox
 from wx import ComboBox
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
+
 from wx.lib.sized_controls import SizedPanel
 from wx.lib.sized_controls import SizedStaticBox
 
@@ -34,7 +35,7 @@ from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 
-from pygitissue2todoist.general.PreferencesV2 import PreferencesV2
+from pygitissue2todoist.general.Preferences import Preferences
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
@@ -62,9 +63,9 @@ class GitHubPanel(BasePanel):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._eventEngine:             IEventEngine          = eventEngine
-        self._preferences:             PreferencesV2         = PreferencesV2()
-        self._selectedSimpleGitIssues: AbbreviatedGitIssues  = AbbreviatedGitIssues([])
+        self._eventEngine:             IEventEngine         = eventEngine
+        self._preferences:             Preferences          = Preferences()
+        self._selectedSimpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
 
         self._githubAdapter: GithubAdapter = GithubAdapter(userName=self._preferences.gitHubUserName, authenticationToken=self._preferences.gitHubAPIToken)
 
