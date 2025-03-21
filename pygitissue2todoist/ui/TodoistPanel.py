@@ -33,8 +33,8 @@ from pygitissue2todoist.ErrorHandler import ErrorHandler
 # from pygitissue2todoist.adapters.AbstractTodoistAdapter import AbstractTodoistAdapter
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 
-from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
-from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 # from pygitissue2todoist.strategy.StrategyTypes import TodoistAdapter
 
 # from pygitissue2todoist.adapters.TodoistAdapterSingleProject import TodoistAdapterSingleProject

@@ -4,7 +4,7 @@ from typing import Callable
 from logging import Logger
 from logging import getLogger
 
-from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 
 from pygitissue2todoist.general.Preferences import Preferences
 

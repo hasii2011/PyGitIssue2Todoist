@@ -24,8 +24,8 @@ from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectName
 from pygitissue2todoist.strategy.AbstractTodoistStrategy import Tasks
 
 
-from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
-from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 
 
 @dataclass

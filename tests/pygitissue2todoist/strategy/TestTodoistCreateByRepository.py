@@ -15,8 +15,8 @@ from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreation
 from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectDictionary
 from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectName
 
-from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
-from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 
 from pygitissue2todoist.strategy.TodoistCreateByRepository import ProjectTasks
 from pygitissue2todoist.strategy.TodoistCreateByRepository import TodoistCreateByRepository

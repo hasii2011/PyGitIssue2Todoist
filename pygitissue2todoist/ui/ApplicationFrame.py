@@ -36,7 +36,7 @@ from codeallybasic.Position import Position
 
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 
-from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 from pygitissue2todoist.general.Preferences import Preferences
 
 from pygitissue2todoist.ui.GitHubPanel import GitHubPanel

@@ -1,7 +1,7 @@
 
 from typing import List
 
-from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 
 from tests.ProjectTestBase import ProjectTestBase
 

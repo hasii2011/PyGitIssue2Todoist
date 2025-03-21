@@ -4,7 +4,7 @@ from typing import Callable
 from abc import ABC
 from abc import abstractmethod
 
-from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 
 
 class ITodoistCreationStrategy(ABC):
