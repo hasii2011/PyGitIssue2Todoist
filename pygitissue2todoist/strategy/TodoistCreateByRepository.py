@@ -12,28 +12,25 @@ from dataclasses import field
 from logging import Logger
 from logging import getLogger
 
-
 from todoist_api_python.api import TodoistAPI
+
 from todoist_api_python.models import Project
 from todoist_api_python.models import Task
 
-
 from pygitissue2todoist.strategy.AbstractTodoistStrategy import AbstractTodoistStrategy
-from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectDictionary
-from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectName
-from pygitissue2todoist.strategy.AbstractTodoistStrategy import Tasks
-
 
 from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectDictionary
+from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectName
+from pygitissue2todoist.strategy.TodoistStrategyTypes import Tasks
+from pygitissue2todoist.strategy.TodoistStrategyTypes import tasksFactory
 
 
 @dataclass
 class ProjectTasks:
-    # Figure this out later...
-    # Incompatible types in assignment (expression has type "List[_T]", variable has type "Tasks")
-    mileStoneTasks: Tasks = field(default_factory=list)     # type: ignore
-    devTasks:       Tasks = field(default_factory=list)     # type: ignore
+    mileStoneTasks: Tasks = field(default_factory=tasksFactory)
+    devTasks:       Tasks = field(default_factory=tasksFactory)
 
 
 Items            = NewType('Items', Dict[str, str])
@@ -149,8 +146,8 @@ class TodoistCreateByRepository(AbstractTodoistStrategy):
 
         # TODO:  Get tasks associated with the project
         tasks: List[Task] = todoist.get_tasks(project_id=projectId)
-        mileStoneTasks: Tasks = Tasks([])
-        devTasks:       Tasks = Tasks([])
+        mileStoneTasks: Tasks = tasksFactory()
+        devTasks:       Tasks = tasksFactory()
 
         try:
             for item in tasks:

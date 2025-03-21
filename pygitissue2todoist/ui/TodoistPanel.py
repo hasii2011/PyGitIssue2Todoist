@@ -75,10 +75,6 @@ class TodoistPanel(BasePanel):
         self._preferences: Preferences = Preferences()
         self._apiToken:    str         = self._preferences.todoistAPIToken
 
-        # if self._preferences.singleTodoistProject is True:
-        #     self._todoistAdapter: AbstractTodoistAdapter = TodoistAdapterSingleProject(apiToken=self._apiToken)
-        # else:
-        #     self._todoistAdapter = TodoistAdapter(self._apiToken)
         self._todoistCreation: TodoistCreation = TodoistCreation()
 
         self._taskList:         ListBox = cast(ListBox, None)

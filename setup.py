@@ -1,10 +1,9 @@
-"""
 
-"""
+from setuptools import find_packages
+from setuptools import setup
 
 from pygitissue2todoist import __version__
 
-from setuptools import setup
 
 APP = ['pygitissue2todoist/PyGitIssue2Todoist.py']
 DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/loggingConfiguration.json']),
@@ -21,16 +20,7 @@ setup(
     version=__version__,
     app=APP,
     data_files=DATA_FILES,
-    packages=['pygitissue2todoist',
-              'pygitissue2todoist.adapters',
-              'pygitissue2todoist.general',
-              'pygitissue2todoist.general.exceptions',
-              'pygitissue2todoist.resources',
-              'pygitissue2todoist.ui',
-              'pygitissue2todoist.ui.dialogs',
-              'pygitissue2todoist.ui.dialogs.configuration',
-              'pygitissue2todoist.ui.eventengine',
-              ],
+    packages=find_packages(include=['pygitissue2todoist.*']),
     include_package_data=True,
     zip_safe=False,
 
@@ -38,7 +28,7 @@ setup(
     author='Humberto A. Sanchez II',
     author_email='Humberto.A.Sanchez.II@gmail.com',
     maintainer_email='humberto.a.sanchez.ii@gmail.com',
-    description='Convert Github issues to Todoist Tasks',
+    description='Convert GitHub issues to Todoist Tasks',
     options=dict(py2app=dict(
                     plist=dict(
                         CFBundleIdentifier='PyGitIssue2Todoist',

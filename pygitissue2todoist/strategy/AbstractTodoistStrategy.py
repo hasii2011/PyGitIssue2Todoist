@@ -1,14 +1,12 @@
 
 from typing import Dict
 from typing import List
-from typing import NewType
 from typing import cast
 
 from abc import ABCMeta
 
 from logging import Logger
 from logging import getLogger
-
 
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.api_async import TodoistAPIAsync
@@ -18,16 +16,17 @@ from todoist_api_python.models import Task
 from todoist_api_python.models import Comment
 
 from pygitissue2todoist.strategy.ITodoistCreationStrategy import ITodoistCreationStrategy
-from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
 from pygitissue2todoist.general.Preferences import Preferences
+
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
-Tasks             = NewType('Tasks', List[Task])
-ProjectName       = NewType('ProjectName', str)
-ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
+from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
+from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectDictionary
+from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectName
+from pygitissue2todoist.strategy.TodoistStrategyTypes import Tasks
 
 
 class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
@@ -93,7 +92,6 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
                 break
         #
         # To create subtasks first create in project then move them to the milestone task
-        # TODO: Make this a case statement in Python 3.10
         #
         if foundTaskItem is None:
             option: GitHubURLOption = self._preferences.gitHubURLOption
@@ -102,17 +100,20 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
                     todoist.add_task(projectId=projectId,
                                      parent_id=parentMileStoneTaskItem.id,
                                      content=taskInfo.gitIssueName)
+
                 case GitHubURLOption.AddAsDescription:
                     todoist.add_task(projectId=projectId,
                                      parent_id=parentMileStoneTaskItem.id,
                                      content=taskInfo.gitIssueName,
                                      description=taskInfo.gitIssueURL)
+
                 case GitHubURLOption.AddAsComment:
                     task: Task = todoist.add_task(projectId=projectId,
                                                   parent_id=parentMileStoneTaskItem.id,
                                                   content=taskInfo.gitIssueName)
                     comment: Comment = todoist.add_comment(task_id=task.id, content=taskInfo.gitIssueURL)
                     AbstractTodoistStrategy.clsLogger.info(f'Comment added: {comment}')
+
                 case GitHubURLOption.HyperLinkedTaskName:
                     linkedTaskName: str = f'[{taskInfo.gitIssueName}]({taskInfo.gitIssueURL})'
                     todoist.add_task(project_id=projectId,
