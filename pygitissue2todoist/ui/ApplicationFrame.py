@@ -35,17 +35,17 @@ from codeallybasic.Dimensions import Dimensions
 from codeallybasic.Position import Position
 
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
-from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
 
+from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
 from pygitissue2todoist.general.Preferences import Preferences
 
 from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
 from pygitissue2todoist.ui.TodoistPanel import CloneInformation
 from pygitissue2todoist.ui.TodoistPanel import TodoistPanel
-from pygitissue2todoist.ui.dialogs.DlgAbout import DlgAbout
 
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 from pygitissue2todoist.ui.dialogs.DlgHelp import DlgHelp
+from pygitissue2todoist.ui.dialogs.DlgAbout import DlgAbout
 
 from pygitissue2todoist.ui.eventengine.Events import EVT_ISSUES_SELECTED
 from pygitissue2todoist.ui.eventengine.Events import EVT_REPOSITORY_SELECTED
@@ -168,8 +168,8 @@ class ApplicationFrame(SizedFrame):
 
     def _onIssuesSelected(self, event: IssuesSelectedEvent):
 
-        adapterTaskInfo: List[GitIssueInfo] = self.__convertToTasksToClone(event.selectedSimpleGitIssues)
-        cloneInformation: CloneInformation = CloneInformation()
+        adapterTaskInfo:  List[GitIssueInfo] = self.__convertToTasksToClone(event.selectedSimpleGitIssues)
+        cloneInformation: CloneInformation   = CloneInformation()
 
         cloneInformation.repositoryTask    = event.repositoryName
         cloneInformation.milestoneNameTask = event.milestoneName

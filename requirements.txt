@@ -3,7 +3,7 @@ wheel==0.45.1
 setuptools==70.1.1
 
 html-testRunner==1.2.1
-mypy==1.10.0
+mypy==1.15.0
 types-cffi==1.16.0.20250318
 
 py2app==0.28.8

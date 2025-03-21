@@ -20,6 +20,8 @@ from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreation
 
 from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
 
+MOCK_PROJECT_NAME: str = 'MockProject'
+
 NUMBER_OF_TEST_MILESTONE_TASKS: int = 2
 NUMBER_OF_TEST_DEV_TASKS:       int = 4
 
@@ -33,10 +35,10 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
     ```
         MockProject
-            MockMileStone1
+            MockMilestone1
                 MockTask1
                 MockTask2
-            MockMileStone2
+            MockMilestone2
                 MockTask3
                 MockTask4
     ```
@@ -105,7 +107,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: str = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
 
         projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 
@@ -133,10 +135,10 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         adapter: TodoistAdapter = self._adapter
 
-        projectId: str = self._getAProjectId(projectName=ProjectName('MockProject'))
+        projectId: str = self._getAProjectId(projectName=ProjectName(MOCK_PROJECT_NAME))
 
         info: CloneInformation = CloneInformation()
-        info.repositoryTask    = 'MockProject'
+        info.repositoryTask    = MOCK_PROJECT_NAME
         info.milestoneNameTask = 'MockMilestone2'
         info.tasksToClone      = [GitIssueInfo(gitIssueName='MockTask3'), GitIssueInfo(gitIssueName='MockTask4')]
 
@@ -150,7 +152,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
         projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
 
-        projectId: str = adapter._getProjectId(projectName=ProjectName('MockProject'), projectDictionary=projectDictionary)
+        projectId: str = adapter._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
 
         projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
 

@@ -16,14 +16,15 @@ from codeallybasic.SecureConversions import SecureConversions
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
 from pygitissue2todoist.general.Resources import Resources
-
+from pygitissue2todoist.strategy.TodoistTaskCreationStrategy import TodoistTaskCreationStrategy
 
 DEFAULT_APP_WIDTH:    int        = 1024
 DEFAULT_APP_HEIGHT:   int        = 768
 DEFAULT_POSITION:     str        = Position(32, 32).__str__()
 DEFAULT_STARTUP_SIZE: Dimensions = Dimensions(width=DEFAULT_APP_WIDTH, height=DEFAULT_APP_HEIGHT).__str__()
 
-DEFAULT_TODOIST_PROJECT_NAME: str = 'Development'
+DEFAULT_TASK_CREATION_STRATEGY: str = TodoistTaskCreationStrategy.PROJECT_BY_REPOSITORY.value
+DEFAULT_TODOIST_PROJECT_NAME:   str = 'Development'
 
 
 SECTION_MAIN: ValueDescriptions = ValueDescriptions(
@@ -47,6 +48,7 @@ TODOIST_SECTION: ValueDescriptions = ValueDescriptions(
         KeyName('cleanTodoistCache'):    ValueDescription(defaultValue='True', deserializer=SecureConversions.secureBoolean),
         KeyName('singleTodoistProject'): ValueDescription(defaultValue='True', deserializer=SecureConversions.secureBoolean),
         KeyName('todoistProjectName'):   ValueDescription(defaultValue=DEFAULT_TODOIST_PROJECT_NAME),
+        KeyName('taskCreationStrategy'): ValueDescription(defaultValue=DEFAULT_TASK_CREATION_STRATEGY, deserializer=TodoistTaskCreationStrategy, enumUseValue=True),
     }
 )
 
