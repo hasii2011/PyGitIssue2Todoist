@@ -1,12 +1,12 @@
 
 from typing import List
 
-from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
+from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
 
 from tests.ProjectTestBase import ProjectTestBase
 
 
-class TestTodoistAdapterBase(ProjectTestBase):
+class TodoistStrategyUnitTestBase(ProjectTestBase):
     """
     Base class for the todoist adapter unit tests.  Capture common code here
     """

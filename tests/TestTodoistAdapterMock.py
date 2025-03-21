@@ -17,10 +17,10 @@ from pygitissue2todoist.adapters.TodoistAdapter import ProjectData
 from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
 from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 
-from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
+from tests.TodoistStrategyUnitTestBase import TodoistStrategyUnitTestBase
 
 
-class TestTodoistAdapterMock(TestTodoistAdapterBase):
+class TestTodoistAdapterMock(TodoistStrategyUnitTestBase):
     """
     This unit test uses mocks to test the todoist adapter.
     """
@@ -75,7 +75,7 @@ class TestTodoistAdapterMock(TestTodoistAdapterBase):
         # adapter.createTasks(info=ci, progressCb=self._sampleCallback)
         #
         # self.assertTrue(self._cbInvoked, 'Looks like callback was never invoked')
-        # self.assertEqual(TestTodoistAdapterBase.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
+        # self.assertEqual(TodoistStrategyUnitTestBase.EXPECTED_NUMBER_OF_CALLBACKS, self._cbInvokeCount, 'Callback invoked an incorrect number of times')
         #
 
 

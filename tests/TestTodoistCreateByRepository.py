@@ -1,5 +1,4 @@
 
-
 from unittest import TestSuite
 from unittest import main as unitTestMain
 
@@ -7,18 +6,23 @@ from todoist_api_python.models import Comment
 from todoist_api_python.models import Project
 from todoist_api_python.models import Task
 
-from pygitissue2todoist.adapters.TodoistAdapter import ProjectDictionary
-from pygitissue2todoist.adapters.TodoistAdapter import ProjectName
-from pygitissue2todoist.adapters.TodoistAdapter import ProjectTasks
-from pygitissue2todoist.adapters.TodoistAdapter import GitIssueInfo
-from pygitissue2todoist.adapters.TodoistAdapter import TodoistAdapter
-from pygitissue2todoist.adapters.TodoistAdapter import CloneInformation
 from pygitissue2todoist.general.GitHubURLOption import GitHubURLOption
 
 from pygitissue2todoist.general.Preferences import Preferences
+
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 
-from tests.TestTodoistAdapterBase import TestTodoistAdapterBase
+from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectDictionary
+from pygitissue2todoist.strategy.AbstractTodoistStrategy import ProjectName
+
+from pygitissue2todoist.strategy.StrategyTypes import CloneInformation
+from pygitissue2todoist.strategy.StrategyTypes import GitIssueInfo
+
+from pygitissue2todoist.strategy.TodoistCreateByRepository import ProjectTasks
+from pygitissue2todoist.strategy.TodoistCreateByRepository import TodoistCreateByRepository
+
+
+from tests.TodoistStrategyUnitTestBase import TodoistStrategyUnitTestBase
 
 MOCK_PROJECT_NAME: str = 'MockProject'
 
@@ -26,9 +30,9 @@ NUMBER_OF_TEST_MILESTONE_TASKS: int = 2
 NUMBER_OF_TEST_DEV_TASKS:       int = 4
 
 
-class TestTodoistAdapterReal(TestTodoistAdapterBase):
+class TestTodoistCreateByRepository(TodoistStrategyUnitTestBase):
     """
-    This unit test uses real credentials to test the todoist adapter.
+    This unit test uses real credentials to test the todoist single project strategy.
 
     For the tests against the MockProject make sure your account has a project with
     the following name and structure
@@ -51,8 +55,8 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
     def setUp(self):
 
         super().setUp()
-        preferences: Preferences = Preferences()
-        self._adapter: TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
+
+        self._strategy: TodoistCreateByRepository = TodoistCreateByRepository()
 
     def tearDown(self):
         super().tearDown()
@@ -64,37 +68,34 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         ci.milestoneNameTask = 'MockMilestone'
         ci.tasksToClone      = self._createTasksToClone()
 
-        preferences: Preferences    = Preferences()
-        adapter:     TodoistAdapter = TodoistAdapter(apiToken=preferences.todoistAPIToken)
-
-        adapter.createTasks(info=ci, progressCb=self._sampleCallback)
+        self._strategy.createTasks(info=ci, progressCb=self._sampleCallback)
 
     def testGetCurrentProjects(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
         self.assertIsNotNone(projectDictionary, 'Must return some object')
         self.assertGreater(len(projectDictionary), 0, 'Hopefully some objects')
 
     def testGetProjectId(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
-        projectId: str = adapter._getProjectId(projectName=ProjectName('Bogus'), projectDictionary=projectDictionary)
+        projectId: str = strategy._getProjectId(projectName=ProjectName('Bogus'), projectDictionary=projectDictionary)
 
         self.assertNotEqual(0, projectId,  'I expected some id')
 
     def testGetExistingProjectId(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
-        actualId: str = adapter._getProjectId(projectName=ProjectName('Personal'), projectDictionary=projectDictionary)
+        actualId: str = strategy._getProjectId(projectName=ProjectName('Personal'), projectDictionary=projectDictionary)
 
         project: Project = projectDictionary[ProjectName('Personal')]
         expectedId: str = project.id
@@ -103,13 +104,13 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
     def testGetProjectTaskItems(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
-        projectId: str = adapter._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
+        projectId: str = strategy._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
 
-        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
+        projectTasks: ProjectTasks = strategy._getProjectTaskItems(projectId=projectId)
 
         self.assertIsNotNone(projectTasks.mileStoneTasks, 'I need some test milestone tasks')
         self.assertIsNotNone(projectTasks.devTasks, 'I need some test developer tasks')
@@ -119,10 +120,10 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
     def testGetProjectTaskItemsForNewProject(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
         projectId: str = self._getAProjectId(projectName=ProjectName('NewProject'))
-        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
+        projectTasks: ProjectTasks = strategy._getProjectTaskItems(projectId=projectId)
 
         self.assertIsNotNone(projectTasks, 'I a basic data class return')
         self.assertIsNotNone(projectTasks.mileStoneTasks, 'I need some test milestone tasks')
@@ -133,7 +134,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
 
     def testGetMilestoneTaskItemExisting(self):
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
         projectId: str = self._getAProjectId(projectName=ProjectName(MOCK_PROJECT_NAME))
 
@@ -142,19 +143,20 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         info.milestoneNameTask = 'MockMilestone2'
         info.tasksToClone      = [GitIssueInfo(gitIssueName='MockTask3'), GitIssueInfo(gitIssueName='MockTask4')]
 
-        milestoneTask: Task = adapter._getMilestoneTaskItem(projectId=projectId, milestoneName='MockMilestone2', progressCb=self._sampleCallback)
+        milestoneTask: Task = strategy._getMilestoneTaskItem(projectId=projectId, milestoneName='MockMilestone2', progressCb=self._sampleCallback)
 
         taskName: str = milestoneTask.content
         self.assertEqual('MockMilestone2', taskName, 'Should get existing item')
 
     def testAddNoteToSubTask(self):
-        adapter: TodoistAdapter = self._adapter
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectId: str = adapter._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
-        projectTasks: ProjectTasks = adapter._getProjectTaskItems(projectId=projectId)
+        projectId: str = strategy._getProjectId(projectName=ProjectName(MOCK_PROJECT_NAME), projectDictionary=projectDictionary)
+
+        projectTasks: ProjectTasks = strategy._getProjectTaskItems(projectId=projectId)
 
         devTasks = projectTasks.devTasks
         for devTask in devTasks:
@@ -165,7 +167,7 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
             try:
                 noteToAdd: str = f'https://{taskName}-{taskId}.com'
 
-                comment: Comment = adapter._addNoteToTask(itemId=taskId, noteContent=noteToAdd)
+                comment: Comment = strategy._addNoteToTask(itemId=taskId, noteContent=noteToAdd)
                 self.logger.info(f'Comment added: {comment}')
             except NoteCreationError as nce:
                 self.logger.error(f'{nce.errorCode=} {nce.message=}')
@@ -188,18 +190,18 @@ class TestTodoistAdapterReal(TestTodoistAdapterBase):
         savedOption: GitHubURLOption = preferences.gitHubURLOption
         preferences.gitHubURLOption  = GitHubURLOption.HyperLinkedTaskName
 
-        adapter: TodoistAdapter = self._adapter
-        adapter.createTasks(ci, self._sampleCallback)
+        strategy: TodoistCreateByRepository = self._strategy
+        strategy.createTasks(ci, self._sampleCallback)
 
         preferences.gitHubURLOption = savedOption
 
     def _getAProjectId(self, projectName: ProjectName) -> str:
 
-        adapter: TodoistAdapter = self._adapter
+        strategy: TodoistCreateByRepository = self._strategy
 
-        projectDictionary: ProjectDictionary = adapter._getCurrentProjects()
+        projectDictionary: ProjectDictionary = strategy._getCurrentProjects()
 
-        projectId: str = adapter._getProjectId(projectName=projectName, projectDictionary=projectDictionary)
+        projectId: str = strategy._getProjectId(projectName=projectName, projectDictionary=projectDictionary)
 
         return projectId
 
@@ -209,7 +211,7 @@ def suite() -> TestSuite:
 
     testSuite: TestSuite = TestSuite()
 
-    testSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(testCaseClass=TestTodoistAdapterReal))
+    testSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(testCaseClass=TestTodoistCreateByRepository))
 
     return testSuite
 
