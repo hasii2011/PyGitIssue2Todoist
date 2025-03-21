@@ -22,7 +22,7 @@ from pygitissue2todoist.strategy.TodoistCreateByRepository import ProjectTasks
 from pygitissue2todoist.strategy.TodoistCreateByRepository import TodoistCreateByRepository
 
 
-from tests.TodoistStrategyUnitTestBase import TodoistStrategyUnitTestBase
+from tests.pygitissue2todoist.strategy.TodoistStrategyUnitTestBase import TodoistStrategyUnitTestBase
 
 MOCK_PROJECT_NAME: str = 'MockProject'
 
