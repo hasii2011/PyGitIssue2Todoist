@@ -12,7 +12,9 @@ from unittest.mock import Mock
 from unittest.mock import PropertyMock
 from unittest.mock import patch
 
+from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
 from pygitissue2todoist.adapters.GitHubAdapter import GithubAdapter
+from pygitissue2todoist.adapters.GitHubAdapter import IssueOwner
 from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.GitHubAdapter import MilestoneTitles
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
@@ -137,9 +139,31 @@ class TestGithubAdapter(ProjectTestBase):
             ]
         )
 
-        simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getIssuesAssignedToMe(slugs, callback=self._statusCallback)
+        issueOwner: IssueOwner = IssueOwner(preferences.gitHubUserName)
+        simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getIssuesAssignedToOwner(slugs, issueOwner=issueOwner, callback=self._statusCallback)
 
         print(f'Retrieved a total of {len(simpleGitIssues)} issues')
+
+    def testActuallyAssignedToMe(self):
+        preferences: Preferences = Preferences()
+
+        githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.gitHubUserName,
+                                                     authenticationToken=preferences.gitHubAPIToken)
+
+        # noinspection SpellCheckingInspection
+        slugs: Slugs = Slugs(
+            [
+                Slug('hasii2011/TestRepository'),
+            ]
+        )
+
+        issueOwner: IssueOwner = IssueOwner(preferences.gitHubUserName)
+        simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getIssuesAssignedToOwner(slugs, issueOwner=issueOwner, callback=self._statusCallback)
+
+        for issue in simpleGitIssues:
+            simpleIssue: AbbreviatedGitIssue = cast(AbbreviatedGitIssue, issue)
+
+            self.assertNotEqual('Not Assigned To Me', simpleIssue.issueTitle, 'Should not get this one')
 
     def _statusCallback(self, msg: str):
         print(f'{msg}')

@@ -12,6 +12,7 @@ from dataclasses import field
 
 from github import Github
 from github import BadCredentialsException
+from github.Auth import Token
 
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
@@ -36,6 +37,7 @@ from pygitissue2todoist.adapters.GitHubGeneralError import GitHubGeneralError
 
 RepositoryNames = NewType('RepositoryNames', List[str])
 MilestoneTitles = NewType('MilestoneTitles', List[str])
+IssueOwner      = NewType('IssueOwner',      str)
 
 
 def createLabelsFactory() -> List[str]:
@@ -71,7 +73,7 @@ class GithubAdapter:
 
         self._userName:            str    = userName
         self._authenticationToken: str    = authenticationToken
-        self._github:              Github = Github(self._authenticationToken)
+        self._github:              Github = Github(auth=Token(self._authenticationToken))
 
     def getRepositoryNames(self) -> RepositoryNames:
 
@@ -153,11 +155,17 @@ class GithubAdapter:
 
         return simpleGitIssues
 
-    def getIssuesAssignedToMe(self, slugs: Slugs, callback: IssuesCallback) -> AbbreviatedGitIssues:
+    def getIssuesAssignedToOwner(self, slugs: Slugs, issueOwner: IssueOwner, callback: IssuesCallback) -> AbbreviatedGitIssues:
         """
-        Returns a list of issues assigned to the user.
-        """
+        Creates an abbreviated list open issues assigned to the issue owner
 
+        Args:
+            slugs:          GitHub Slugs;  e.g. 'hasii2011/pyut'
+            issueOwner:     The ones we are looking for
+            callback:       Status reporting callback
+
+        Returns:  A list of issues assigned to the user.
+        """
         simpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
 
         for slug in slugs:
@@ -166,8 +174,13 @@ class GithubAdapter:
 
             issueCount: int = 0
             for issue in openIssues:
-                simpleGitIssues.append(self._createAbbreviatedGitIssue(issue))
-                issueCount += 1
+                potentialIssue: Issue = cast(Issue, issue)
+                # TODO:  Might want to look through the assignees list also
+                if potentialIssue.assignee is None:
+                    pass
+                elif potentialIssue.assignee.login == issueOwner:
+                    simpleGitIssues.append(self._createAbbreviatedGitIssue(issue))
+                    issueCount += 1
 
             msg: str = f'Retrieved {issueCount} issues from {slug}'
             callback(msg)
