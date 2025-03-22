@@ -165,7 +165,7 @@ class TestGithubAdapter(ProjectTestBase):
             self.assertNotEqual('Not Assigned To Me', simpleIssue.issueTitle, 'Should not get this one')
 
     def _statusCallback(self, msg: str):
-        print(f'{msg}')
+        self.logger.info(f'{msg}')
 
 
 def suite() -> TestSuite:

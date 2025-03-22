@@ -1,3 +1,4 @@
+
 from typing import Callable
 from typing import List
 from typing import NewType
@@ -13,7 +14,6 @@ from dataclasses import field
 from github import Github
 from github import BadCredentialsException
 from github.Auth import Token
-
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
 from github.Milestone import Milestone
@@ -46,6 +46,7 @@ def createLabelsFactory() -> List[str]:
 @dataclass
 class AbbreviatedGitIssue:
 
+    slug:         str = ''
     issueTitle:   str = ''
     issueHTMLURL: str = ''
     body:         str = ''
@@ -144,13 +145,13 @@ class GithubAdapter:
 
         if milestoneTitle == GithubAdapter.ALL_ISSUES_INDICATOR:
             for openIssue in openGitIssues:
-                simpleGitIssues.append(self._createAbbreviatedGitIssue(openIssue))
+                simpleGitIssues.append(self._createAbbreviatedGitIssue(slug=repoName, fullGitIssue=openIssue))
         else:
             for openIssue in openGitIssues:
                 fullGitIssue: Issue = cast(Issue, openIssue)
                 mileStone: Optional[Milestone] = fullGitIssue.milestone
                 if mileStone is not None and mileStone.title == milestoneTitle:
-                    simpleGitIssues.append(self._createAbbreviatedGitIssue(fullGitIssue))
+                    simpleGitIssues.append(self._createAbbreviatedGitIssue(slug=repoName, fullGitIssue=fullGitIssue))
 
         return simpleGitIssues
 
@@ -178,7 +179,7 @@ class GithubAdapter:
                 if potentialIssue.assignee is None:
                     pass
                 elif potentialIssue.assignee.login == issueOwner:
-                    simpleGitIssues.append(self._createAbbreviatedGitIssue(issue))
+                    simpleGitIssues.append(self._createAbbreviatedGitIssue(slug=slug, fullGitIssue=issue))
                     issueCount += 1
 
             msg: str = f'Retrieved {issueCount} issues from {slug}'
@@ -186,10 +187,11 @@ class GithubAdapter:
 
         return simpleGitIssues
 
-    def _createAbbreviatedGitIssue(self, fullGitIssue: Issue) -> AbbreviatedGitIssue:
+    def _createAbbreviatedGitIssue(self, slug: Slug, fullGitIssue: Issue) -> AbbreviatedGitIssue:
 
         simpleIssue: AbbreviatedGitIssue = AbbreviatedGitIssue()
 
+        simpleIssue.slug         = str(slug)
         simpleIssue.issueTitle   = fullGitIssue.title
         simpleIssue.issueHTMLURL = fullGitIssue.html_url
         simpleIssue.body         = fullGitIssue.body
