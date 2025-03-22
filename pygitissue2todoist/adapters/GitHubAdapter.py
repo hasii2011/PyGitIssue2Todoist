@@ -1,23 +1,23 @@
-
+from typing import Callable
 from typing import List
 from typing import NewType
 from typing import Optional
 from typing import cast
 
-from dataclasses import dataclass
-from dataclasses import field
-
 from logging import Logger
 from logging import getLogger
+
+from dataclasses import dataclass
+from dataclasses import field
 
 from github import Github
 from github import BadCredentialsException
 
-from github.Issue import Issue
-from github.Milestone import Milestone
-from github.Label import Label
 from github.PaginatedList import PaginatedList
 from github.Repository import Repository
+from github.Milestone import Milestone
+from github.Label import Label
+from github.Issue import Issue
 
 #
 # Import the module because it appears that PyGithub dynamically loads it.  So
@@ -52,6 +52,11 @@ class AbbreviatedGitIssue:
 
 
 AbbreviatedGitIssues = NewType('AbbreviatedGitIssues', List[AbbreviatedGitIssue])
+
+Slug  = NewType('Slug',  str)
+Slugs = NewType('Slugs', List[Slug])
+
+IssuesCallback = Callable[[str], None]
 
 
 class GithubAdapter:
@@ -145,6 +150,27 @@ class GithubAdapter:
                 mileStone: Optional[Milestone] = fullGitIssue.milestone
                 if mileStone is not None and mileStone.title == milestoneTitle:
                     simpleGitIssues.append(self._createAbbreviatedGitIssue(fullGitIssue))
+
+        return simpleGitIssues
+
+    def getIssuesAssignedToMe(self, slugs: Slugs, callback: IssuesCallback) -> AbbreviatedGitIssues:
+        """
+        Returns a list of issues assigned to the user.
+        """
+
+        simpleGitIssues: AbbreviatedGitIssues = AbbreviatedGitIssues([])
+
+        for slug in slugs:
+            repo:       Repository           = self._github.get_repo(slug)
+            openIssues: PaginatedList[Issue] = repo.get_issues(state='open')
+
+            issueCount: int = 0
+            for issue in openIssues:
+                simpleGitIssues.append(self._createAbbreviatedGitIssue(issue))
+                issueCount += 1
+
+            msg: str = f'Retrieved {issueCount} issues from {slug}'
+            callback(msg)
 
         return simpleGitIssues
 

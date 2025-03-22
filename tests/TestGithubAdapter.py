@@ -16,6 +16,9 @@ from pygitissue2todoist.adapters.GitHubAdapter import GithubAdapter
 from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.GitHubAdapter import MilestoneTitles
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
+from pygitissue2todoist.adapters.GitHubAdapter import Slug
+from pygitissue2todoist.adapters.GitHubAdapter import Slugs
+from pygitissue2todoist.general.Preferences import Preferences
 
 from tests.ProjectTestBase import ProjectTestBase
 
@@ -115,14 +118,39 @@ class TestGithubAdapter(ProjectTestBase):
                 for issueTitle in simpleGitIssues:
                     self.logger.info(f'{issueTitle=}')
 
+    def testGetIssuesAssignedToMe(self):
+
+        preferences: Preferences = Preferences()
+
+        githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.gitHubUserName,
+                                                     authenticationToken=preferences.gitHubAPIToken)
+
+        # noinspection SpellCheckingInspection
+        slugs: Slugs = Slugs(
+            [
+                Slug('hasii2011/pyut'),
+                Slug('hasii2011/pytrek'),
+                Slug('hasii2011/pyutmodel'),
+                Slug('hasii2011/CodeSigningScripts'),
+                Slug('hasii2011/Chip8Emulator'),
+                Slug('hasii2011/albow-python-3'),
+            ]
+        )
+
+        simpleGitIssues: AbbreviatedGitIssues = githubAdapter.getIssuesAssignedToMe(slugs, callback=self._statusCallback)
+
+        print(f'Retrieved a total of {len(simpleGitIssues)} issues')
+
+    def _statusCallback(self, msg: str):
+        print(f'{msg}')
+
 
 def suite() -> TestSuite:
-    """You need to change the name of the test class here also."""
     import unittest
 
     testSuite: TestSuite = TestSuite()
-    # noinspection PyUnresolvedReferences
-    testSuite.addTest(unittest.makeSuite(TestGithubAdapter))
+
+    testSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(testCaseClass=TestGithubAdapter))
 
     return testSuite
 
