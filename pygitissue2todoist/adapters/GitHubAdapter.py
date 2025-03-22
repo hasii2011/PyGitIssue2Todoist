@@ -35,7 +35,6 @@ from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthen
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 from pygitissue2todoist.adapters.GitHubGeneralError import GitHubGeneralError
 
-RepositoryNames = NewType('RepositoryNames', List[str])
 MilestoneTitles = NewType('MilestoneTitles', List[str])
 IssueOwner      = NewType('IssueOwner',      str)
 
@@ -75,7 +74,7 @@ class GithubAdapter:
         self._authenticationToken: str    = authenticationToken
         self._github:              Github = Github(auth=Token(self._authenticationToken))
 
-    def getRepositoryNames(self) -> RepositoryNames:
+    def getRepositoryNames(self) -> Slugs:
 
         userName: str = self._userName
         query:    str = f'user:{userName}'
@@ -86,7 +85,7 @@ class GithubAdapter:
         import urllib3.exceptions
 
         try:
-            repoNames: RepositoryNames = RepositoryNames([])
+            repoNames: Slugs = Slugs([])
             for repository in repos:
                 repoNames.append(repository.full_name)
 
@@ -110,7 +109,7 @@ class GithubAdapter:
 
         return repoNames
 
-    def getMileStoneTitles(self, repoName: str) -> MilestoneTitles:
+    def getMileStoneTitles(self, repoName: Slug) -> MilestoneTitles:
         """
         Args:
             repoName: The repository name
@@ -126,7 +125,7 @@ class GithubAdapter:
 
         return mileStoneTitles
 
-    def getAbbreviatedIssues(self, repoName: str, milestoneTitle: str) -> AbbreviatedGitIssues:
+    def getAbbreviatedIssues(self, repoName: Slug, milestoneTitle: str) -> AbbreviatedGitIssues:
         """
         Given a repo name and a milestone title return a simplified list of Git issues
 

@@ -31,7 +31,8 @@ from wx.lib.sized_controls import SizedStaticBox
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.adapters.GitHubAdapter import GithubAdapter
-from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
+from pygitissue2todoist.adapters.GitHubAdapter import Slug
+from pygitissue2todoist.adapters.GitHubAdapter import Slugs
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 from pygitissue2todoist.adapters.GitHubConnectionError import GitHubConnectionError
 
@@ -136,7 +137,7 @@ class GitHubPanel(BasePanel):
         repoName: str = event.GetString()
         self.logger.info(f'{repoName=}')
 
-        self._populateMilestones(repoName)
+        self._populateMilestones(Slug(repoName))
 
         self._eventEngine.sendEvent(eventType=EventType.RepositorySelected)
 
@@ -147,7 +148,7 @@ class GitHubPanel(BasePanel):
         self.logger.info(f'{repoName=} - {milestoneTitle=}')
 
         self.clearIssues()
-        self._populateIssues(repoName=repoName, milestoneTitle=milestoneTitle)
+        self._populateIssues(repoName=Slug(repoName), milestoneTitle=milestoneTitle)
         self._eventEngine.sendEvent(eventType=EventType.MilestoneSelected)
 
     # noinspection PyUnusedLocal
@@ -173,7 +174,7 @@ class GitHubPanel(BasePanel):
     def _populateRepositories(self):
 
         try:
-            repoNames: RepositoryNames = self._githubAdapter.getRepositoryNames()
+            repoNames: Slugs = self._githubAdapter.getRepositoryNames()
 
             self._repositorySelection.SetItems(repoNames)
         except AdapterAuthenticationError:
@@ -181,14 +182,14 @@ class GitHubPanel(BasePanel):
         except GitHubConnectionError:
             self._handleGitHubConnectionError()
 
-    def _populateMilestones(self, repoName: str):
+    def _populateMilestones(self, repoName: Slug):
 
         mileStoneTitles: List[str] = self._githubAdapter.getMileStoneTitles(repoName)
 
         self._milestoneList.SetItems(mileStoneTitles)
         self._milestoneList.Enable(True)
 
-    def _populateIssues(self, repoName: str, milestoneTitle: str):
+    def _populateIssues(self, repoName: Slug, milestoneTitle: str):
         """
         The UI control can only display strings
         Args:

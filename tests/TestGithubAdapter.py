@@ -15,7 +15,6 @@ from unittest.mock import patch
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
 from pygitissue2todoist.adapters.GitHubAdapter import GithubAdapter
 from pygitissue2todoist.adapters.GitHubAdapter import IssueOwner
-from pygitissue2todoist.adapters.GitHubAdapter import RepositoryNames
 from pygitissue2todoist.adapters.GitHubAdapter import MilestoneTitles
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.adapters.GitHubAdapter import Slug
@@ -27,9 +26,9 @@ from tests.ProjectTestBase import ProjectTestBase
 
 class TestGithubAdapter(ProjectTestBase):
 
-    TEST_REPOSITORY_NAME: str = 'hasii2011/StarTrekPy'
-    TEST_MILESTONE_TITLE: str = '0.7 Release'
-    TEST_ISSUE_URL:       str = 'https://www.ElderAbuseInTheWhiteHouse'
+    TEST_REPOSITORY_NAME: Slug = Slug('hasii2011/StarTrekPy')
+    TEST_MILESTONE_TITLE: str  = '0.7 Release'
+    TEST_ISSUE_URL:       str  = 'https://www.ElderAbuseInTheWhiteHouse'
 
     clsLogger: Logger = cast(Logger, None)
 
@@ -59,7 +58,7 @@ class TestGithubAdapter(ProjectTestBase):
 
                 githubAdapter._github.search_repositories.return_value = [mockRepo1, mockRepo2]
 
-                repoNames: RepositoryNames = githubAdapter.getRepositoryNames()
+                repoNames: Slugs = githubAdapter.getRepositoryNames()
 
                 self.assertTrue(len(repoNames) == 2, "We should have found an exact number")
 
@@ -120,7 +119,7 @@ class TestGithubAdapter(ProjectTestBase):
                 for issueTitle in simpleGitIssues:
                     self.logger.info(f'{issueTitle=}')
 
-    def testGetIssuesAssignedToMe(self):
+    def testGetIssuesAssignedToOwner(self):
 
         preferences: Preferences = Preferences()
 
@@ -144,7 +143,7 @@ class TestGithubAdapter(ProjectTestBase):
 
         print(f'Retrieved a total of {len(simpleGitIssues)} issues')
 
-    def testActuallyAssignedToMe(self):
+    def testActuallyAssignedToOwner(self):
         preferences: Preferences = Preferences()
 
         githubAdapter: GithubAdapter = GithubAdapter(userName=preferences.gitHubUserName,
