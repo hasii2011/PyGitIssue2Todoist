@@ -27,6 +27,7 @@ class DialogTestApp(App):
         self.logger: Logger = getLogger('TestADialog')
         frameTop: Frame = Frame(parent=None, id=DialogTestApp.FRAME_ID, title="Test A Dialog", size=(600, 400), style=DEFAULT_FRAME_STYLE)
 
+        frameTop.Show(True)
         self.SetTopWindow(frameTop)
         self._frameTop = frameTop
 
