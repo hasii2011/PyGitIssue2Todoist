@@ -34,7 +34,7 @@ class GitHubConfigurationPanel(AbstractConfigurationPanel):
 
         self.Bind(EVT_RADIOBOX, self.__URLOptionChanged, self._URLOption)
 
-    def _createControls(self):
+    def _layoutContent(self):
         """
         Creates the panel's controls and stashes them as private instance variables
         """

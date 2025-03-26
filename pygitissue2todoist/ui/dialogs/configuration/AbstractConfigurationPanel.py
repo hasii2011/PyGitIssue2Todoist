@@ -1,10 +1,21 @@
 
+from abc import ABCMeta
+from abc import abstractmethod
+
 from wx.lib.sized_controls import SizedPanel
 
 from pygitissue2todoist.general.Preferences import Preferences
 
 
-class AbstractConfigurationPanel(SizedPanel):
+class MyMetaConfigurationPanel(ABCMeta, type(SizedPanel)):        # type: ignore
+    """
+    I have know idea why this works:
+    https://stackoverflow.com/questions/66591752/metaclass-conflict-when-trying-to-create-a-python-abstract-class-that-also-subcl
+    """
+    pass
+
+
+class AbstractConfigurationPanel(SizedPanel, metaclass=MyMetaConfigurationPanel):
     """
     A generally abstract class to capture the behaviour of our configuration panels;  It
     is unclear to me whether the constructor here should call the abstract methods or
@@ -19,7 +30,7 @@ class AbstractConfigurationPanel(SizedPanel):
     """
     def __init__(self, parent, *args, **kwargs):
         """
-        This constructor creates and instance of the preferences class for use by
+        This constructor creates an instance of the preferences class for use by
         the subclasses;
 
         Additionally, it immediately calls the methods necessary to populate the container
@@ -29,16 +40,18 @@ class AbstractConfigurationPanel(SizedPanel):
 
         self._preferences: Preferences = Preferences()
 
-        self._createControls()
+        self._layoutContent()
         self._setControlValues()
 
-    def _createControls(self):
+    @abstractmethod
+    def _layoutContent(self):
         """
         Abstract method
         Creates the panel's controls and stashes them as private instance variables
         """
         pass
 
+    @abstractmethod
     def _setControlValues(self):
         """
         Set the default values on the controls.

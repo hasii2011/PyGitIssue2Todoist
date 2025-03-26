@@ -64,7 +64,6 @@ class OwnerIssuesGitHubPanel(BasePanel):
 
 
     """
-
     def __init__(self, parent: SizedPanel, eventEngine: IEventEngine):
 
         super().__init__(parent=parent)

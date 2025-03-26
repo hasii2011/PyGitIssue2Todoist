@@ -19,7 +19,7 @@ class TokensConfigurationPanel(AbstractConfigurationPanel):
 
         self.SetSizerType('vertical')
 
-    def _createControls(self):
+    def _layoutContent(self):
         """
         Implement parent empty method
         Creates the panel's control containers and stash them as private instance variables
