@@ -1,12 +1,10 @@
 
-from typing import Optional
-
 from logging import Logger
 from logging import getLogger
 
 from os import sep as osSep
 
-from pkg_resources import resource_filename
+from codeallybasic.ResourceManager import ResourceManager
 
 from pygitissue2todoist.general.ResourceTextType import ResourceTextType
 
@@ -46,14 +44,7 @@ class Resources:
     @classmethod
     def retrieveResourcePath(cls, bareFileName: str) -> str:
 
-        try:
-            fqFileName: str = resource_filename(Resources.RESOURCES_PACKAGE_NAME, bareFileName)
-        except (ValueError, Exception):
-            #
-            # Maybe we are in an app
-            #
-            from os import environ
-            pathToResources: Optional[str] = environ.get(f'{Resources.RESOURCE_ENV_VAR}')
-            fqFileName = f'{pathToResources}/{Resources.RESOURCES_PATH}/{bareFileName}'
-
+        fqFileName: str = ResourceManager.retrieveResourcePath(bareFileName=bareFileName,
+                                                               resourcePath=Resources.RESOURCES_PATH,
+                                                               packageName=Resources.RESOURCES_PACKAGE_NAME)
         return fqFileName

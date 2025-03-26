@@ -7,15 +7,19 @@ from wx import DefaultPosition
 from wx import DefaultSize
 from wx import EVT_CHECKBOX
 from wx import EVT_RADIOBOX
+from wx import ICON_INFORMATION
 from wx import ID_ANY
+from wx import OK
+from wx import RA_SPECIFY_COLS
 
 from wx import CheckBox
+from wx import MessageBox
 from wx import NOT_FOUND
 from wx import Notebook
+from wx import RadioBox
 
 from wx import NewIdRef as wxNewIdRef
-from wx import RA_SPECIFY_COLS
-from wx import RadioBox
+from wx import STAY_ON_TOP
 
 from pygitissue2todoist.strategy.TodoistTaskCreationStrategy import TodoistTaskCreationStrategy
 from pygitissue2todoist.ui.dialogs.configuration.AbstractConfigurationPanel import AbstractConfigurationPanel
@@ -111,3 +115,9 @@ class TodoistConfigurationPanel(AbstractConfigurationPanel):
             self._parentProjectNameContainer.textControlEnabled(False)
         else:
             self._parentProjectNameContainer.textControlEnabled(True)
+
+        MessageBox(message='You must manually exit and restart the application for this option to take effect',
+                   caption='Action Required',
+                   parent=self,
+                   style=OK | ICON_INFORMATION | STAY_ON_TOP
+                   )

@@ -24,6 +24,8 @@ class TodoistCreation:
             self._taskCreationStrategy: ITodoistCreationStrategy = TodoistCreateByRepository()
         elif preferences.taskCreationStrategy == TodoistTaskCreationStrategy.SINGLE_TODOIST_PROJECT:
             self._taskCreationStrategy = TodoistCreateSingleProject()
+        elif preferences.taskCreationStrategy == TodoistTaskCreationStrategy.ALL_ISSUES_ASSIGNED_TO_USER:
+            pass
         else:
             assert False, 'Unknown task creation strategy'
 

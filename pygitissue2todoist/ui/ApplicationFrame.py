@@ -39,7 +39,7 @@ from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 from pygitissue2todoist.general.Preferences import Preferences
 
-from pygitissue2todoist.ui.GitHubPanel import GitHubPanel
+from pygitissue2todoist.ui.MilestoneGitHubPanel import MilestoneGitHubPanel
 from pygitissue2todoist.ui.TodoistPanel import CloneInformation
 from pygitissue2todoist.ui.TodoistPanel import TodoistPanel
 
@@ -146,11 +146,11 @@ class ApplicationFrame(SizedFrame):
         self.Bind(EVT_MENU, self._onAbout,     id=ID_ABOUT)
         self.Bind(EVT_MENU, self.Close,        id=ID_EXIT)
 
-    def _layoutApplicationContentArea(self) -> Tuple[GitHubPanel, TodoistPanel]:
+    def _layoutApplicationContentArea(self) -> Tuple[MilestoneGitHubPanel, TodoistPanel]:
 
-        sizedPanel: SizedPanel = self.GetContentsPane()
-        leftPanel:  GitHubPanel  = GitHubPanel(sizedPanel, eventEngine=self._eventEngine)
-        rightPanel: TodoistPanel = TodoistPanel(sizedPanel, eventEngine=self._eventEngine)
+        sizedPanel: SizedPanel           = self.GetContentsPane()
+        leftPanel:  MilestoneGitHubPanel = MilestoneGitHubPanel(sizedPanel, eventEngine=self._eventEngine)
+        rightPanel: TodoistPanel         = TodoistPanel(sizedPanel, eventEngine=self._eventEngine)
 
         # noinspection PyUnresolvedReferences
         # self.SetSizer(mainSizer)

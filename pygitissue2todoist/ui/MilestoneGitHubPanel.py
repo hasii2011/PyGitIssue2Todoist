@@ -47,7 +47,7 @@ from pygitissue2todoist.ui.eventengine.Events import EVT_TASK_CREATION_COMPLETE
 from pygitissue2todoist.ui.eventengine.Events import TaskCreationCompleteEvent
 
 
-class GitHubPanel(BasePanel):
+class MilestoneGitHubPanel(BasePanel):
 
     ALL_ISSUES_INDICATOR:     str = 'All'
     OPEN_MILESTONE_INDICATOR: str = 'Open'

@@ -1,5 +1,4 @@
 
-from wx import DefaultSize
 from wx import LB_EXTENDED
 
 from wx import ListBox
