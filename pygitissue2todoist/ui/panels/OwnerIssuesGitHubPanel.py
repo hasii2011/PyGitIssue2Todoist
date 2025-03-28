@@ -1,3 +1,4 @@
+
 from typing import List
 from typing import NewType
 from typing import cast
@@ -8,15 +9,19 @@ from logging import getLogger
 from wx import CENTRE
 from wx import EVT_BUTTON
 from wx import EVT_LISTBOX
+from wx import EVT_LIST_ITEM_SELECTED
 from wx import ICON_WARNING
 from wx import ID_ANY
-from wx import MessageBox
 from wx import OK
 from wx import PD_ELAPSED_TIME
 
 from wx import Button
 from wx import CommandEvent
+from wx import Point
 from wx import ProgressDialog
+from wx import MessageBox
+
+from codeallybasic.Position import Position
 
 from wx import Yield as wxYield
 
@@ -31,17 +36,22 @@ from pygitissue2todoist.adapters.GitHubAdapter import Slugs
 from pygitissue2todoist.general.Preferences import Preferences
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
+from pygitissue2todoist.ui.eventengine.Events import EventType
 
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
+from pygitissue2todoist.ui.panels.AbstractGitHubPanel import AbstractGitHubPanel
 from pygitissue2todoist.ui.panels.IssueSelector import IssueSelector
 from pygitissue2todoist.ui.panels.RepositorySelector import RepositorySelector
 
+
+SELECT_ITEM:   int = 1
+DESELECT_ITEM: int = 0
 
 RepositoryName  = NewType('RepositoryName',  str)
 RepositoryNames = NewType('RepositoryNames', List[str])
 
 
-class OwnerIssuesGitHubPanel(BasePanel):
+class OwnerIssuesGitHubPanel(AbstractGitHubPanel):
     """
     This is a complicated components.  I tried creating "panels" for each of the selectors
     but I could not get them to size correctly.  Therefore, I instantiated each of the selectors
@@ -85,20 +95,23 @@ class OwnerIssuesGitHubPanel(BasePanel):
                                                                             authenticationToken=self._preferences.gitHubAPIToken
                                                                             )
 
-        self._repositorySelector:   RepositorySelector = cast(RepositorySelector, None)
-        self._selectAllReposButton: Button             = cast(Button, None)
-        self._retrieveReposIssuesButton: Button = cast(Button, None)
+        self._repositorySelector:        RepositorySelector = cast(RepositorySelector, None)
+        self._selectAllReposButton:      Button             = cast(Button, None)
+        self._retrieveReposIssuesButton: Button             = cast(Button, None)
 
         self._issueSelector:         IssueSelector = cast(IssueSelector, None)
         self._selectAllIssuesButton: Button        = cast(Button, None)
         self._cloneButton:           Button        = cast(Button, None)
 
-        self._progressDlg:             ProgressDialog          = cast(ProgressDialog, None)
+        self._progressDlg:           ProgressDialog = cast(ProgressDialog, None)
 
         self._layoutContent(parent=self)
         self._bindEventHandlers()
 
-        # self._eventEngine.registerListener(event=EVT_RETRIEVE_OWNER_ISSUES, callback=self._onRetrieveIssuesForRepositories)
+    def clearIssues(self):
+        # self._issueSelector.ClearAll()
+        # TODO
+        pass
 
     def _layoutContent(self, parent: BasePanel):
 
@@ -113,9 +126,13 @@ class OwnerIssuesGitHubPanel(BasePanel):
 
     def _bindEventHandlers(self):
 
-        self.Bind(EVT_BUTTON,  self._onSelectAllIssues,               self._selectAllReposButton)
-        self.Bind(EVT_BUTTON,  self._onRetrieveIssuesForRepositories, self._retrieveReposIssuesButton)
-        self.Bind(EVT_LISTBOX, self._onRepositorySelected,            self._repositorySelector)
+        self.Bind(EVT_BUTTON, self._onSelectAllRepositories,         self._selectAllReposButton)
+        self.Bind(EVT_BUTTON, self._onRetrieveIssuesForRepositories, self._retrieveReposIssuesButton)
+        self.Bind(EVT_BUTTON, self._onSelectAllIssues,               self._selectAllIssuesButton)
+        self.Bind(EVT_BUTTON, self._onCloneClicked,                  self._cloneButton)
+
+        self.Bind(EVT_LISTBOX,            self._onRepositorySelected, self._repositorySelector)
+        self.Bind(EVT_LIST_ITEM_SELECTED, self._onIssueSelected,      self._issueSelector)
 
     # noinspection PyUnusedLocal
     def _onRetrieveIssuesForRepositories(self, event: CommandEvent):
@@ -131,7 +148,6 @@ class OwnerIssuesGitHubPanel(BasePanel):
                 name: str = self._repositorySelector.GetString(idx)
                 repositoryNames.append(RepositoryName(name))
 
-            # self._eventEngine.sendEvent(eventType=EventType.RetrieveOwnerIssues, repositoryNames=repositoryNames)
             self._populateIssueSelector(repositoryNames=repositoryNames)
 
     def _populateIssueSelector(self, repositoryNames: RepositoryNames):
@@ -149,7 +165,7 @@ class OwnerIssuesGitHubPanel(BasePanel):
         self._issueSelector.issues = issues
 
     # noinspection PyUnusedLocal
-    def _onSelectAllIssues(self, event: CommandEvent):
+    def _onSelectAllRepositories(self, event: CommandEvent):
 
         itemCount: int = self._repositorySelector.GetCount()
         for idx in range(itemCount):
@@ -158,16 +174,47 @@ class OwnerIssuesGitHubPanel(BasePanel):
         self._retrieveReposIssuesButton.Enable(True)
 
     # noinspection PyUnusedLocal
+    def _onSelectAllIssues(self, event: CommandEvent):
+
+        itemCount: int = self._issueSelector.GetItemCount()
+
+        for idx in range(itemCount):
+            self._issueSelector.Select(idx, on=SELECT_ITEM)
+
+    # noinspection PyUnusedLocal
     def _onRepositorySelected(self, event: CommandEvent):
+        """
+        A single repository or many may be selected
+        Args:
+            event:
+        """
 
         if len(self._repositorySelector.GetSelections()) == 0:
             self._retrieveReposIssuesButton.Enable(False)
         else:
             self._retrieveReposIssuesButton.Enable(True)
 
+    # noinspection PyUnusedLocal
+    def _onIssueSelected(self, event: CommandEvent):
+        self._cloneButton.Enable(True)
+
+    # noinspection PyUnusedLocal
+    def _onCloneClicked(self, event: CommandEvent):
+
+        selectedIssues: AbbreviatedGitIssues = self._issueSelector.selectedIssues
+
+        self._infoLogSelectedIssues(selectedIssues)
+        self._eventEngine.sendEvent(eventType=EventType.IssuesSelected,
+                                    repositoryName='Repository not used',
+                                    milestoneName='Milestone not used',
+                                    selectedSimpleGitIssues=selectedIssues)
+
     def _setupProgressDialog(self) -> ProgressDialog:
 
         self._progressDlg = ProgressDialog("Retrieve Issues", "Hello", style=PD_ELAPSED_TIME)
+
+        position: Position = self._preferences.progressDialogPosition
+        self._progressDlg.SetPosition(pt=Point(x=position.x, y=position.y))
 
         return self._progressDlg
 

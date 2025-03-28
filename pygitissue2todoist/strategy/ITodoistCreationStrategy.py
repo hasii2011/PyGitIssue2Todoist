@@ -22,7 +22,7 @@ class ITodoistCreationStrategy(ABC):
         pass
 
     @abstractmethod
-    def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable) -> str:
+    def _determineTopLevelProjectId(self, info: CloneInformation, progressCb: Callable) -> str:
         """
         Either gets a project ID from the repo name or one for the user specified project
 

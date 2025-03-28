@@ -21,7 +21,6 @@ from pygitissue2todoist.strategy.AbstractTodoistStrategy import AbstractTodoistS
 
 from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
-from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectDictionary
 from pygitissue2todoist.strategy.TodoistStrategyTypes import ProjectName
 from pygitissue2todoist.strategy.TodoistStrategyTypes import Tasks
 from pygitissue2todoist.strategy.TodoistStrategyTypes import tasksFactory
@@ -53,10 +52,6 @@ class TodoistCreateByRepository(AbstractTodoistStrategy):
         super().__init__()
 
         self.logger:             Logger            = getLogger(__name__)
-        # self._preferences:       Preferences       = Preferences()
-        # self._devTasks:          Tasks             = Tasks([])
-
-        self._projectDictionary: ProjectDictionary = ProjectDictionary({})
 
     def createTasks(self, info: CloneInformation, progressCb: Callable):
         """
@@ -69,16 +64,16 @@ class TodoistCreateByRepository(AbstractTodoistStrategy):
 
         progressCb('Starting')
 
-        projectId:         str  = self._determineProjectIdFromRepoName(info, progressCb)
+        projectId:         str  = self._determineTopLevelProjectId(info, progressCb)
         milestoneTaskItem: Task = self._getMilestoneTaskItem(projectId=projectId, milestoneName=info.milestoneNameTask, progressCb=progressCb)
 
         tasks: List[GitIssueInfo] = info.tasksToClone
         for taskInfo in tasks:
-            self._createTaskItem(taskInfo=taskInfo, projectId=projectId, parentMileStoneTaskItem=milestoneTaskItem)
+            self._createTaskItem(gitIssueInfo=taskInfo, projectId=projectId, parentTaskItem=milestoneTaskItem, progressCb=progressCb)
 
         self._synchronize(progressCb)
 
-    def _determineProjectIdFromRepoName(self, info: CloneInformation, progressCb: Callable) -> str:
+    def _determineTopLevelProjectId(self, info: CloneInformation, progressCb: Callable) -> str:
         """
         Implement empty method from parent;
         Gets a project ID from the repo name

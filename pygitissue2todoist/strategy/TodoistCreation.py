@@ -4,6 +4,7 @@ from typing import Callable
 from logging import Logger
 from logging import getLogger
 
+from pygitissue2todoist.strategy.TodoistOwnerIssues import TodoistOwnerIssues
 from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 
 from pygitissue2todoist.general.Preferences import Preferences
@@ -25,7 +26,7 @@ class TodoistCreation:
         elif preferences.taskCreationStrategy == TodoistTaskCreationStrategy.SINGLE_TODOIST_PROJECT:
             self._taskCreationStrategy = TodoistCreateSingleProject()
         elif preferences.taskCreationStrategy == TodoistTaskCreationStrategy.ALL_ISSUES_ASSIGNED_TO_USER:
-            pass
+            self._taskCreationStrategy = TodoistOwnerIssues()
         else:
             assert False, 'Unknown task creation strategy'
 

@@ -16,22 +16,26 @@ from wx import PD_ELAPSED_TIME
 
 from wx import MessageDialog
 from wx import Button
+from wx import Point
 from wx import ProgressDialog
 from wx import CommandEvent
 from wx import ListBox
+from wx import STAY_ON_TOP
 
 from wx import Yield as wxYield
-from wx import MilliSleep as wxMilliSleep
 
 from wx.lib.sized_controls import SizedPanel
 from wx.lib.sized_controls import SizedStaticBox
 
 from wx.lib.agw.genericmessagedialog import GenericMessageDialog
 
+from codeallybasic.Position import Position
+
 from pygitissue2todoist.ErrorHandler import ErrorHandler
 
 from pygitissue2todoist.adapters.AdapterAuthenticationError import AdapterAuthenticationError
 
+from pygitissue2todoist.strategy.TodoistCreation import TodoistCreation
 from pygitissue2todoist.strategy.TodoistStrategyTypes import CloneInformation
 from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 
@@ -40,15 +44,14 @@ from pygitissue2todoist.general.Preferences import Preferences
 from pygitissue2todoist.general.exceptions.NoteCreationError import NoteCreationError
 from pygitissue2todoist.general.exceptions.TaskCreationError import TaskCreationError
 
-from pygitissue2todoist.strategy.TodoistCreation import TodoistCreation
 
 from pygitissue2todoist.ui.dialogs.configuration.DlgConfigure import DlgConfigure
 from pygitissue2todoist.ui.eventengine.Events import EVT_MILESTONE_SELECTED
 from pygitissue2todoist.ui.eventengine.Events import MilestoneSelectedEvent
 from pygitissue2todoist.ui.eventengine.IEventEngine import IEventEngine
+from pygitissue2todoist.ui.eventengine.Events import EventType
 
 from pygitissue2todoist.ui.BasePanel import BasePanel
-from pygitissue2todoist.ui.eventengine.Events import EventType
 
 
 class TodoistPanel(BasePanel):
@@ -91,6 +94,8 @@ class TodoistPanel(BasePanel):
 
         self._cloneInformation = newInfo
         tasksToClone: List[GitIssueInfo] = newInfo.tasksToClone
+
+        self._taskList.Clear()
         for taskToClone in tasksToClone:
             self._taskList.Append(taskToClone.gitIssueName, taskToClone)
 
@@ -133,14 +138,11 @@ class TodoistPanel(BasePanel):
     # noinspection PyUnusedLocal
     def _onCreateTaskClicked(self, event: CommandEvent):
 
-        dlg: ProgressDialog = self._setupProgressDialog()
-
-        ci: CloneInformation = self._cloneInformation
-
-        # adapter: AbstractTodoistAdapter = self._todoistAdapter
+        dlg: ProgressDialog   = self._setupProgressDialog()
+        ci:  CloneInformation = self._cloneInformation
 
         try:
-            # adapter.createTasks(info=ci, progressCb=self._adapterCallback)
+
             self._todoistCreation.createTasks(info=ci, progressCb=self._adapterCallback)
             self._progressDlg.Destroy()
             self.clearTasks()
@@ -165,18 +167,20 @@ class TodoistPanel(BasePanel):
 
     def _setupProgressDialog(self) -> ProgressDialog:
 
-        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "", style=PD_ELAPSED_TIME)
+        self._progressDlg: ProgressDialog = ProgressDialog("Creating Tasks", "", parent=self, style=PD_ELAPSED_TIME | STAY_ON_TOP)
 
+        position: Position = self._preferences.progressDialogPosition
+        self._progressDlg.SetPosition(pt=Point(x=position.x, y=position.y))
         return self._progressDlg
 
     def _adapterCallback(self, statusMsg: str):
         self._updateDialog(newMsg=statusMsg)
 
-    def _updateDialog(self, newMsg: str, delay: int = 500):
+    def _updateDialog(self, newMsg: str):
 
         self._progressDlg.Pulse(newMsg)
         wxYield()
-        wxMilliSleep(delay)
+        # wxMilliSleep(delay)
 
     def _handleAuthenticationError(self, event: CommandEvent):
 

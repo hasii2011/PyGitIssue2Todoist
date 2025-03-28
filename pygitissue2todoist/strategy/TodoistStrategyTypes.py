@@ -12,8 +12,10 @@ from todoist_api_python.models import Task
 
 @dataclass
 class GitIssueInfo:
+    slug:         str = ''
     gitIssueName: str = ''
     gitIssueURL:  str = ''
+    labels:       List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -30,3 +32,8 @@ ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
 
 def tasksFactory() -> Tasks:
     return Tasks([])
+
+
+TaskName     = NewType('TaskName',     str)
+TaskId       = NewType('TaskId',       str)
+TaskNameMap  = NewType('TaskNameMap',  Dict[TaskName, TaskId])

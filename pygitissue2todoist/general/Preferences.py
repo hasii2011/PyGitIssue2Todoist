@@ -23,14 +23,17 @@ DEFAULT_APP_HEIGHT:   int        = 768
 DEFAULT_POSITION:     str        = Position(32, 32).__str__()
 DEFAULT_STARTUP_SIZE: Dimensions = Dimensions(width=DEFAULT_APP_WIDTH, height=DEFAULT_APP_HEIGHT).__str__()
 
+DEFAULT_PROGRESS_DIALOG_POSITION: Position = Position(10, 10).__str__()
+
 DEFAULT_TASK_CREATION_STRATEGY: str = TodoistTaskCreationStrategy.PROJECT_BY_REPOSITORY.value
 DEFAULT_TODOIST_PROJECT_NAME:   str = 'Development'
 
 
 SECTION_MAIN: ValueDescriptions = ValueDescriptions(
     {
-        KeyName('startupPosition'): ValueDescription(defaultValue=DEFAULT_POSITION,     deserializer=Position.deSerialize),
-        KeyName('startupSize'):     ValueDescription(defaultValue=DEFAULT_STARTUP_SIZE, deserializer=Dimensions.deSerialize),
+        KeyName('startupPosition'):        ValueDescription(defaultValue=DEFAULT_POSITION,                 deserializer=Position.deSerialize),
+        KeyName('startupSize'):            ValueDescription(defaultValue=DEFAULT_STARTUP_SIZE,             deserializer=Dimensions.deSerialize),
+        KeyName('progressDialogPosition'): ValueDescription(defaultValue=DEFAULT_PROGRESS_DIALOG_POSITION, deserializer=Position.deSerialize),
     }
 )
 
