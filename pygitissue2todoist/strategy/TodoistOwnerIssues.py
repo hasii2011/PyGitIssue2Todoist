@@ -29,7 +29,7 @@ RepositoryName           = NewType('RepositoryName', str)
 class TodoistOwnerIssues(AbstractTodoistStrategy):
     """
     This strategy relies on a GitHub issue selection strategy that collects a developer's open
-    issue across all repositories and organizations
+    issues across all repositories and organizations
 
     """
     def __init__(self):

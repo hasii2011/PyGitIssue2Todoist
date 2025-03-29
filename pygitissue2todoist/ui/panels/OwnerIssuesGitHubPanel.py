@@ -172,14 +172,8 @@ class OwnerIssuesGitHubPanel(AbstractGitHubPanel):
             self._repositorySelector.Select(idx)
 
         self._retrieveReposIssuesButton.Enable(True)
-
-    # noinspection PyUnusedLocal
-    def _onSelectAllIssues(self, event: CommandEvent):
-
-        itemCount: int = self._issueSelector.GetItemCount()
-
-        for idx in range(itemCount):
-            self._issueSelector.Select(idx, on=SELECT_ITEM)
+        self._issueSelector.clearIssues()
+        self._cloneButton.Enable(False)
 
     # noinspection PyUnusedLocal
     def _onRepositorySelected(self, event: CommandEvent):
@@ -193,6 +187,17 @@ class OwnerIssuesGitHubPanel(AbstractGitHubPanel):
             self._retrieveReposIssuesButton.Enable(False)
         else:
             self._retrieveReposIssuesButton.Enable(True)
+
+        self._issueSelector.clearIssues()
+        self._cloneButton.Enable(False)
+
+    # noinspection PyUnusedLocal
+    def _onSelectAllIssues(self, event: CommandEvent):
+
+        itemCount: int = self._issueSelector.GetItemCount()
+
+        for idx in range(itemCount):
+            self._issueSelector.Select(idx, on=SELECT_ITEM)
 
     # noinspection PyUnusedLocal
     def _onIssueSelected(self, event: CommandEvent):

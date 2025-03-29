@@ -21,7 +21,10 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssue
 from pygitissue2todoist.adapters.GitHubAdapter import AbbreviatedGitIssues
 
-NO_ITEM: int = -1       # Syntactic sugar for wxPython
+NO_ITEM:       int = -1       # Syntactic sugar for wxPython
+ITEM_SELECT:   int = 1        #
+ITEM_DESELECT: int = 0        #
+
 
 IssueMap = NewType('IssueMap', Dict[int, AbbreviatedGitIssue])
 
@@ -69,6 +72,13 @@ class IssueSelector(ListCtrl, ListCtrlAutoWidthMixin):
             selectedIssues.append(issue)
 
         return selectedIssues
+
+    def clearIssues(self):
+        self.ClearAll()
+        self._createHeader()
+        self._issueMap = IssueMap({})
+        self.SetColumnWidth(0, LIST_AUTOSIZE)
+        self.SetColumnWidth(1, LIST_AUTOSIZE)
 
     def _issueSetter(self, issues: AbbreviatedGitIssues) -> None:
         """
