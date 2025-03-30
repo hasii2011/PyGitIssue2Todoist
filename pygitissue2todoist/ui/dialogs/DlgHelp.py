@@ -15,7 +15,7 @@ from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
 
-from wx.html import HtmlWindow
+from wx.lib.ClickableHtmlWindow import PyClickableHtmlWindow
 
 from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
@@ -33,7 +33,8 @@ class DlgHelp(SizedDialog):
         self.Center(BOTH)
         pane: SizedPanel = self.GetContentsPane()
         pane.SetSizerType('horizontal')
-        self._createHTMLPanel(sizedPanel=pane)
+
+        self._htmlWindow: PyClickableHtmlWindow = self._createHTMLPanel(sizedPanel=pane)
         self.SetButtonSizer(self.CreateStdDialogButtonSizer(OK))
 
         self.Fit()
@@ -42,19 +43,20 @@ class DlgHelp(SizedDialog):
         self.Bind(EVT_BUTTON, self.__onCmdOk, id=ID_OK)
         self.Bind(EVT_CLOSE,  self.__onCmdOk)
 
-    def _createHTMLPanel(self, sizedPanel: SizedPanel):
+    def _createHTMLPanel(self, sizedPanel: SizedPanel) -> PyClickableHtmlWindow:
 
         htmlPanel: SizedPanel = SizedPanel(parent=sizedPanel, id=ID_ANY)
         htmlPanel.SetSizerType('horizontal')
 
-        # noinspection PyUnresolvedReferences
         htmlPanel.SetSizerProps(expand=True)
 
         htmlSize:  Size = Size(width=440, height=310)
-        self._html = HtmlWindow(parent=htmlPanel, id=ID_ANY, size=htmlSize, style=NO_FULL_REPAINT_ON_RESIZE)
+        htmlWindow: PyClickableHtmlWindow = PyClickableHtmlWindow(parent=htmlPanel, ID=ID_ANY, size=htmlSize, style=NO_FULL_REPAINT_ON_RESIZE)
 
         helpText: str = Resources.retrieveResourceText(ResourceTextType.SIMPLE_HELP)
-        self._html.SetPage(helpText)
+        htmlWindow.SetPage(helpText)
+
+        return htmlWindow
 
     def __onCmdOk(self, event: CommandEvent):
         event.Skip(skip=True)
