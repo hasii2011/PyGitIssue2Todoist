@@ -50,7 +50,7 @@ class DlgHelp(SizedDialog):
 
         htmlPanel.SetSizerProps(expand=True)
 
-        htmlSize:  Size = Size(width=440, height=310)
+        htmlSize:  Size = Size(width=440, height=210)
         htmlWindow: PyClickableHtmlWindow = PyClickableHtmlWindow(parent=htmlPanel, ID=ID_ANY, size=htmlSize, style=NO_FULL_REPAINT_ON_RESIZE)
 
         helpText: str = Resources.retrieveResourceText(ResourceTextType.SIMPLE_HELP)
