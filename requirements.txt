@@ -12,4 +12,4 @@ codeallybasic==1.30.0
 
 PyGithub==2.8.1
 todoist_api_python==3.2.1
-wxPython==4.2.2
+wxPython==4.2.4
