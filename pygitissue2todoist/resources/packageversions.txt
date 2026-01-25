@@ -1,2 +1,0 @@
-todoist-api-python=2.1.7
-PyGithub=2.6.1
