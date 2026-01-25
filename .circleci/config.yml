@@ -27,7 +27,7 @@ jobs:
             pip install setuptools
             pip install codeallybasic==1.10.0
             pip install PyGithub==2.6.1
-            pip install todoist_api_python==2.1.7
+            pip install todoist_api_python==3.1.0
             pip install html-testRunner==1.2.1
             pip install buildlackey==1.8.1
       - run:

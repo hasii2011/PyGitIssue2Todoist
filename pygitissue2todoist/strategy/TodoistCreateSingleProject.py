@@ -1,4 +1,5 @@
 
+from typing import Iterator
 from typing import cast
 from typing import List
 from typing import Callable
@@ -98,12 +99,14 @@ class TodoistCreateSingleProject(AbstractTodoistStrategy):
         progressCb(f'Retrieving milestone task: {milestoneName}')
         todoist: TodoistAPI = self._todoist
 
-        tasks = self._todoist.get_tasks(project_id=projectId)
+        taskIterator: Iterator = self._todoist.get_tasks(project_id=projectId)
 
-        itemNames: TaskNameMap = self._createTaskNameMap(tasks=tasks)
+        taskList: Tasks = self._todoistIteratorToTasks(taskIterator=taskIterator)
+
+        itemNames: TaskNameMap = self._createTaskNameMap(taskList=taskList)
 
         if milestoneName in itemNames:
-            singleItemList: List = [x for x in tasks if x.content == milestoneName]
+            singleItemList: List = [x for x in taskList if x.content == milestoneName]
             msg: str = f'Using existing milestone: {milestoneName}'
             progressCb(msg)
             milestoneTask: Task = singleItemList[0]
@@ -130,17 +133,18 @@ class TodoistCreateSingleProject(AbstractTodoistStrategy):
         Returns:
             The list of subtasks that are leaf tasks end of the projectId->repoTaskId->milestoneId task branch
         """
-        subTasks: Tasks = Tasks([])
+        subTasks: Tasks = []
 
         todoist:   TodoistAPI  = self._todoist
 
-        tasks = todoist.get_tasks(project_id=projectId)
+        taskIterator: Iterator = todoist.get_tasks(project_id=projectId)
 
-        for item in tasks:
-            task: Task = cast(Task, item)
-            parentId: str = task.parent_id  # type: ignore
-            self.logger.debug(f'{task.content=}  {task.id=} {parentId=}')
-            if parentId == milestoneId:
-                subTasks.append(item)
+        for tasks in taskIterator:
+            for item in tasks:
+                task: Task = cast(Task, item)
+                parentId: str = task.parent_id  # type: ignore
+                self.logger.debug(f'{task.content=}  {task.id=} {parentId=}')
+                if parentId == milestoneId:
+                    subTasks.append(item)
 
         return subTasks

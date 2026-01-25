@@ -1,4 +1,4 @@
-
+from typing import Iterator
 from typing import List
 from typing import Callable
 from typing import NewType
@@ -36,7 +36,7 @@ Items            = NewType('Items', Dict[str, str])
 ProjectNotes     = NewType('ProjectNotes', List[str])
 Sections         = NewType('Sections', List[str])
 
-ProjectDataTypes = NewType('ProjectDataTypes', Union[Items, Project, ProjectNotes, Sections])   # type: ignore
+ProjectDataTypes = Union[Items, Project, ProjectNotes, Sections]
 
 ProjectData = NewType('ProjectData', Dict[str, ProjectDataTypes])
 
@@ -137,16 +137,16 @@ class TodoistCreateByRepository(AbstractTodoistStrategy):
         potential child tasks whose parents are one of the milestone tasks
         """
 
-        todoist:   TodoistAPI  = self._todoist
+        todoist: TodoistAPI  = self._todoist
 
-        # TODO:  Get tasks associated with the project
-        tasks: List[Task] = todoist.get_tasks(project_id=projectId)
+        taskIterator: Iterator = todoist.get_tasks(project_id=projectId)
+        tasks:        Tasks    = self._todoistIteratorToTasks(taskIterator=taskIterator)
         mileStoneTasks: Tasks = tasksFactory()
         devTasks:       Tasks = tasksFactory()
 
         try:
             for item in tasks:
-                task: Task = cast(Task, item)
+                task: Task = item
                 parentId: str = task.parent_id  # type: ignore
                 self.logger.debug(f'{task.content=}  {task.id=} {parentId=}')
 

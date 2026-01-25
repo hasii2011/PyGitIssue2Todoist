@@ -1,11 +1,13 @@
 
-from logging import Logger
-from logging import getLogger
 from typing import Callable
 from typing import Dict
+from typing import Iterator
 from typing import List
 from typing import NewType
 from typing import cast
+
+from logging import Logger
+from logging import getLogger
 
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
@@ -16,7 +18,6 @@ from pygitissue2todoist.strategy.TodoistStrategyTypes import GitIssueInfo
 from pygitissue2todoist.strategy.TodoistStrategyTypes import TaskId
 from pygitissue2todoist.strategy.TodoistStrategyTypes import TaskName
 from pygitissue2todoist.strategy.TodoistStrategyTypes import TaskNameMap
-from pygitissue2todoist.strategy.TodoistStrategyTypes import Tasks
 
 RepositoryId = NewType('RepositoryId', str)
 
@@ -61,17 +62,19 @@ class TodoistOwnerIssues(AbstractTodoistStrategy):
             progressCb:
             projectId:
         """
+        taskIter: Iterator = self._todoist.get_tasks(project_id=projectId)
+        self._devTasks = self._todoistIteratorToTasks(taskIterator=taskIter)
 
-        self._devTasks = Tasks(self._todoist.get_tasks(project_id=projectId))
+        # self._devTasks = Tasks(self._todoist.get_tasks(project_id=projectId))
         # This includes all the repository tasks and repository subtasks (ugh)
         #
-        self._repositoryTaskMap = self._createTaskNameMap(tasks=self._devTasks)
+        self._repositoryTaskMap = self._createTaskNameMap(taskList=self._devTasks)
         #
         # Iterate through all the clone issues
         #
         cloneIssues: List[GitIssueInfo] = info.tasksToClone
         for cloneIssue in cloneIssues:
-            gitIssueInfo: GitIssueInfo = cast(GitIssueInfo, cloneIssue)
+            gitIssueInfo: GitIssueInfo = cloneIssue
             justRepoName: str          = gitIssueInfo.slug.split('/')[1]
             todoist:      TodoistAPI   = self._todoist
             #
@@ -100,7 +103,7 @@ class TodoistOwnerIssues(AbstractTodoistStrategy):
 
         subTaskMap: SubTaskMap = SubTaskMap({})
         for t in projectTopLevelTasks:
-            task: Task = cast(Task, t)
+            task: Task = t
             if task.parent_id == repoId:
                 self.logger.info(f'Task {task.content} exists')
                 subTaskMap[TaskName(task.content)] = TaskId(task.id)

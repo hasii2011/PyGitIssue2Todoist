@@ -106,7 +106,7 @@ class TodoistPanel(BasePanel):
         self._taskList.Clear()
 
     # noinspection PyUnusedLocal
-    def _onMileStoneSelected(self, event: MilestoneSelectedEvent):
+    def _onMileStoneSelected(self, event: MilestoneSelectedEvent):      # noqa
         self.clearTasks()
         self._createTaskButton.Disable()
 
@@ -160,7 +160,7 @@ class TodoistPanel(BasePanel):
                 booBoo.ShowModal()
         except Exception as ue:
             message: str = str(ue)
-            uhOh: MessageDialog = MessageDialog(parent=None, message=message, caption='Task Creation Error!', style=OK | ICON_ERROR)
+            uhOh: MessageDialog = MessageDialog(parent=None, message=message, caption='General Error!', style=OK | ICON_ERROR)
             uhOh.ShowModal()
         finally:
             self._eventEngine.sendEvent(eventType=EventType.TaskCreationComplete)
@@ -188,7 +188,7 @@ class TodoistPanel(BasePanel):
         eDlg.ShowModal()
         eDlg.Destroy()
         with DlgConfigure(self) as aDlg:
-            cDlg: DlgConfigure = cast(DlgConfigure, aDlg)
+            cDlg: DlgConfigure = aDlg
             if cDlg.ShowModal() == OK:
                 # The following 2 already defined in init
                 # self._apiToken       = Preferences().todoistAPIToken

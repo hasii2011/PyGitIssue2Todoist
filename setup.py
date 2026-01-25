@@ -8,7 +8,6 @@ from pygitissue2todoist import __version__
 APP = ['pygitissue2todoist/PyGitIssue2Todoist.py']
 DATA_FILES = [('pygitissue2todoist/resources', ['pygitissue2todoist/resources/loggingConfiguration.json']),
               ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/play.png']),
-              ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/version.txt']),
               ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/packageversions.txt']),
               ('pygitissue2todoist/resources', ['pygitissue2todoist/resources/SimpleHelp.html'])
               ]
@@ -42,5 +41,5 @@ setup(
             ),
     ),
     setup_requires=['py2app'],
-    install_requires=['codeallybasic==1.10.0', 'wxPython==4.2.2', 'PyGithub==2.6.1', 'todoist_api_python==2.1.7']
+    install_requires=['codeallybasic==1.10.0', 'wxPython==4.2.2', 'PyGithub==2.6.1', 'todoist_api_python==3.1.0']
 )

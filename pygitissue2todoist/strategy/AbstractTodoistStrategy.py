@@ -1,6 +1,5 @@
 
-
-from typing import List
+from typing import Iterator
 from typing import cast
 from typing import Callable
 
@@ -51,27 +50,8 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
         self._todoist:      TodoistAPI      = TodoistAPI(apiToken)
         self._todoistAsync: TodoistAPIAsync = TodoistAPIAsync(apiToken)
 
-        self._devTasks:          Tasks             = Tasks([])
-        self._projectDictionary: ProjectDictionary = ProjectDictionary({})
-
-    def _createTaskNameMap(self, tasks: List[Task]) -> TaskNameMap:
-        """
-
-        Args:
-            tasks:   Todoist Task
-
-        Returns: dictionary taskName -> id
-        """
-        taskMap: TaskNameMap = TaskNameMap({})
-        for item in tasks:
-            task:     Task     = cast(Task, item)
-            itemName: TaskName = TaskName(task.content)
-            itemId:   TaskId   = TaskId(task.id)
-
-            taskMap[itemName] = itemId
-            AbstractTodoistStrategy.clsLogger.debug(f'TaskName: {task.content}')
-
-        return taskMap
+        self._devTasks:          Tasks             = []
+        self._projectDictionary: ProjectDictionary = {}
 
     def _createTaskItem(self, gitIssueInfo: GitIssueInfo, projectId: str, parentTaskItem: Task, progressCb: Callable):
         """
@@ -91,7 +71,7 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
         foundTaskItem: Task = cast(Task, None)
         devTasks:      Tasks = self._devTasks
         for devTask in devTasks:
-            taskItem: Task = cast(Task, devTask)
+            taskItem: Task = devTask
             # Might have name embedded as URL
             # if taskInfo.gitIssueName in taskItem['content']:
             if gitIssueInfo.gitIssueName in taskItem.content:
@@ -104,18 +84,18 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
             option: GitHubURLOption = self._preferences.gitHubURLOption
             match option:
                 case GitHubURLOption.DoNotAdd:
-                    todoist.add_task(projectId=projectId,
+                    todoist.add_task(project_id=projectId,
                                      parent_id=parentTaskItem.id,
                                      content=gitIssueInfo.gitIssueName)
 
                 case GitHubURLOption.AddAsDescription:
-                    todoist.add_task(projectId=projectId,
+                    todoist.add_task(project_id=projectId,
                                      parent_id=parentTaskItem.id,
                                      content=gitIssueInfo.gitIssueName,
                                      description=gitIssueInfo.gitIssueURL)
 
                 case GitHubURLOption.AddAsComment:
-                    task: Task = todoist.add_task(projectId=projectId,
+                    task: Task = todoist.add_task(project_id=projectId,
                                                   parent_id=parentTaskItem.id,
                                                   content=gitIssueInfo.gitIssueName)
                     comment: Comment = todoist.add_comment(task_id=task.id, content=gitIssueInfo.gitIssueURL)
@@ -127,7 +107,7 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
                                      parent_id=parentTaskItem.id,
                                      content=linkedTaskName)
                 case _:
-                    self.clsLogger.error(f'Unknown URL option: {option}')
+                    self.clsLogger.error(f'Unknown URL option: {option}')       # noqa
             progressCb(f'Created task: {gitIssueInfo.gitIssueName}')
 
     def _addNoteToTask(self, itemId: str, noteContent: str) -> Comment:
@@ -206,9 +186,9 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
         Returns: The Repo ID
 
         """
-        tasks = self._todoist.get_tasks(project_id=projectId)
-
-        itemNames: TaskNameMap = self._createTaskNameMap(tasks=tasks)
+        taskIterator: Iterator = self._todoist.get_tasks(project_id=projectId)
+        taskList:     Tasks    = self._todoistIteratorToTasks(taskIterator=taskIterator)
+        itemNames: TaskNameMap = self._createTaskNameMap(taskList=taskList)
 
         # Either use the id of the one found or create it
         if repoName in itemNames:
@@ -225,19 +205,19 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
 
         todoist: TodoistAPI = self._todoist
 
-        projects:          List[Project]     = todoist.get_projects()
-        projectDictionary: ProjectDictionary = ProjectDictionary({})
+        iterProjectLists:  Iterator          = todoist.get_projects()
+        projectDictionary: ProjectDictionary = {}
 
-        for aProject in projects:
+        for projectList in iterProjectLists:
 
-            project: Project = cast(Project, aProject)
+            for aProject in projectList:
+                project: Project = cast(Project, aProject)
+                projectName: ProjectName = ProjectName(project.name)
+                projectId:   str         = project.id
 
-            projectName: ProjectName = ProjectName(project.name)
-            projectId:   str         = project.id
+                AbstractTodoistStrategy.clsLogger.debug(f'{projectName:12} - {projectId=}')
 
-            AbstractTodoistStrategy.clsLogger.debug(f'{projectName:12} - {projectId=}')
-
-            projectDictionary[projectName] = project
+                projectDictionary[projectName] = project
 
         return projectDictionary
 
@@ -258,5 +238,34 @@ class AbstractTodoistStrategy(ITodoistCreationStrategy, metaclass=ABCMeta):
 
             AbstractTodoistStrategy.clsLogger.info(f'{info.repositoryTask=} {info.milestoneNameTask=}')
             for t in info.tasksToClone:
-                gitIssueInfo: GitIssueInfo = cast(GitIssueInfo, t)
+                gitIssueInfo: GitIssueInfo = t
                 AbstractTodoistStrategy.clsLogger.info(f'{gitIssueInfo.gitIssueName}')
+
+    def _createTaskNameMap(self, taskList: Tasks) -> TaskNameMap:
+        """
+
+        Args:
+            taskList:   An iterator for lists of tasks
+
+        Returns: dictionary taskName -> id
+        """
+        taskMap: TaskNameMap = TaskNameMap({})
+
+        for item in taskList:
+            task:     Task     = item
+            itemName: TaskName = TaskName(task.content)
+            itemId:   TaskId   = TaskId(task.id)
+
+            taskMap[itemName] = itemId
+            AbstractTodoistStrategy.clsLogger.debug(f'TaskName: {task.content}')
+
+        return taskMap
+
+    def _todoistIteratorToTasks(self, taskIterator) -> Tasks:
+
+        unpackedList: Tasks = []
+        for taskList in taskIterator:
+            for task in taskList:
+                unpackedList.append(task)
+
+        return unpackedList

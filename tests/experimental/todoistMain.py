@@ -1,5 +1,5 @@
 
-from typing import List
+from typing import Iterator
 from typing import cast
 
 from github.Project import Project
@@ -36,18 +36,20 @@ def addTaskToProject():
     api_token: str = Preferences().todoistAPIToken
 
     todoist: TodoistAPI = TodoistAPI(api_token)
-    projects: List[Project] = todoist.get_projects()     # type: ignore
+    projectIter: Iterator = todoist.get_projects()     # type: ignore
+    # projects: List[Project] = todoist.get_projects()     # type: ignore
 
     mockProject: Project = cast(Project, None)
-    for p in projects:
-        project: Project = cast(Project, p)
-        if project.name == MOCK_PROJECT_NAME:
-            mockProject = project
-            break
+    for projects in projectIter:
+        for p in projects:
+            project: Project = p
+            if project.name == MOCK_PROJECT_NAME:
+                mockProject = project
+                break
     assert mockProject is not None, "I need a ring to hang my hat on"
 
     try:
-        task: Task = todoist.add_task(project_id=mockProject.id, content='MockTaskOnProject')
+        task: Task = todoist.add_task(project_id=mockProject.id, content='MockTaskOnProject')   # type: ignore
         print(task)
     except Exception as error:
         print(error)
@@ -59,12 +61,12 @@ def getProjects():
 
     todoist: TodoistAPI = TodoistAPI(api_token)
 
-    projects: List[Project] = todoist.get_projects()     # type: ignore
+    projectIter: Iterator = todoist.get_projects()     # type: ignore
+    for projects in projectIter:
+        for p in projects:
+            project: Project = p
 
-    for p in projects:
-        project: Project = cast(Project, p)
-
-        print(f'{project.name:15} - {project.id=}')
+            print(f'{project.name:15} - {project.id=}')
 
 
 def getProjectTasks():
@@ -72,28 +74,32 @@ def getProjectTasks():
     api_token: str = Preferences().todoistAPIToken
 
     todoist:  TodoistAPI    = TodoistAPI(api_token)
-    projects: List[Project] = todoist.get_projects()     # type: ignore
+    # projects: List[Project] = todoist.get_projects()     # type: ignore
+    projectsIter: Iterator = todoist.get_projects()
 
     mockProject: Project = cast(Project, None)
-    for p in projects:
+    for projects in projectsIter:
+        for p in projects:
 
-        project: Project = cast(Project, p)
+            project: Project = p
 
-        if project.name == MOCK_PROJECT_NAME:
-            mockProject = project
-            break
+            if project.name == MOCK_PROJECT_NAME:
+                mockProject = project
+                break
 
     print(f'{mockProject.id=}')
 
-    tasks: List[Task] = todoist.get_tasks(project_id=mockProject.id)
+    taskIter: Iterator = todoist.get_tasks(project_id=mockProject.id)   # type: ignore
+    # tasks: List[Task] = todoist.get_tasks(project_id=mockProject.id)
 
-    for t in tasks:
-        task: Task = cast(Task, t)
-        print(f'{task.content:15}  {task.id=} {task.parent_id=}')
+    for tasks in taskIter:
+        for t in tasks:
+            task: Task = t
+            print(f'{task.content:15}  {task.id=} {task.parent_id=}')
 
 
 if __name__ == '__main__':
     # addSimpleTask()
-    # addTaskToProject()
-    getProjects()
+    addTaskToProject()
+    # getProjects()
     # getProjectTasks()

@@ -25,13 +25,13 @@ class CloneInformation:
     tasksToClone:      List[GitIssueInfo] = field(default_factory=list)
 
 
-Tasks             = NewType('Tasks', List[Task])
+Tasks             = List[Task]
 ProjectName       = NewType('ProjectName', str)
-ProjectDictionary = NewType('ProjectDictionary', Dict[ProjectName, Project])
+ProjectDictionary = Dict[ProjectName, Project]
 
 
 def tasksFactory() -> Tasks:
-    return Tasks([])
+    return []
 
 
 TaskName     = NewType('TaskName',     str)
