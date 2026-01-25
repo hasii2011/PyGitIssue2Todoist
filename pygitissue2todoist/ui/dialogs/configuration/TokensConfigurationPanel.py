@@ -24,9 +24,9 @@ class TokensConfigurationPanel(AbstractConfigurationPanel):
         Implement parent empty method
         Creates the panel's control containers and stash them as private instance variables
         """
-        self._txtTodoistContainer     = TextContainer(parent=self, labelText='Todoist Token:',    valueChangedCallback=self.__onTodoistTokenChange)
-        self._txtGitHubTokenContainer = TextContainer(parent=self, labelText='GitHub Token:',     valueChangedCallback=self.__onGitHubTokenChange)
-        self._txtGitHubNameContainer  = TextContainer(parent=self, labelText='GitHub User Name:', valueChangedCallback=self.__onGitHubUserNameChange)
+        self._txtTodoistContainer     = TextContainer(parent=self, labelText='Todoist Token',    valueChangedCallback=self.__onTodoistTokenChange)
+        self._txtGitHubTokenContainer = TextContainer(parent=self, labelText='GitHub Token',     valueChangedCallback=self.__onGitHubTokenChange)
+        self._txtGitHubNameContainer  = TextContainer(parent=self, labelText='GitHub User Name', valueChangedCallback=self.__onGitHubUserNameChange)
 
     def _setControlValues(self):
         """

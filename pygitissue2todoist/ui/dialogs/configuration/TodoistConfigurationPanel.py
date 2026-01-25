@@ -59,7 +59,7 @@ class TodoistConfigurationPanel(AbstractConfigurationPanel):
 
         self._cacheOptionControl         = CheckBox(parent=self, label="Allow Todoist Cache Cleanup", id=ID_ANY)
         self._layoutStrategySelector()
-        self._parentProjectNameContainer = TextContainer(parent=self, labelText='Todoist Project Name:',
+        self._parentProjectNameContainer = TextContainer(parent=self, labelText='Todoist Project Name',
                                                          valueChangedCallback=self.__onParentProjectNameChange)
 
     def _layoutStrategySelector(self):
