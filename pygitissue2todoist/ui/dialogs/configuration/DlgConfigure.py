@@ -19,6 +19,7 @@ from wx import CommandEvent
 from wx import Window
 
 from wx import NewIdRef as wxNewIdRef
+from wx import CallAfter as wxCallAfter
 
 from wx.lib.sized_controls import SizedDialog
 from wx.lib.sized_controls import SizedPanel
@@ -57,12 +58,11 @@ class DlgConfigure(SizedDialog):
 
         self.SetButtonSizer(self.CreateStdDialogButtonSizer(OK | CANCEL))
 
-        self.Fit()
-        self.SetMinSize(self.GetSize())
-
         self.Bind(EVT_BUTTON, self.__onCmdOk, id=ID_OK)
         self.Bind(EVT_BUTTON, self.__onClose, id=ID_CANCEL)
         self.Bind(EVT_CLOSE,  self.__onClose)
+
+        wxCallAfter(callableObj=self._adjustSize)
 
     def __onCmdOk(self, event: CommandEvent):
         """
@@ -79,3 +79,7 @@ class DlgConfigure(SizedDialog):
         """
         self.SetReturnCode(CANCEL)
         self.EndModal(CANCEL)
+
+    def _adjustSize(self):
+        self.Fit()
+        self.SetMinSize(self.GetSize())
