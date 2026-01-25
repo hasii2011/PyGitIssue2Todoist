@@ -3,14 +3,13 @@ wheel==0.45.1
 setuptools==70.1.1
 
 html-testRunner==1.2.1
-mypy==1.15.0
+mypy==1.19.1
 types-cffi==1.16.0.20250318
 
-py2app==0.28.8
+py2app==0.28.9
 
-codeallybasic==1.10.0
+codeallybasic==1.30.0
 
-PyGithub==2.6.1
-todoist_api_python==3.1.0
+PyGithub==2.8.1
+todoist_api_python==3.2.1
 wxPython==4.2.2
-
