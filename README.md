@@ -6,7 +6,10 @@
 </a>
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/hasii2011/PyGitIssue2Todoist/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/hasii2011/PyGitIssue2Todoist/tree/master)
 
-> **Project Status:** Inactive. A re-engineered BeeWare version of this project is now maintained at [hasii2011/gitissue2todoist](https://github.com/hasii2011/gitissue2todoist/).
+> [!IMPORTANT]
+> **Project Status: Deprecated & Replaced**
+>
+> This project is no longer actively maintained or updated. It has been superseded by a re-engineered BeeWare version, available at [hasii2011/gitissue2todoist](https://github.com/hasii2011/gitissue2todoist/). Please head over to the new repository for ongoing development, releases, and support.
 
 # Introduction
 
